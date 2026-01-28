@@ -1,5 +1,6 @@
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 import biodiversityImg from "@/assets/biodiversity-center.jpg";
 import geneBankImg from "@/assets/gene-bank.jpg";
@@ -14,6 +15,7 @@ const centers = [
     description:
       "Istraživanje i dokumentovanje biološke raznolikosti regije, monitoring vrsta i ekosistema.",
     image: biodiversityImg,
+    href: "/centri/biodiverzitet",
   },
   {
     id: 2,
@@ -21,6 +23,7 @@ const centers = [
     description:
       "Očuvanje genetičkih resursa biljaka kroz dugotrajno skladištenje sjemena i vegetativnog materijala.",
     image: geneBankImg,
+    href: "/centri/banka-gena",
   },
   {
     id: 3,
@@ -28,6 +31,7 @@ const centers = [
     description:
       "Očuvanje i upravljanje zaštićenim prirodnim područjem unutar kampusa Univerziteta.",
     image: protectedAreaImg,
+    href: "/centri/zasticeno-podrucje",
   },
   {
     id: 4,
@@ -35,6 +39,7 @@ const centers = [
     description:
       "Živa kolekcija biljaka za naučna istraživanja, obrazovanje i očuvanje rijetkih vrsta.",
     image: botanicalGardenImg,
+    href: "/centri/botanicka-basta",
   },
   {
     id: 5,
@@ -42,6 +47,7 @@ const centers = [
     description:
       "Proizvodnja sadnog materijala autohtonih i ugroženih biljnih vrsta za konzervaciju.",
     image: nurseryImg,
+    href: "/centri/rasadnik",
   },
 ];
 
@@ -92,10 +98,12 @@ export function CentersSection() {
               </div>
               <div className="p-6">
                 <p className="text-muted-foreground mb-4">{center.description}</p>
-                <Button variant="link" className="p-0 h-auto group/btn">
-                  Saznaj više
-                  <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-                </Button>
+                <Link to={center.href}>
+                  <Button variant="link" className="p-0 h-auto group/btn">
+                    Saznaj više
+                    <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                  </Button>
+                </Link>
               </div>
             </div>
           ))}
