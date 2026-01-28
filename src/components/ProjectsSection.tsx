@@ -1,5 +1,6 @@
 import { Calendar, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const projects = [
   {
@@ -61,10 +62,12 @@ export function ProjectsSection() {
               biodiverziteta u regionu.
             </p>
           </div>
-          <Button variant="outline" size="lg" className="self-start lg:self-auto">
-            Svi projekti
-            <ArrowRight className="w-4 h-4" />
-          </Button>
+          <Link to="/projekti">
+            <Button variant="outline" size="lg" className="self-start lg:self-auto">
+              Svi projekti
+              <ArrowRight className="w-4 h-4" />
+            </Button>
+          </Link>
         </div>
 
         {/* Projects List */}
@@ -111,13 +114,15 @@ export function ProjectsSection() {
                     <Calendar className="w-4 h-4" />
                     <span>{project.year}</span>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                  >
-                    <ArrowRight className="w-5 h-5" />
-                  </Button>
+                  <Link to="/projekti">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <ArrowRight className="w-5 h-5" />
+                    </Button>
+                  </Link>
                 </div>
               </div>
             </div>
