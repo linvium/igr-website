@@ -1,0 +1,265 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@layer base {
+  :root {
+    /* Natural, academic color palette */
+    --background: 45 20% 97%;
+    --foreground: 150 25% 15%;
+
+    --card: 45 30% 98%;
+    --card-foreground: 150 25% 15%;
+
+    --popover: 45 30% 98%;
+    --popover-foreground: 150 25% 15%;
+
+    /* Deep forest green - primary */
+    --primary: 152 45% 25%;
+    --primary-foreground: 45 30% 98%;
+
+    /* Sage green - secondary */
+    --secondary: 145 20% 90%;
+    --secondary-foreground: 150 30% 20%;
+
+    /* Muted earth tones */
+    --muted: 45 15% 92%;
+    --muted-foreground: 150 10% 45%;
+
+    /* Botanical accent - warm amber */
+    --accent: 38 70% 50%;
+    --accent-foreground: 45 30% 98%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 145 15% 85%;
+    --input: 145 15% 85%;
+    --ring: 152 45% 25%;
+
+    --radius: 0.75rem;
+
+    /* Custom tokens for genetics/nature theme */
+    --hero-gradient: linear-gradient(135deg, hsl(152 45% 25%) 0%, hsl(160 35% 35%) 50%, hsl(145 25% 45%) 100%);
+    --card-shadow: 0 4px 20px -4px hsl(150 20% 20% / 0.08);
+    --card-shadow-hover: 0 12px 40px -8px hsl(150 20% 20% / 0.15);
+    --text-gradient: linear-gradient(135deg, hsl(152 45% 25%) 0%, hsl(145 35% 40%) 100%);
+    
+    /* Botanical pattern overlay */
+    --pattern-opacity: 0.03;
+    
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 150 25% 8%;
+    --foreground: 45 20% 95%;
+
+    --card: 150 20% 12%;
+    --card-foreground: 45 20% 95%;
+
+    --popover: 150 20% 12%;
+    --popover-foreground: 45 20% 95%;
+
+    --primary: 152 40% 45%;
+    --primary-foreground: 150 25% 8%;
+
+    --secondary: 150 15% 18%;
+    --secondary-foreground: 45 20% 90%;
+
+    --muted: 150 15% 18%;
+    --muted-foreground: 145 10% 60%;
+
+    --accent: 38 65% 55%;
+    --accent-foreground: 150 25% 8%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 150 15% 20%;
+    --input: 150 15% 20%;
+    --ring: 152 40% 45%;
+    
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif;
+  }
+}
+
+@layer components {
+  .hero-gradient {
+    background: var(--hero-gradient);
+  }
+
+  .text-gradient {
+    background: var(--text-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .card-elevated {
+    box-shadow: var(--card-shadow);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+  }
+
+  .card-elevated:hover {
+    box-shadow: var(--card-shadow-hover);
+    transform: translateY(-4px);
+  }
+
+  .botanical-pattern {
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 5 Q35 15 30 25 Q25 15 30 5' fill='none' stroke='%23228B22' stroke-width='0.5' opacity='0.1'/%3E%3Cpath d='M15 30 Q25 35 35 30' fill='none' stroke='%23228B22' stroke-width='0.5' opacity='0.1'/%3E%3Ccircle cx='45' cy='45' r='3' fill='none' stroke='%23228B22' stroke-width='0.5' opacity='0.1'/%3E%3C/svg%3E");
+    background-size: 60px 60px;
+  }
+
+  .dna-helix {
+    background-image: url("data:image/svg+xml,%3Csvg width='40' height='80' viewBox='0 0 40 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 0 Q20 10 30 0 Q20 10 10 20 Q0 30 10 40 Q20 50 30 40 Q40 50 30 60 Q20 70 10 60 Q0 70 10 80' fill='none' stroke='%23228B22' stroke-width='0.5' opacity='0.08'/%3E%3C/svg%3E");
+    background-size: 40px 80px;
+  }
+
+  .section-divider {
+    @apply w-24 h-1 bg-primary rounded-full mx-auto;
+  }
+
+  .link-underline {
+    @apply relative;
+  }
+
+  .link-underline::after {
+    content: '';
+    @apply absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300;
+  }
+
+  .link-underline:hover::after {
+    @apply w-full;
+  }
+}
+
+@layer utilities {
+  .animate-fade-up {
+    animation: fadeUp 0.6s ease-out forwards;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+
+  .animate-slide-in-left {
+    animation: slideInLeft 0.6s ease-out forwards;
+  }
+
+  .animate-slide-in-right {
+    animation: slideInRight 0.6s ease-out forwards;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.5s ease-out forwards;
+  }
+
+  .delay-100 { animation-delay: 100ms; }
+  .delay-200 { animation-delay: 200ms; }
+  .delay-300 { animation-delay: 300ms; }
+  .delay-400 { animation-delay: 400ms; }
+  .delay-500 { animation-delay: 500ms; }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary) / 0.3);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary) / 0.5);
+}
