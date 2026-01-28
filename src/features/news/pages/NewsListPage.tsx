@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { Calendar, Search } from "lucide-react"
@@ -8,8 +8,12 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Container } from "@/components/layout"
 import { PageHeader, Breadcrumbs, FilterPills, EmptyState } from "@/components/shared"
-import { routes, news, getFeaturedNews, type Language, type NewsCategory } from "@/lib"
+import { NewsListSkeleton } from "@/components/skeletons"
+import { routes, type Language } from "@/lib"
 import { formatDateShort } from "@/lib/format"
+import { useTranslations } from "@/hooks/useTranslations"
+import { getNewsRepository } from "@/repositories/factory"
+import type { News, NewsCategory } from "@/types/models"
 import type { FilterOption } from "@/components/shared/FilterPills"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
@@ -17,46 +21,67 @@ interface NewsListPageProps {
   lang: Language
 }
 
-const categoryOptions: FilterOption[] = [
-  { value: "all", label: "Sve" },
-  { value: "vesti", label: "Vesti" },
-  { value: "dogadjaji", label: "Događaji" },
-  { value: "istrazivanja", label: "Istraživanja" },
-  { value: "edukacija", label: "Edukacija" },
-  { value: "saradnja", label: "Saradnja" },
-]
-
 export function NewsListPage({ lang }: NewsListPageProps) {
-  const [selectedCategory, setSelectedCategory] = useState<string>("all")
-  const [searchQuery, setSearchQuery] = useState("")
+  const { t, translations } = useTranslations('news')
+  const { t: tc } = useTranslations('common')
+  const [allNews, setAllNews] = useState<News[]>([])
+  const [loading, setLoading] = useState(true)
+  const [selectedCategory, setSelectedCategory] = useState<NewsCategory | 'all'>('all')
+  const [searchQuery, setSearchQuery] = useState('')
 
-  const featured = getFeaturedNews()[0]
-  const regularNews = news.filter((n) => !n.featured)
+  // Load news data
+  useEffect(() => {
+    const loadNews = async () => {
+      try {
+        const repository = getNewsRepository()
+        const data = await repository.findAll()
+        setAllNews(data)
+      } catch (error) {
+        console.error('Failed to load news:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadNews()
+  }, [])
+
+  // Category filter options from translations
+  const categoryOptions: FilterOption[] = Object.entries(translations.categories).map(([value, label]) => ({
+    value,
+    label
+  }))
+
+  const featured = allNews.find(n => n.featured)
+  const regularNews = allNews.filter(n => !n.featured)
 
   const filteredNews = regularNews.filter((item) => {
-    const matchesCategory = selectedCategory === "all" || item.category === selectedCategory
+    const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory
     const matchesSearch =
-      searchQuery === "" ||
+      searchQuery === '' ||
       item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.excerpt.toLowerCase().includes(searchQuery.toLowerCase())
     return matchesCategory && matchesSearch
   })
 
+  if (loading) {
+    return <NewsListSkeleton />
+  }
+
   return (
     <Container>
       <div className="py-8">
-        <Breadcrumbs lang={lang} items={[{ label: "Novosti" }]} />
+        <Breadcrumbs lang={lang} items={[{ label: t('title') }]} />
       </div>
 
       <PageHeader
-        title="Novosti"
-        description="Pratite naše aktivnosti, događaje i postignuća u oblasti očuvanja genetičkih resursa."
+        title={t('title')}
+        description={t('description')}
       />
 
       {/* Featured News */}
       {featured && (
         <div className="py-8">
-          <h2 className="font-serif text-2xl font-semibold mb-6">Istaknuto</h2>
+          <h2 className="font-serif text-2xl font-semibold mb-6">{t('featured')}</h2>
           <Card className="group card-elevated overflow-hidden">
             <div className="grid md:grid-cols-2 gap-0">
               <div className="relative h-64 md:h-full">
@@ -73,7 +98,7 @@ export function NewsListPage({ lang }: NewsListPageProps) {
                   <span>{formatDateShort(featured.date)}</span>
                 </div>
                 <Button asChild>
-                  <Link href={routes.news.detail(lang, featured.slug)}>Pročitaj više</Link>
+                  <Link href={routes.news.detail(lang, featured.slug)}>{tc('actions.readMore')}</Link>
                 </Button>
               </CardHeader>
             </div>
@@ -87,7 +112,7 @@ export function NewsListPage({ lang }: NewsListPageProps) {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
           <Input
             type="search"
-            placeholder="Pretraži novosti..."
+            placeholder={t('filters.search')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10"
@@ -95,11 +120,11 @@ export function NewsListPage({ lang }: NewsListPageProps) {
         </div>
 
         <div>
-          <h3 className="text-sm font-medium mb-2">Kategorija</h3>
+          <h3 className="text-sm font-medium mb-2">{t('filters.category')}</h3>
           <FilterPills
             options={categoryOptions}
-            selected={selectedCategory === "all" ? [] : [selectedCategory]}
-            onSelect={(value) => setSelectedCategory(value)}
+            selected={selectedCategory === 'all' ? [] : [selectedCategory]}
+            onSelect={(value) => setSelectedCategory(value as NewsCategory | 'all')}
           />
         </div>
       </div>
@@ -107,8 +132,8 @@ export function NewsListPage({ lang }: NewsListPageProps) {
       {/* News List */}
       {filteredNews.length === 0 ? (
         <EmptyState
-          title="Nema pronađenih novosti"
-          description="Pokušajte da promenite filtere ili pretragu."
+          title={t('empty.title')}
+          description={t('empty.description')}
         />
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 py-8">
@@ -133,7 +158,7 @@ export function NewsListPage({ lang }: NewsListPageProps) {
                     <span>{formatDateShort(item.date)}</span>
                   </div>
                   <Button variant="ghost" size="sm" asChild>
-                    <Link href={routes.news.detail(lang, item.slug)}>Pročitaj</Link>
+                    <Link href={routes.news.detail(lang, item.slug)}>{tc('actions.readMore')}</Link>
                   </Button>
                 </div>
               </CardContent>

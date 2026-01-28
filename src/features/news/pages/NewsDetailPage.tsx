@@ -1,13 +1,21 @@
+"use client"
+
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { ArrowLeft, Calendar, Tag } from "lucide-react"
+import { ArrowLeft, Calendar } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Container } from "@/components/layout"
 import { PageHeader, Breadcrumbs } from "@/components/shared"
-import { routes, getNewsBySlug, getRelatedNews, type Language } from "@/lib"
+import { NewsDetailSkeleton } from "@/components/skeletons"
+import { routes, type Language } from "@/lib"
 import { formatDate } from "@/lib/format"
+import { useTranslations } from "@/hooks/useTranslations"
+import { getNewsRepository } from "@/repositories/factory"
+import type { News } from "@/types/models"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { notFound } from "next/navigation"
 
 interface NewsDetailPageProps {
   lang: Language
@@ -15,12 +23,43 @@ interface NewsDetailPageProps {
 }
 
 export function NewsDetailPage({ lang, slug }: NewsDetailPageProps) {
-  const item = getNewsBySlug(slug)
+  const { t } = useTranslations('news')
+  const { t: tc } = useTranslations('common')
+  const [item, setItem] = useState<News | null>(null)
+  const [relatedNews, setRelatedNews] = useState<News[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const repository = getNewsRepository()
+        const newsItem = await repository.findBySlug(slug)
+        
+        if (!newsItem) {
+          notFound()
+          return
+        }
+        
+        setItem(newsItem)
+        
+        const related = await repository.findRelated(newsItem)
+        setRelatedNews(related)
+      } catch (error) {
+        console.error('Failed to load news:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadData()
+  }, [slug])
+
+  if (loading) {
+    return <NewsDetailSkeleton />
+  }
+
   if (!item) {
     return null
   }
-
-  const relatedNews = getRelatedNews(item)
 
   return (
     <Container>
@@ -28,7 +67,7 @@ export function NewsDetailPage({ lang, slug }: NewsDetailPageProps) {
         <Breadcrumbs
           lang={lang}
           items={[
-            { label: "Novosti", href: routes.news.list(lang) },
+            { label: t('title'), href: routes.news.list(lang) },
             { label: item.title },
           ]}
         />
@@ -37,7 +76,7 @@ export function NewsDetailPage({ lang, slug }: NewsDetailPageProps) {
       <Button variant="ghost" className="mb-6" asChild>
         <Link href={routes.news.list(lang)}>
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Nazad na novosti
+          {tc('actions.back')}
         </Link>
       </Button>
 
@@ -62,12 +101,15 @@ export function NewsDetailPage({ lang, slug }: NewsDetailPageProps) {
           </div>
 
           {item.tags.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {item.tags.map((tag) => (
-                <Badge key={tag} variant="outline">
-                  {tag}
-                </Badge>
-              ))}
+            <div>
+              <h3 className="text-sm font-medium mb-3">{t('detail.tags')}</h3>
+              <div className="flex flex-wrap gap-2">
+                {item.tags.map((tag) => (
+                  <Badge key={tag} variant="outline">
+                    {tag}
+                  </Badge>
+                ))}
+              </div>
             </div>
           )}
         </div>
@@ -84,7 +126,7 @@ export function NewsDetailPage({ lang, slug }: NewsDetailPageProps) {
                   <Badge className="capitalize">{item.category}</Badge>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground mb-2">Datum</p>
+                  <p className="text-sm text-muted-foreground mb-2">{t('detail.publishedOn')}</p>
                   <div className="flex items-center gap-2">
                     <Calendar className="w-4 h-4" />
                     <span>{formatDate(item.date)}</span>
@@ -98,7 +140,7 @@ export function NewsDetailPage({ lang, slug }: NewsDetailPageProps) {
 
       {relatedNews.length > 0 && (
         <div className="py-12 border-t">
-          <h2 className="font-serif text-3xl font-bold mb-8">Povezane novosti</h2>
+          <h2 className="font-serif text-3xl font-bold mb-8">{t('detail.relatedNews')}</h2>
           <div className="grid md:grid-cols-2 gap-6">
             {relatedNews.map((related) => (
               <Card key={related.id} className="card-elevated">
@@ -111,7 +153,7 @@ export function NewsDetailPage({ lang, slug }: NewsDetailPageProps) {
                 </CardHeader>
                 <CardContent>
                   <Button variant="link" className="p-0 h-auto" asChild>
-                    <Link href={routes.news.detail(lang, related.slug)}>Pročitaj više</Link>
+                    <Link href={routes.news.detail(lang, related.slug)}>{tc('actions.readMore')}</Link>
                   </Button>
                 </CardContent>
               </Card>

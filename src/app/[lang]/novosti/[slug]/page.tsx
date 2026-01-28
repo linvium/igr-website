@@ -1,7 +1,7 @@
 import { NewsDetailPage } from "@/features/news"
 import { getLanguage } from "@/lib/lang"
 import { generatePageMetadata } from "@/lib/seo"
-import { getNewsBySlug } from "@/data/news"
+import { getNewsRepository } from "@/repositories/factory"
 import type { Metadata } from "next"
 import type { Language } from "@/lib"
 
@@ -11,7 +11,8 @@ export async function generateMetadata({
   params: Promise<{ lang: string; slug: string }>
 }): Promise<Metadata> {
   const resolvedParams = await params
-  const item = getNewsBySlug(resolvedParams.slug)
+  const repository = getNewsRepository()
+  const item = await repository.findBySlug(resolvedParams.slug)
   return generatePageMetadata(item?.title || "Novost", item?.excerpt, item?.image)
 }
 

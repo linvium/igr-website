@@ -1,0 +1,7 @@
+export { NewsListSkeleton } from './NewsListSkeleton'
+export { NewsDetailSkeleton } from './NewsDetailSkeleton'
+export { CenterListSkeleton } from './CenterListSkeleton'
+export { CenterDetailSkeleton } from './CenterDetailSkeleton'
+export { ProjectListSkeleton } from './ProjectListSkeleton'
+export { ProjectDetailSkeleton } from './ProjectDetailSkeleton'
+export { GalleryListSkeleton } from './GalleryListSkeleton'

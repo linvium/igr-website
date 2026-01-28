@@ -1,60 +1,85 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Calendar, Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Container } from "@/components/layout"
 import { PageHeader, Breadcrumbs, FilterPills, EmptyState } from "@/components/shared"
-import { routes, projects, type Language, type ProjectCategory, type ProjectStatus } from "@/lib"
+import { routes, type Language } from "@/lib"
 import { formatYear } from "@/lib/format"
+import { useTranslations } from "@/hooks/useTranslations"
+import { ProjectListSkeleton } from "@/components/skeletons"
+import { getProjectsRepository } from "@/repositories/factory"
+import type { Project, ProjectCategory, ProjectStatus } from "@/types/models"
 import type { FilterOption } from "@/components/shared/FilterPills"
 
 interface ProjectsListPageProps {
   lang: Language
 }
 
-const categoryOptions: FilterOption[] = [
-  { value: "all", label: "Sve" },
-  { value: "istraživanje", label: "Istraživanje" },
-  { value: "očuvanje", label: "Očuvanje" },
-  { value: "edukacija", label: "Edukacija" },
-  { value: "razvoj", label: "Razvoj" },
-]
-
-const statusOptions: FilterOption[] = [
-  { value: "all", label: "Sve" },
-  { value: "aktivno", label: "Aktivno" },
-  { value: "završeno", label: "Završeno" },
-  { value: "planirano", label: "Planirano" },
-]
-
 export function ProjectsListPage({ lang }: ProjectsListPageProps) {
-  const [selectedCategory, setSelectedCategory] = useState<string>("all")
-  const [selectedStatus, setSelectedStatus] = useState<string>("all")
-  const [searchQuery, setSearchQuery] = useState("")
+  const { t } = useTranslations('projects')
+  const [allProjects, setAllProjects] = useState<Project[]>([])
+  const [loading, setLoading] = useState(true)
+  const [selectedCategory, setSelectedCategory] = useState<string>('all')
+  const [selectedStatus, setSelectedStatus] = useState<string>('all')
+  const [searchQuery, setSearchQuery] = useState('')
 
-  const filteredProjects = projects.filter((project) => {
-    const matchesCategory =
-      selectedCategory === "all" || project.category === selectedCategory
-    const matchesStatus = selectedStatus === "all" || project.status === selectedStatus
+  useEffect(() => {
+    const loadProjects = async () => {
+      try {
+        const repository = getProjectsRepository()
+        const data = await repository.findAll()
+        setAllProjects(data)
+      } catch (error) {
+        console.error('Failed to load projects:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadProjects()
+  }, [])
+
+  const categoryOptions: FilterOption[] = [
+    { value: 'all', label: 'Sve' },
+    { value: 'istraživanje', label: 'Istraživanje' },
+    { value: 'očuvanje', label: 'Očuvanje' },
+    { value: 'edukacija', label: 'Edukacija' },
+    { value: 'razvoj', label: 'Razvoj' },
+  ]
+
+  const statusOptions: FilterOption[] = [
+    { value: 'all', label: 'Sve' },
+    { value: 'aktivno', label: t('status.active') },
+    { value: 'završeno', label: t('status.completed') },
+    { value: 'planirano', label: t('status.planned') },
+  ]
+
+  const filteredProjects = allProjects.filter((project) => {
+    const matchesCategory = selectedCategory === 'all' || project.category === selectedCategory
+    const matchesStatus = selectedStatus === 'all' || project.status === selectedStatus
     const matchesSearch =
-      searchQuery === "" ||
+      searchQuery === '' ||
       project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       project.excerpt.toLowerCase().includes(searchQuery.toLowerCase())
     return matchesCategory && matchesStatus && matchesSearch
   })
 
+  if (loading) {
+    return <ProjectListSkeleton />
+  }
+
   return (
     <Container>
       <div className="py-8">
-        <Breadcrumbs lang={lang} items={[{ label: "Projekti" }]} />
+        <Breadcrumbs lang={lang} items={[{ label: t('title') }]} />
       </div>
 
       <PageHeader
-        title="Projekti"
-        description="Aktivni i završeni projekti koji doprinose očuvanju genetičkih resursa i biodiverziteta."
+        title={t('title')}
+        description={t('description')}
       />
 
       {/* Filters */}
@@ -72,18 +97,18 @@ export function ProjectsListPage({ lang }: ProjectsListPageProps) {
 
         <div className="space-y-4">
           <div>
-            <h3 className="text-sm font-medium mb-2">Kategorija</h3>
+            <h3 className="text-sm font-medium mb-2">{t('filters.category')}</h3>
             <FilterPills
               options={categoryOptions}
-              selected={selectedCategory === "all" ? [] : [selectedCategory]}
+              selected={selectedCategory === 'all' ? [] : [selectedCategory]}
               onSelect={(value) => setSelectedCategory(value)}
             />
           </div>
           <div>
-            <h3 className="text-sm font-medium mb-2">Status</h3>
+            <h3 className="text-sm font-medium mb-2">{t('filters.status')}</h3>
             <FilterPills
               options={statusOptions}
-              selected={selectedStatus === "all" ? [] : [selectedStatus]}
+              selected={selectedStatus === 'all' ? [] : [selectedStatus]}
               onSelect={(value) => setSelectedStatus(value)}
             />
           </div>
@@ -111,11 +136,11 @@ export function ProjectsListPage({ lang }: ProjectsListPageProps) {
                     </span>
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${
-                        project.status === "aktivno"
-                          ? "bg-primary/10 text-primary"
-                          : project.status === "završeno"
-                            ? "bg-muted text-muted-foreground"
-                            : "bg-accent/10 text-accent"
+                        project.status === 'aktivno'
+                          ? 'bg-primary/10 text-primary'
+                          : project.status === 'završeno'
+                            ? 'bg-muted text-muted-foreground'
+                            : 'bg-accent/10 text-accent'
                       }`}
                     >
                       {project.status}

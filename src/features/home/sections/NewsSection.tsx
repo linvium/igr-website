@@ -1,18 +1,42 @@
+"use client"
+
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { Calendar, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Container } from "@/components/layout"
-import { routes, news, getFeaturedNews, type Language } from "@/lib"
+import { routes, type Language } from "@/lib"
 import { formatDateShort } from "@/lib/format"
+import { useTranslations } from "@/hooks/useTranslations"
+import { getNewsRepository } from "@/repositories/factory"
+import type { News } from "@/types/models"
 
 interface NewsSectionProps {
   lang: Language
 }
 
 export function NewsSection({ lang }: NewsSectionProps) {
-  const featured = getFeaturedNews()[0]
-  const regularNews = news.filter((n) => !n.featured).slice(0, 3)
+  const { t } = useTranslations('home')
+  const { t: tc } = useTranslations('common')
+  const [featured, setFeatured] = useState<News | null>(null)
+  const [regularNews, setRegularNews] = useState<News[]>([])
+
+  useEffect(() => {
+    const loadNews = async () => {
+      try {
+        const repository = getNewsRepository()
+        const featuredList = await repository.findFeatured()
+        const allNews = await repository.findAll()
+        
+        setFeatured(featuredList[0] || null)
+        setRegularNews(allNews.filter(n => !n.featured).slice(0, 3))
+      } catch (error) {
+        console.error('Failed to load news:', error)
+      }
+    }
+    loadNews()
+  }, [])
 
   return (
     <section id="news" className="py-24 bg-secondary/30 relative">
@@ -21,7 +45,7 @@ export function NewsSection({ lang }: NewsSectionProps) {
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 mb-16">
           <div className="max-w-2xl">
             <span className="inline-block px-4 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
-              Novosti
+              {t('sections.news')}
             </span>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-foreground mb-6">
               Najnovije vijesti
@@ -32,7 +56,7 @@ export function NewsSection({ lang }: NewsSectionProps) {
           </div>
           <Button variant="outline" size="lg" className="self-start lg:self-auto" asChild>
             <Link href={routes.news.list(lang)}>
-              Sve vijesti
+              {tc('actions.viewAll')}
               <ArrowRight className="w-4 h-4" />
             </Link>
           </Button>
@@ -68,7 +92,7 @@ export function NewsSection({ lang }: NewsSectionProps) {
               <div className="p-6">
                 <Button variant="link" className="p-0 h-auto group/btn" asChild>
                   <Link href={routes.news.detail(lang, featured.slug)}>
-                    Pročitaj više
+                    {tc('actions.readMore')}
                     <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
                   </Link>
                 </Button>

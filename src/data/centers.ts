@@ -1,17 +1,9 @@
-export type Center = {
-  id: string
-  slug: string
-  title: string
-  excerpt: string
-  description: string
-  image: string
-  category: string
-  established: number
-  director?: string
-  location?: string
-  relatedCenters?: string[]
-}
+import type { Center } from '@/types/models'
 
+/**
+ * Static centers data
+ * This will be replaced by Sanity CMS data in the future
+ */
 export const centers: Center[] = [
   {
     id: "1",
@@ -79,12 +71,3 @@ export const centers: Center[] = [
     relatedCenters: ["3"],
   },
 ]
-
-export const getCenterBySlug = (slug: string): Center | undefined => {
-  return centers.find((center) => center.slug === slug)
-}
-
-export const getRelatedCenters = (center: Center): Center[] => {
-  if (!center.relatedCenters) return []
-  return centers.filter((c) => center.relatedCenters?.includes(c.id))
-}

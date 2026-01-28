@@ -1,25 +1,12 @@
-export type GalleryCategory = "centri" | "projekti" | "dogadjaji" | "priroda" | "istrazivanja"
+import type { GalleryAlbum } from '@/types/models'
 
-export type GalleryImage = {
-  id: string
-  url: string
-  alt: string
-  caption?: string
-}
-
-export type GalleryAlbum = {
-  id: string
-  slug: string
-  title: string
-  description: string
-  category: GalleryCategory
-  coverImage: string
-  images: GalleryImage[]
-  date: string
-  tags: string[]
-}
-
-export const galleryAlbums: GalleryAlbum[] = [
+/**
+ * Static gallery data
+ * This will be replaced by Sanity CMS data in the future
+ * 
+ * Note: Exported as 'gallery' to match repository expectations
+ */
+export const gallery: GalleryAlbum[] = [
   {
     id: "1",
     slug: "gen-banka-interijer",
@@ -111,11 +98,3 @@ export const galleryAlbums: GalleryAlbum[] = [
     tags: ["edukacija", "škole", "mladi"],
   },
 ]
-
-export const getAlbumBySlug = (slug: string): GalleryAlbum | undefined => {
-  return galleryAlbums.find((album) => album.slug === slug)
-}
-
-export const getAlbumsByCategory = (category: GalleryCategory): GalleryAlbum[] => {
-  return galleryAlbums.filter((album) => album.category === category)
-}

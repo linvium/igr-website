@@ -1,19 +1,9 @@
-export type NewsCategory = "vesti" | "dogadjaji" | "istrazivanja" | "edukacija" | "saradnja"
+import type { News } from '@/types/models'
 
-export type News = {
-  id: string
-  slug: string
-  title: string
-  excerpt: string
-  body: string
-  category: NewsCategory
-  date: string
-  image: string
-  tags: string[]
-  featured?: boolean
-  relatedNews?: string[]
-}
-
+/**
+ * Static news data
+ * This will be replaced by Sanity CMS data in the future
+ */
 export const news: News[] = [
   {
     id: "1",
@@ -115,20 +105,3 @@ export const news: News[] = [
     relatedNews: ["1", "6"],
   },
 ]
-
-export const getNewsBySlug = (slug: string): News | undefined => {
-  return news.find((item) => item.slug === slug)
-}
-
-export const getRelatedNews = (item: News): News[] => {
-  if (!item.relatedNews) return []
-  return news.filter((n) => item.relatedNews?.includes(n.id))
-}
-
-export const getFeaturedNews = (): News[] => {
-  return news.filter((item) => item.featured)
-}
-
-export const getNewsByCategory = (category: NewsCategory): News[] => {
-  return news.filter((item) => item.category === category)
-}

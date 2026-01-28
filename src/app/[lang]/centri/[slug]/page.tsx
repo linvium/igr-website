@@ -1,7 +1,7 @@
 import { CenterDetailPage } from "@/features/centers"
 import { getLanguage } from "@/lib/lang"
 import { generatePageMetadata } from "@/lib/seo"
-import { getCenterBySlug } from "@/data/centers"
+import { getCentersRepository } from "@/repositories/factory"
 import type { Metadata } from "next"
 import type { Language } from "@/lib"
 
@@ -11,7 +11,8 @@ export async function generateMetadata({
   params: Promise<{ lang: string; slug: string }>
 }): Promise<Metadata> {
   const resolvedParams = await params
-  const center = getCenterBySlug(resolvedParams.slug)
+  const repository = getCentersRepository()
+  const center = await repository.findBySlug(resolvedParams.slug)
   return generatePageMetadata(
     center?.title || "Centar",
     center?.excerpt,

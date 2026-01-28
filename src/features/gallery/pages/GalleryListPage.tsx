@@ -1,11 +1,15 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { Container } from "@/components/layout"
 import { PageHeader, Breadcrumbs, FilterPills } from "@/components/shared"
-import { routes, galleryAlbums, type Language, type GalleryCategory } from "@/lib"
+import { routes, type Language } from "@/lib"
+import { useTranslations } from "@/hooks/useTranslations"
+import { GalleryListSkeleton } from "@/components/skeletons"
+import { getGalleryRepository } from "@/repositories/factory"
+import type { GalleryAlbum, GalleryCategory } from "@/types/models"
 import type { FilterOption } from "@/components/shared/FilterPills"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { formatDateShort } from "@/lib/format"
@@ -14,41 +18,63 @@ interface GalleryListPageProps {
   lang: Language
 }
 
-const categoryOptions: FilterOption[] = [
-  { value: "all", label: "Sve" },
-  { value: "centri", label: "Centri" },
-  { value: "projekti", label: "Projekti" },
-  { value: "dogadjaji", label: "Događaji" },
-  { value: "priroda", label: "Priroda" },
-  { value: "istrazivanja", label: "Istraživanja" },
-]
-
 export function GalleryListPage({ lang }: GalleryListPageProps) {
-  const [selectedCategory, setSelectedCategory] = useState<GalleryCategory | "all">("all")
+  const { t } = useTranslations('gallery')
+  const [allAlbums, setAllAlbums] = useState<GalleryAlbum[]>([])
+  const [loading, setLoading] = useState(true)
+  const [selectedCategory, setSelectedCategory] = useState<GalleryCategory | 'all'>('all')
+
+  useEffect(() => {
+    const loadGallery = async () => {
+      try {
+        const repository = getGalleryRepository()
+        const data = await repository.findAll()
+        setAllAlbums(data)
+      } catch (error) {
+        console.error('Failed to load gallery:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadGallery()
+  }, [])
+
+  const categoryOptions: FilterOption[] = [
+    { value: 'all', label: 'Sve' },
+    { value: 'centri', label: 'Centri' },
+    { value: 'projekti', label: 'Projekti' },
+    { value: 'dogadjaji', label: 'Događaji' },
+    { value: 'priroda', label: 'Priroda' },
+    { value: 'istrazivanja', label: 'Istraživanja' },
+  ]
 
   const filteredAlbums =
-    selectedCategory === "all"
-      ? galleryAlbums
-      : galleryAlbums.filter((album) => album.category === selectedCategory)
+    selectedCategory === 'all'
+      ? allAlbums
+      : allAlbums.filter((album) => album.category === selectedCategory)
+
+  if (loading) {
+    return <GalleryListSkeleton />
+  }
 
   return (
     <Container>
       <div className="py-8">
-        <Breadcrumbs lang={lang} items={[{ label: "Galerija" }]} />
+        <Breadcrumbs lang={lang} items={[{ label: t('title') }]} />
       </div>
 
       <PageHeader
-        title="Galerija"
-        description="Fotografije naših centara, projekata i aktivnosti."
+        title={t('title')}
+        description={t('description')}
       />
 
       {/* Filters */}
       <div className="py-8">
         <FilterPills
           options={categoryOptions}
-          selected={selectedCategory === "all" ? [] : [selectedCategory]}
+          selected={selectedCategory === 'all' ? [] : [selectedCategory]}
           onSelect={(value) =>
-            setSelectedCategory(value === "all" ? "all" : (value as GalleryCategory))
+            setSelectedCategory(value === 'all' ? 'all' : (value as GalleryCategory))
           }
         />
       </div>
@@ -75,12 +101,12 @@ export function GalleryListPage({ lang }: GalleryListPageProps) {
                   {formatDateShort(album.date)}
                 </span>
                 <span className="text-sm text-muted-foreground">
-                  {album.images.length} {album.images.length === 1 ? "slika" : "slika"}
+                  {album.images.length} {album.images.length === 1 ? 'slika' : 'slika'}
                 </span>
               </div>
               <Link href={routes.gallery.detail(lang, album.slug)}>
                 <button className="w-full mt-4 text-sm font-medium text-primary hover:underline">
-                  Pogledaj album
+                  {t('viewAlbum')}
                 </button>
               </Link>
             </CardContent>

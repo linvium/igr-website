@@ -30,14 +30,27 @@ export function Header() {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50)
     }
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
+    // Throttle scroll events for better performance
+    let ticking = false
+    const onScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          handleScroll()
+          ticking = false
+        })
+        ticking = true
+      }
+    }
+    window.addEventListener("scroll", onScroll, { passive: true })
+    return () => window.removeEventListener("scroll", onScroll)
   }, [])
 
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? "bg-background/95 backdrop-blur-md shadow-lg" : "bg-transparent"
+        isScrolled 
+          ? "bg-background/95 backdrop-blur-md shadow-lg" 
+          : "bg-background/80 backdrop-blur-sm"
       }`}
     >
       <Container>
@@ -49,18 +62,10 @@ export function Header() {
                 <Leaf className="w-6 h-6 text-primary-foreground" />
               </div>
               <div className="hidden sm:block">
-                <h1
-                  className={`font-serif font-bold text-lg leading-tight transition-colors ${
-                    isScrolled ? "text-foreground" : "text-primary-foreground"
-                  }`}
-                >
+                <h1 className="font-serif font-bold text-lg leading-tight text-foreground transition-colors">
                   Institut za Genetičke Resurse
                 </h1>
-                <p
-                  className={`text-xs transition-colors ${
-                    isScrolled ? "text-muted-foreground" : "text-primary-foreground/80"
-                  }`}
-                >
+                <p className="text-xs text-muted-foreground transition-colors">
                   Centar za očuvanje i istraživanje
                 </p>
               </div>
@@ -72,11 +77,7 @@ export function Header() {
                 <Link
                   key={item.name}
                   href={item.href(currentLang)}
-                  className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 hover:bg-primary/10 ${
-                    isScrolled
-                      ? "text-foreground hover:text-primary"
-                      : "text-primary-foreground/90 hover:text-primary-foreground hover:bg-primary-foreground/10"
-                  }`}
+                  className="px-4 py-2 rounded-lg font-medium transition-all duration-200 text-foreground hover:text-primary hover:bg-primary/10"
                 >
                   {item.name}
                 </Link>
@@ -92,7 +93,7 @@ export function Header() {
               <Button
                 variant="ghost"
                 size="icon"
-                className={isScrolled ? "text-foreground" : "text-primary-foreground"}
+                className="text-foreground"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               >
                 {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}

@@ -1,62 +1,68 @@
+"use client"
+
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Calendar, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Container } from "@/components/layout"
-import { routes, projects, type Language } from "@/lib"
+import { routes, type Language } from "@/lib"
 import { formatYear } from "@/lib/format"
+import { useTranslations } from "@/hooks/useTranslations"
+import { getProjectsRepository } from "@/repositories/factory"
+import type { Project } from "@/types/models"
 
 interface ProjectsSectionProps {
   lang: Language
 }
 
 export function ProjectsSection({ lang }: ProjectsSectionProps) {
-  const featuredProjects = projects.slice(0, 4)
+  const { t } = useTranslations('home')
+  const { t: tc } = useTranslations('common')
+  const [projects, setProjects] = useState<Project[]>([])
+
+  useEffect(() => {
+    const loadProjects = async () => {
+      try {
+        const repository = getProjectsRepository()
+        const data = await repository.findAll()
+        setProjects(data.slice(0, 4))
+      } catch (error) {
+        console.error('Failed to load projects:', error)
+      }
+    }
+    loadProjects()
+  }, [])
 
   return (
-    <section id="projects" className="py-24 bg-background relative overflow-hidden">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 dna-helix opacity-20" />
-
-      <Container className="relative">
-        {/* Section Header */}
+    <section id="projects" className="py-24 relative">
+      <Container>
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 mb-16">
           <div className="max-w-2xl">
-            <span className="inline-block px-4 py-1 rounded-full bg-secondary text-secondary-foreground text-sm font-medium mb-4">
-              Projekti
+            <span className="inline-block px-4 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
+              {t('sections.projects')}
             </span>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-foreground mb-6">
-              Naši projekti
+              Projekti
             </h2>
             <p className="text-lg text-muted-foreground">
-              Aktivni i završeni projekti koji doprinose očuvanju genetičkih resursa i biodiverziteta
-              u regionu.
+              Aktivni i završeni projekti koji doprinose očuvanju genetičkih resursa i biodiverziteta.
             </p>
           </div>
           <Button variant="outline" size="lg" className="self-start lg:self-auto" asChild>
             <Link href={routes.projects.list(lang)}>
-              Svi projekti
+              {tc('actions.viewAll')}
               <ArrowRight className="w-4 h-4" />
             </Link>
           </Button>
         </div>
 
-        {/* Projects List */}
         <div className="space-y-6">
-          {featuredProjects.map((project, index) => (
+          {projects.map((project) => (
             <div
               key={project.id}
               className="group bg-card rounded-2xl p-6 md:p-8 card-elevated border border-border/50 hover:border-primary/30 transition-all"
-              style={{ animationDelay: `${index * 100}ms` }}
             >
               <div className="flex flex-col md:flex-row md:items-center gap-6">
-                {/* Project Number */}
-                <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary transition-colors">
-                  <span className="text-2xl font-serif font-bold text-primary group-hover:text-primary-foreground transition-colors">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                </div>
-
-                {/* Project Info */}
                 <div className="flex-1">
                   <div className="flex flex-wrap items-center gap-3 mb-2">
                     <span className="px-3 py-1 rounded-full bg-secondary text-secondary-foreground text-xs font-medium capitalize">
@@ -64,11 +70,11 @@ export function ProjectsSection({ lang }: ProjectsSectionProps) {
                     </span>
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${
-                        project.status === "aktivno"
-                          ? "bg-primary/10 text-primary"
-                          : project.status === "završeno"
-                            ? "bg-muted text-muted-foreground"
-                            : "bg-accent/10 text-accent"
+                        project.status === 'aktivno'
+                          ? 'bg-primary/10 text-primary'
+                          : project.status === 'završeno'
+                            ? 'bg-muted text-muted-foreground'
+                            : 'bg-accent/10 text-accent'
                       }`}
                     >
                       {project.status}
@@ -77,26 +83,15 @@ export function ProjectsSection({ lang }: ProjectsSectionProps) {
                   <h3 className="text-xl md:text-2xl font-serif font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
                     {project.title}
                   </h3>
-                  <p className="text-muted-foreground">{project.excerpt}</p>
-                </div>
-
-                {/* Year & Arrow */}
-                <div className="flex items-center gap-4 md:gap-8">
+                  <p className="text-muted-foreground mb-4">{project.excerpt}</p>
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <Calendar className="w-4 h-4" />
                     <span>{formatYear(project.year)}</span>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                    asChild
-                  >
-                    <Link href={routes.projects.detail(lang, project.slug)}>
-                      <ArrowRight className="w-5 h-5" />
-                    </Link>
-                  </Button>
                 </div>
+                <Button variant="outline" asChild>
+                  <Link href={routes.projects.detail(lang, project.slug)}>{tc('actions.learnMore')}</Link>
+                </Button>
               </div>
             </div>
           ))}

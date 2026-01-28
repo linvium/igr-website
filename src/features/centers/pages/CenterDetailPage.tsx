@@ -1,3 +1,6 @@
+"use client"
+
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { ArrowLeft, MapPin, Calendar, User } from "lucide-react"
@@ -5,8 +8,12 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Container } from "@/components/layout"
 import { PageHeader, Breadcrumbs } from "@/components/shared"
-import { routes, getCenterBySlug, getRelatedCenters, type Language } from "@/lib"
+import { routes, type Language } from "@/lib"
+import { useTranslations } from "@/hooks/useTranslations"
+import { getCentersRepository } from "@/repositories/factory"
+import type { Center } from "@/types/models"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { notFound } from "next/navigation"
 
 interface CenterDetailPageProps {
   lang: Language
@@ -14,12 +21,39 @@ interface CenterDetailPageProps {
 }
 
 export function CenterDetailPage({ lang, slug }: CenterDetailPageProps) {
-  const center = getCenterBySlug(slug)
-  if (!center) {
+  const { t } = useTranslations('centers')
+  const { t: tc } = useTranslations('common')
+  const [center, setCenter] = useState<Center | null>(null)
+  const [relatedCenters, setRelatedCenters] = useState<Center[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const repository = getCentersRepository()
+        const centerData = await repository.findBySlug(slug)
+        
+        if (!centerData) {
+          notFound()
+          return
+        }
+        
+        setCenter(centerData)
+        
+        const related = await repository.findRelated(centerData)
+        setRelatedCenters(related)
+      } catch (error) {
+        console.error('Failed to load center:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadData()
+  }, [slug])
+
+  if (loading || !center) {
     return null
   }
-
-  const relatedCenters = getRelatedCenters(center)
 
   return (
     <Container>
@@ -27,7 +61,7 @@ export function CenterDetailPage({ lang, slug }: CenterDetailPageProps) {
         <Breadcrumbs
           lang={lang}
           items={[
-            { label: "Centri", href: routes.centers.list(lang) },
+            { label: t('title'), href: routes.centers.list(lang) },
             { label: center.title },
           ]}
         />
@@ -36,7 +70,7 @@ export function CenterDetailPage({ lang, slug }: CenterDetailPageProps) {
       <Button variant="ghost" className="mb-6" asChild>
         <Link href={routes.centers.list(lang)}>
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Nazad na centri
+          {tc('actions.back')}
         </Link>
       </Button>
 
@@ -60,7 +94,7 @@ export function CenterDetailPage({ lang, slug }: CenterDetailPageProps) {
                   <div className="flex items-center gap-3">
                     <User className="w-5 h-5 text-muted-foreground" />
                     <div>
-                      <p className="text-sm text-muted-foreground">Direktor</p>
+                      <p className="text-sm text-muted-foreground">{t('detail.director')}</p>
                       <p className="font-medium">{center.director}</p>
                     </div>
                   </div>
@@ -69,7 +103,7 @@ export function CenterDetailPage({ lang, slug }: CenterDetailPageProps) {
                   <div className="flex items-center gap-3">
                     <MapPin className="w-5 h-5 text-muted-foreground" />
                     <div>
-                      <p className="text-sm text-muted-foreground">Lokacija</p>
+                      <p className="text-sm text-muted-foreground">{t('detail.location')}</p>
                       <p className="font-medium">{center.location}</p>
                     </div>
                   </div>
@@ -78,7 +112,7 @@ export function CenterDetailPage({ lang, slug }: CenterDetailPageProps) {
                   <div className="flex items-center gap-3">
                     <Calendar className="w-5 h-5 text-muted-foreground" />
                     <div>
-                      <p className="text-sm text-muted-foreground">Osnovan</p>
+                      <p className="text-sm text-muted-foreground">{t('detail.established')}</p>
                       <p className="font-medium">{center.established}</p>
                     </div>
                   </div>
@@ -92,7 +126,7 @@ export function CenterDetailPage({ lang, slug }: CenterDetailPageProps) {
           <div className="sticky top-24">
             <Card>
               <CardHeader>
-                <CardTitle className="font-serif">Kategorija</CardTitle>
+                <CardTitle className="font-serif">{t('detail.category')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <Badge>{center.category}</Badge>
@@ -104,7 +138,7 @@ export function CenterDetailPage({ lang, slug }: CenterDetailPageProps) {
 
       {relatedCenters.length > 0 && (
         <div className="py-12 border-t">
-          <h2 className="font-serif text-3xl font-bold mb-8">Povezani centri</h2>
+          <h2 className="font-serif text-3xl font-bold mb-8">{t('detail.relatedCenters')}</h2>
           <div className="grid md:grid-cols-2 gap-6">
             {relatedCenters.map((related) => (
               <Card key={related.id} className="card-elevated">
@@ -123,7 +157,7 @@ export function CenterDetailPage({ lang, slug }: CenterDetailPageProps) {
                 <CardContent>
                   <Button variant="link" className="p-0 h-auto" asChild>
                     <Link href={routes.centers.detail(lang, related.slug)}>
-                      Saznaj više
+                      {tc('actions.learnMore')}
                     </Link>
                   </Button>
                 </CardContent>

@@ -1,20 +1,11 @@
 import type { Metadata } from "next"
-import { Inter, Cormorant_Garamond } from "next/font/google"
+import { Inter } from "next/font/google"
 import "@/styles/globals.css"
-import { generateHomeMetadata } from "@/lib/seo"
+import { defaultMetadata } from '@/lib/seo-metadata'
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-sans",
-})
+const inter = Inter({ subsets: ["latin"] })
 
-const cormorant = Cormorant_Garamond({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-serif",
-})
-
-export const metadata: Metadata = generateHomeMetadata()
+export const metadata: Metadata = defaultMetadata
 
 export default function RootLayout({
   children,
@@ -22,8 +13,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="sr" className={`${inter.variable} ${cormorant.variable}`}>
-      <body className="font-sans">{children}</body>
+    <html lang="sr" suppressHydrationWarning>
+      <body className={inter.className}>{children}</body>
     </html>
   )
 }

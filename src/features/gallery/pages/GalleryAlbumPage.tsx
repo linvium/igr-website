@@ -1,15 +1,19 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { ArrowLeft, X, ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Container } from "@/components/layout"
 import { PageHeader, Breadcrumbs } from "@/components/shared"
-import { routes, getAlbumBySlug, type Language } from "@/lib"
+import { routes, type Language } from "@/lib"
 import { formatDateShort } from "@/lib/format"
+import { useTranslations } from "@/hooks/useTranslations"
+import { getGalleryRepository } from "@/repositories/factory"
+import type { GalleryAlbum } from "@/types/models"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
+import { notFound } from "next/navigation"
 
 interface GalleryAlbumPageProps {
   lang: Language
@@ -17,10 +21,34 @@ interface GalleryAlbumPageProps {
 }
 
 export function GalleryAlbumPage({ lang, slug }: GalleryAlbumPageProps) {
-  const album = getAlbumBySlug(slug)
+  const { t } = useTranslations('gallery')
+  const { t: tc } = useTranslations('common')
+  const [album, setAlbum] = useState<GalleryAlbum | null>(null)
+  const [loading, setLoading] = useState(true)
   const [lightboxImage, setLightboxImage] = useState<string | null>(null)
 
-  if (!album) {
+  useEffect(() => {
+    const loadAlbum = async () => {
+      try {
+        const repository = getGalleryRepository()
+        const data = await repository.findBySlug(slug)
+        
+        if (!data) {
+          notFound()
+          return
+        }
+        
+        setAlbum(data)
+      } catch (error) {
+        console.error('Failed to load album:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadAlbum()
+  }, [slug])
+
+  if (loading || !album) {
     return null
   }
 
@@ -53,7 +81,7 @@ export function GalleryAlbumPage({ lang, slug }: GalleryAlbumPageProps) {
           <Breadcrumbs
             lang={lang}
             items={[
-              { label: "Galerija", href: routes.gallery.list(lang) },
+              { label: t('title'), href: routes.gallery.list(lang) },
               { label: album.title },
             ]}
           />
@@ -62,21 +90,13 @@ export function GalleryAlbumPage({ lang, slug }: GalleryAlbumPageProps) {
         <Button variant="ghost" className="mb-6" asChild>
           <Link href={routes.gallery.list(lang)}>
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Nazad na galeriju
+            {tc('actions.back')}
           </Link>
         </Button>
 
         <PageHeader
           title={album.title}
-          description={
-            <>
-              {album.description}
-              <span className="block mt-2 text-sm text-muted-foreground">
-                {formatDateShort(album.date)} • {album.images.length}{" "}
-                {album.images.length === 1 ? "slika" : "slika"}
-              </span>
-            </>
-          }
+          description={`${album.description} • ${formatDateShort(album.date)} • ${album.images.length} ${album.images.length === 1 ? "slika" : "slika"}`}
         />
 
         {/* Images Grid */}

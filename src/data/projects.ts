@@ -1,21 +1,9 @@
-export type ProjectStatus = "aktivno" | "završeno" | "planirano"
-export type ProjectCategory = "istraživanje" | "očuvanje" | "edukacija" | "razvoj"
+import type { Project } from '@/types/models'
 
-export type Project = {
-  id: string
-  slug: string
-  title: string
-  excerpt: string
-  body: string
-  category: ProjectCategory
-  status: ProjectStatus
-  year: number
-  image: string
-  gallery?: string[]
-  tags: string[]
-  relatedProjects?: string[]
-}
-
+/**
+ * Static projects data
+ * This will be replaced by Sanity CMS data in the future
+ */
 export const projects: Project[] = [
   {
     id: "1",
@@ -123,20 +111,3 @@ export const projects: Project[] = [
     relatedProjects: ["1"],
   },
 ]
-
-export const getProjectBySlug = (slug: string): Project | undefined => {
-  return projects.find((project) => project.slug === slug)
-}
-
-export const getRelatedProjects = (project: Project): Project[] => {
-  if (!project.relatedProjects) return []
-  return projects.filter((p) => project.relatedProjects?.includes(p.id))
-}
-
-export const getProjectsByCategory = (category: ProjectCategory): Project[] => {
-  return projects.filter((p) => p.category === category)
-}
-
-export const getProjectsByStatus = (status: ProjectStatus): Project[] => {
-  return projects.filter((p) => p.status === status)
-}
