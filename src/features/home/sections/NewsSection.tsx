@@ -19,6 +19,7 @@ interface NewsSectionProps {
 export function NewsSection({ lang }: NewsSectionProps) {
   const { t } = useTranslations('home')
   const { t: tc } = useTranslations('common')
+  const [allNews, setAllNews] = useState<News[]>([])
   const [featured, setFeatured] = useState<News | null>(null)
   const [regularNews, setRegularNews] = useState<News[]>([])
 
@@ -27,10 +28,11 @@ export function NewsSection({ lang }: NewsSectionProps) {
       try {
         const repository = getNewsRepository()
         const featuredList = await repository.findFeatured()
-        const allNews = await repository.findAll()
+        const newsData = await repository.findAll()
         
+        setAllNews(newsData)
         setFeatured(featuredList[0] || null)
-        setRegularNews(allNews.filter(n => !n.featured).slice(0, 3))
+        setRegularNews(newsData.filter(n => !n.featured).slice(0, 3))
       } catch (error) {
         console.error('Failed to load news:', error)
       }
@@ -63,78 +65,49 @@ export function NewsSection({ lang }: NewsSectionProps) {
         </div>
 
         {/* News Grid */}
-        <div className="grid lg:grid-cols-2 gap-8">
-          {/* Featured News */}
-          {featured && (
-            <div className="group bg-card rounded-2xl overflow-hidden card-elevated border border-border/50 lg:row-span-2">
-              <div className="relative h-64 lg:h-80">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {allNews.slice(0, 4).map((item: News) => (
+            <div
+              key={item.id}
+              className="group bg-card rounded-2xl overflow-hidden card-elevated border border-border/50 hover:border-primary/30 transition-all flex flex-col h-full"
+            >
+              <div className="relative h-48 overflow-hidden flex-shrink-0">
                 <Image
-                  src={featured.image}
-                  alt={featured.title}
+                  src={item.image}
+                  alt={item.title}
                   fill
-                  className="object-cover"
+                  className="object-cover group-hover:scale-110 transition-transform duration-500"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/40 to-transparent" />
-                <div className="absolute inset-0 p-8 flex flex-col justify-end">
-                  <span className="inline-block w-fit px-3 py-1 rounded-full bg-primary-foreground/20 text-primary-foreground text-xs font-medium mb-3 capitalize">
-                    {featured.category}
+                <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 to-transparent" />
+                <div className="absolute top-4 left-4">
+                  <span className="inline-block px-3 py-1 rounded-full bg-primary-foreground/90 text-foreground text-xs font-medium capitalize backdrop-blur-sm">
+                    {item.category}
                   </span>
-                  <h3 className="text-2xl md:text-3xl font-serif font-bold text-primary-foreground mb-3">
-                    {featured.title}
-                  </h3>
-                  <p className="text-primary-foreground/80 mb-4">{featured.excerpt}</p>
-                  <div className="flex items-center gap-2 text-primary-foreground/70 text-sm">
-                    <Calendar className="w-4 h-4" />
-                    <span>{formatDateShort(featured.date)}</span>
-                  </div>
                 </div>
               </div>
-              <div className="p-6">
-                <Button variant="link" className="p-0 h-auto group/btn" asChild>
-                  <Link href={routes.news.detail(lang, featured.slug)}>
-                    {tc('actions.readMore')}
-                    <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-                  </Link>
-                </Button>
-              </div>
-            </div>
-          )}
-
-          {/* Regular News */}
-          <div className="space-y-6">
-            {regularNews.map((item) => (
-              <div
-                key={item.id}
-                className="group bg-card rounded-2xl p-6 card-elevated border border-border/50 hover:border-primary/30 transition-all"
-              >
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <span className="inline-block px-3 py-1 rounded-full bg-secondary text-secondary-foreground text-xs font-medium mb-3 capitalize">
-                      {item.category}
-                    </span>
-                    <h3 className="text-lg font-serif font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
-                      {item.title}
-                    </h3>
-                    <p className="text-muted-foreground text-sm mb-3">{item.excerpt}</p>
-                    <div className="flex items-center gap-2 text-muted-foreground text-sm">
-                      <Calendar className="w-4 h-4" />
-                      <span>{formatDateShort(item.date)}</span>
-                    </div>
+              <div className="p-5 flex flex-col flex-1">
+                <h3 className="text-lg font-serif font-semibold text-foreground mb-2 group-hover:text-primary transition-colors line-clamp-2">
+                  {item.title}
+                </h3>
+                <p className="text-muted-foreground text-sm mb-3 line-clamp-2 flex-1">
+                  {item.excerpt}
+                </p>
+                <div className="flex items-center justify-between pt-3 border-t border-border/50">
+                  <div className="flex items-center gap-2 text-muted-foreground text-xs">
+                    <Calendar className="w-3.5 h-3.5" />
+                    <span>{formatDateShort(item.date)}</span>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="rounded-full shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                    asChild
-                  >
+                  <Button variant="link" className="p-0 h-auto text-xs group/btn" asChild>
                     <Link href={routes.news.detail(lang, item.slug)}>
-                      <ArrowRight className="w-5 h-5" />
+                      {tc('actions.readMore')}
+                      <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform" />
                     </Link>
                   </Button>
                 </div>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       </Container>
     </section>

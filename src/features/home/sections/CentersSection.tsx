@@ -52,37 +52,32 @@ export function CentersSection({ lang }: CentersSectionProps) {
         </div>
 
         {/* Centers Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {centers.map((center, index) => (
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {centers.map((center) => (
             <div
               key={center.id}
-              className={`group bg-card rounded-2xl overflow-hidden card-elevated border border-border/50 ${
-                index === 0 ? "lg:col-span-2 lg:row-span-2" : ""
-              }`}
+              className="group bg-card rounded-2xl overflow-hidden card-elevated border border-border/50 flex flex-col h-full"
             >
-              <div
-                className={`relative overflow-hidden ${
-                  index === 0 ? "h-64 lg:h-80" : "h-48"
-                }`}
-              >
+              <div className="relative overflow-hidden flex-shrink-0 h-48">
                 <Image
                   src={center.image}
                   alt={center.title}
                   fill
                   className="object-cover group-hover:scale-110 transition-transform duration-500"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  loading={index < 3 ? "eager" : "lazy"}
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 to-transparent" />
                 <div className="absolute bottom-4 left-4 right-4">
-                  <h3 className="text-xl font-serif font-bold text-primary-foreground">
+                  <h3 className="text-lg font-serif font-bold text-primary-foreground line-clamp-2">
                     {center.title}
                   </h3>
                 </div>
               </div>
-              <div className="p-6">
-                <p className="text-muted-foreground mb-4">{center.excerpt}</p>
-                <Button variant="link" className="p-0 h-auto group/btn" asChild>
+              <div className="p-5 flex flex-col flex-1">
+                <p className="text-muted-foreground text-sm mb-4 line-clamp-3 flex-1">
+                  {center.excerpt}
+                </p>
+                <Button variant="link" className="p-0 h-auto group/btn self-start" asChild>
                   <Link href={routes.centers.detail(lang, center.slug)}>
                     {tc('actions.learnMore')}
                     <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
