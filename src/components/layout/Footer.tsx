@@ -1,14 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import {
-  Leaf,
-  Facebook,
-  Twitter,
-  Linkedin,
-  Instagram,
-  ArrowUp,
-} from 'lucide-react';
+import Image from 'next/image';
+import { Facebook, Twitter, Linkedin, Instagram, ArrowUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Container } from './Container';
 import { useSiteSettings } from '@/contexts/SiteSettingsContext';
@@ -49,8 +43,14 @@ export function Footer({ lang }: FooterProps) {
                 href={routes.home(lang)}
                 className="flex items-center gap-3 mb-6"
               >
-                <div className="w-12 h-12 rounded-full bg-primary-foreground flex items-center justify-center">
-                  <Leaf className="w-6 h-6 text-primary" />
+                <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-[#005d8a]">
+                  <Image
+                    src="/logo-white.svg"
+                    alt=""
+                    width={48}
+                    height={48}
+                    className="object-contain"
+                  />
                 </div>
                 <div>
                   <h3 className="font-serif font-bold text-lg text-primary-foreground">

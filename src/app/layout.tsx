@@ -74,7 +74,7 @@ export async function generateMetadata(): Promise<Metadata> {
       },
     },
     icons: {
-      icon: '/leaf.png',
+      icon: '/logo-white.svg',
     },
   }
 }

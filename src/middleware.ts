@@ -13,8 +13,8 @@ export const config = {
      * - api (API routes)
      * - _next/static (static files)
      * - _next/image (image optimization files)
-     * - leaf.png (favicon file)
+     * - logo.png, logo-white.svg (favicon/logo files)
      */
-    '/((?!api|_next/static|_next/image|leaf.png).*)',
+    '/((?!api|_next/static|_next/image|logo\.png|logo-white\.svg).*)',
   ],
 }
