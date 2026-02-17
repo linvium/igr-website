@@ -1,14 +1,20 @@
-import { Container } from "@/components/layout"
-import { PageHeader, Breadcrumbs } from "@/components/shared"
-import { AboutNavigation } from "../components/AboutNavigation"
-import { routes, type Language } from "@/lib"
+'use client';
+
+import { Container } from '@/components/layout';
+import { PageHeader, Breadcrumbs, PortableTextRenderer } from '@/components/shared';
+import { AboutNavigation } from '../components/AboutNavigation';
+import { routes, type Language } from '@/lib';
+import type { AboutNavItem } from '@/services/about.service';
 
 interface AboutSubPageProps {
-  lang: Language
-  title: string
-  description?: string
-  breadcrumbLabel: string
-  content: React.ReactNode
+  lang: Language;
+  title: string;
+  description?: string;
+  breadcrumbLabel: string;
+  overviewBreadcrumbLabel?: string;
+  contentBlocks: unknown[];
+  navItems: AboutNavItem[];
+  navHeading: string;
 }
 
 export function AboutSubPage({
@@ -16,7 +22,10 @@ export function AboutSubPage({
   title,
   description,
   breadcrumbLabel,
-  content,
+  overviewBreadcrumbLabel = 'O Institutu',
+  contentBlocks,
+  navItems,
+  navHeading,
 }: AboutSubPageProps) {
   return (
     <Container>
@@ -24,7 +33,7 @@ export function AboutSubPage({
         <Breadcrumbs
           lang={lang}
           items={[
-            { label: "O Institutu", href: routes.about.overview(lang) },
+            { label: overviewBreadcrumbLabel, href: routes.about.overview(lang) },
             { label: breadcrumbLabel },
           ]}
         />
@@ -33,16 +42,15 @@ export function AboutSubPage({
       <div className="grid lg:grid-cols-4 gap-12 py-8">
         <aside className="lg:col-span-1">
           <div className="sticky top-24">
-            <h2 className="font-serif text-lg font-semibold mb-4">Navigacija</h2>
-            <AboutNavigation lang={lang} />
+            <AboutNavigation heading={navHeading} items={navItems} />
           </div>
         </aside>
 
         <div className="lg:col-span-3">
           <PageHeader title={title} description={description} />
-          <div className="prose prose-lg max-w-none">{content}</div>
+          <PortableTextRenderer value={contentBlocks} />
         </div>
       </div>
     </Container>
-  )
+  );
 }

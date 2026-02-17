@@ -1,44 +1,64 @@
-"use client"
+'use client';
 
-import { useState, useEffect } from "react"
-import Link from "next/link"
-import Image from "next/image"
-import { Calendar, ArrowRight } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Container } from "@/components/layout"
-import { routes, type Language } from "@/lib"
-import { formatDateShort } from "@/lib/format"
-import { useTranslations } from "@/hooks/useTranslations"
-import { getNewsRepository } from "@/repositories/factory"
-import type { News } from "@/types/models"
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { Calendar, ArrowRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Container } from '@/components/layout';
+import { routes, type Language } from '@/lib';
+import { formatDateShort } from '@/lib/format';
+import { getNewsRepository } from '@/repositories/factory';
+import type { News } from '@/types/models';
+import type { NewsListPageConfig } from '@/services/list-pages.service';
 
 interface NewsSectionProps {
-  lang: Language
+  lang: Language;
+  title?: string;
+  description?: string;
+  badgeLabel?: string;
+  buttonLabel?: string;
+  readMoreButton?: string;
+  initialNews?: News[];
+  newsPageConfig?: NewsListPageConfig;
 }
 
-export function NewsSection({ lang }: NewsSectionProps) {
-  const { t } = useTranslations('home')
-  const { t: tc } = useTranslations('common')
-  const [allNews, setAllNews] = useState<News[]>([])
-  const [featured, setFeatured] = useState<News | null>(null)
-  const [regularNews, setRegularNews] = useState<News[]>([])
+export function NewsSection({
+  lang,
+  title,
+  description,
+  badgeLabel,
+  buttonLabel,
+  readMoreButton,
+  initialNews,
+  newsPageConfig,
+}: NewsSectionProps) {
+  const displayTitle =
+    title || badgeLabel || newsPageConfig?.title || 'Novosti';
+  const displayDescription =
+    description || newsPageConfig?.description || '';
+  const displayButtonLabel =
+    buttonLabel || newsPageConfig?.viewAll || 'Pogledaj sve';
+  const displayReadMore =
+    readMoreButton || newsPageConfig?.readMore || newsPageConfig?.learnMore || 'Pročitaj više';
+  const [items, setItems] = useState<News[]>(initialNews ?? []);
 
   useEffect(() => {
+    if (initialNews !== undefined) {
+      setItems(initialNews);
+      return;
+    }
     const loadNews = async () => {
       try {
-        const repository = getNewsRepository()
-        const featuredList = await repository.findFeatured()
-        const newsData = await repository.findAll()
-        
-        setAllNews(newsData)
-        setFeatured(featuredList[0] || null)
-        setRegularNews(newsData.filter(n => !n.featured).slice(0, 3))
+        const repository = getNewsRepository(lang);
+        const newsData = await repository.findAll();
+        setItems(newsData.slice(0, 4));
       } catch (error) {
-        console.error('Failed to load news:', error)
+        console.error('Failed to load news:', error);
       }
-    }
-    loadNews()
-  }, [])
+    };
+    loadNews();
+  }, [initialNews, lang]);
 
   return (
     <section id="news" className="py-24 bg-secondary/30 relative">
@@ -47,18 +67,23 @@ export function NewsSection({ lang }: NewsSectionProps) {
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 mb-16">
           <div className="max-w-2xl">
             <span className="inline-block px-4 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
-              {t('sections.news')}
+              {badgeLabel ?? displayTitle}
             </span>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-foreground mb-6">
-              Najnovije vijesti
+              {displayTitle}
             </h2>
-            <p className="text-lg text-muted-foreground">
-              Pratite naše aktivnosti, događaje i postignuća u oblasti očuvanja genetičkih resursa.
-            </p>
+            {displayDescription && (
+              <p className="text-lg text-muted-foreground">{displayDescription}</p>
+            )}
           </div>
-          <Button variant="outline" size="lg" className="self-start lg:self-auto" asChild>
+          <Button
+            variant="outline"
+            size="lg"
+            className="self-start lg:self-auto"
+            asChild
+          >
             <Link href={routes.news.list(lang)}>
-              {tc('actions.viewAll')}
+              {displayButtonLabel}
               <ArrowRight className="w-4 h-4" />
             </Link>
           </Button>
@@ -66,7 +91,7 @@ export function NewsSection({ lang }: NewsSectionProps) {
 
         {/* News Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {allNews.slice(0, 4).map((item: News) => (
+          {items.map((item: News) => (
             <div
               key={item.id}
               className="group bg-card rounded-2xl overflow-hidden card-elevated border border-border/50 hover:border-primary/30 transition-all flex flex-col h-full"
@@ -96,11 +121,15 @@ export function NewsSection({ lang }: NewsSectionProps) {
                 <div className="flex items-center justify-between pt-3 border-t border-border/50">
                   <div className="flex items-center gap-2 text-muted-foreground text-xs">
                     <Calendar className="w-3.5 h-3.5" />
-                    <span>{formatDateShort(item.date)}</span>
+                    <span>{formatDateShort(item.date, lang)}</span>
                   </div>
-                  <Button variant="link" className="p-0 h-auto text-xs group/btn" asChild>
+                  <Button
+                    variant="link"
+                    className="p-0 h-auto text-xs group/btn"
+                    asChild
+                  >
                     <Link href={routes.news.detail(lang, item.slug)}>
-                      {tc('actions.readMore')}
+                      {displayReadMore}
                       <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform" />
                     </Link>
                   </Button>
@@ -111,5 +140,5 @@ export function NewsSection({ lang }: NewsSectionProps) {
         </div>
       </Container>
     </section>
-  )
+  );
 }

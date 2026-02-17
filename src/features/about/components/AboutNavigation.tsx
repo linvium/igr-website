@@ -3,32 +3,25 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
-import { routes, type Language } from "@/lib"
+import type { AboutNavItem } from "@/services/about.service"
 
 interface AboutNavigationProps {
-  lang: Language
+  heading: string
+  items: AboutNavItem[]
 }
 
-const navItems = [
-  { label: "Pregled", href: (lang: Language) => routes.about.overview(lang) },
-  { label: "Misija i Vizija", href: (lang: Language) => routes.about.mission(lang) },
-  { label: "Istorijat", href: (lang: Language) => routes.about.history(lang) },
-  { label: "Tim", href: (lang: Language) => routes.about.team(lang) },
-  { label: "Partneri", href: (lang: Language) => routes.about.partners(lang) },
-]
-
-export function AboutNavigation({ lang }: AboutNavigationProps) {
+export function AboutNavigation({ heading, items }: AboutNavigationProps) {
   const pathname = usePathname()
 
   return (
     <nav className="space-y-2">
-      {navItems.map((item) => {
-        const href = item.href(lang)
-        const isActive = pathname === href
+      <h2 className="font-serif text-lg font-semibold mb-4">{heading}</h2>
+      {items.map((item) => {
+        const isActive = pathname === item.href
         return (
           <Link
             key={item.label}
-            href={href}
+            href={item.href}
             className={cn(
               "block px-4 py-2 rounded-lg transition-colors",
               isActive

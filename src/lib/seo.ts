@@ -1,13 +1,14 @@
-import { siteSettings } from "@/data"
-import type { Metadata } from "next"
+import type { Metadata } from 'next';
+import type { SiteSettings } from '@/services/site-settings.service';
 
 export const generatePageMetadata = (
+  siteSettings: SiteSettings,
   title: string,
   description?: string,
-  image?: string
+  image?: string,
 ): Metadata => {
-  const fullTitle = `${title} | ${siteSettings.name}`
-  const metaDescription = description || siteSettings.description
+  const fullTitle = `${title} | ${siteSettings.name}`;
+  const metaDescription = description || siteSettings.description;
 
   return {
     title: fullTitle,
@@ -18,22 +19,23 @@ export const generatePageMetadata = (
       url: siteSettings.url,
       siteName: siteSettings.name,
       images: image ? [{ url: image }] : [],
-      locale: "sr_RS",
-      type: "website",
+      locale: 'sr_RS',
+      type: 'website',
     },
     twitter: {
-      card: "summary_large_image",
+      card: 'summary_large_image',
       title: fullTitle,
       description: metaDescription,
       images: image ? [image] : [],
     },
-  }
-}
+  };
+};
 
-export const generateHomeMetadata = (): Metadata => {
+export const generateHomeMetadata = (siteSettings: SiteSettings): Metadata => {
   return generatePageMetadata(
+    siteSettings,
     siteSettings.name,
     siteSettings.description,
-    siteSettings.logo
-  )
-}
+    siteSettings.logo,
+  );
+};

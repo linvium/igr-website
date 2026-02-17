@@ -1,37 +1,37 @@
-"use client"
+'use client';
 
-import { useState, useEffect } from "react"
-import Link from "next/link"
-import { Calendar, ArrowRight } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Container } from "@/components/layout"
-import { routes, type Language } from "@/lib"
-import { formatYear } from "@/lib/format"
-import { useTranslations } from "@/hooks/useTranslations"
-import { getProjectsRepository } from "@/repositories/factory"
-import type { Project } from "@/types/models"
+import Link from 'next/link';
+import { Calendar, ArrowRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Container } from '@/components/layout';
+import { routes, type Language } from '@/lib';
+import { formatYear } from '@/lib/format';
+import type { Project } from '@/types/models';
+
+const DEFAULT_TITLE = 'Projekti';
+const DEFAULT_DESCRIPTION =
+  'Aktivni i završeni projekti koji doprinose očuvanju genetičkih resursa i biodiverziteta.';
 
 interface ProjectsSectionProps {
-  lang: Language
+  lang: Language;
+  title?: string;
+  description?: string;
+  badgeLabel?: string;
+  buttonLabel?: string;
+  readMoreButton?: string;
+  initialProjects: Project[];
 }
 
-export function ProjectsSection({ lang }: ProjectsSectionProps) {
-  const { t } = useTranslations('home')
-  const { t: tc } = useTranslations('common')
-  const [projects, setProjects] = useState<Project[]>([])
-
-  useEffect(() => {
-    const loadProjects = async () => {
-      try {
-        const repository = getProjectsRepository()
-        const data = await repository.findAll()
-        setProjects(data.slice(0, 4))
-      } catch (error) {
-        console.error('Failed to load projects:', error)
-      }
-    }
-    loadProjects()
-  }, [])
+export function ProjectsSection({
+  lang,
+  title = DEFAULT_TITLE,
+  description = DEFAULT_DESCRIPTION,
+  badgeLabel,
+  buttonLabel,
+  readMoreButton,
+  initialProjects,
+}: ProjectsSectionProps) {
+  const projects = initialProjects;
 
   return (
     <section id="projects" className="py-24 relative">
@@ -39,18 +39,21 @@ export function ProjectsSection({ lang }: ProjectsSectionProps) {
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 mb-16">
           <div className="max-w-2xl">
             <span className="inline-block px-4 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
-              {t('sections.projects')}
+              {badgeLabel ?? 'Projekti'}
             </span>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-foreground mb-6">
-              Projekti
+              {title}
             </h2>
-            <p className="text-lg text-muted-foreground">
-              Aktivni i završeni projekti koji doprinose očuvanju genetičkih resursa i biodiverziteta.
-            </p>
+            <p className="text-lg text-muted-foreground">{description}</p>
           </div>
-          <Button variant="outline" size="lg" className="self-start lg:self-auto" asChild>
+          <Button
+            variant="outline"
+            size="lg"
+            className="self-start lg:self-auto"
+            asChild
+          >
             <Link href={routes.projects.list(lang)}>
-              {tc('actions.viewAll')}
+              {buttonLabel ?? 'Pogledaj sve'}
               <ArrowRight className="w-4 h-4" />
             </Link>
           </Button>
@@ -83,14 +86,21 @@ export function ProjectsSection({ lang }: ProjectsSectionProps) {
                   <h3 className="text-xl md:text-2xl font-serif font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
                     {project.title}
                   </h3>
-                  <p className="text-muted-foreground mb-4">{project.excerpt}</p>
+                  <p className="text-muted-foreground mb-4">
+                    {project.excerpt}
+                  </p>
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <Calendar className="w-4 h-4" />
                     <span>{formatYear(project.year)}</span>
                   </div>
                 </div>
                 <Button variant="outline" asChild>
-                  <Link href={routes.projects.detail(lang, project.slug)}>{tc('actions.learnMore')}</Link>
+                  <Link
+                    href={routes.projects.detail(lang, project.slug)}
+                    prefetch={false}
+                  >
+                    {readMoreButton ?? buttonLabel ?? 'Saznaj više'}
+                  </Link>
                 </Button>
               </div>
             </div>
@@ -98,5 +108,5 @@ export function ProjectsSection({ lang }: ProjectsSectionProps) {
         </div>
       </Container>
     </section>
-  )
+  );
 }

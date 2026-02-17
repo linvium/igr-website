@@ -1,114 +1,122 @@
-"use client"
+'use client';
 
-import { useState, useEffect } from "react"
-import Link from "next/link"
-import { Calendar, Search } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Container } from "@/components/layout"
-import { PageHeader, Breadcrumbs, FilterPills, EmptyState } from "@/components/shared"
-import { routes, type Language } from "@/lib"
-import { formatYear } from "@/lib/format"
-import { useTranslations } from "@/hooks/useTranslations"
-import { ProjectListSkeleton } from "@/components/skeletons"
-import { getProjectsRepository } from "@/repositories/factory"
-import type { Project, ProjectCategory, ProjectStatus } from "@/types/models"
-import type { FilterOption } from "@/components/shared/FilterPills"
+import { useState } from 'react';
+import Link from 'next/link';
+import { Calendar, Search } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Container } from '@/components/layout';
+import {
+  PageHeader,
+  Breadcrumbs,
+  FilterPills,
+  EmptyState,
+} from '@/components/shared';
+import { routes, type Language } from '@/lib';
+import { formatYear } from '@/lib/format';
+import type { ProjectsListPageConfig } from '@/services/list-pages.service';
+import type { Project, ProjectCategory, ProjectStatus } from '@/types/models';
+import type { FilterOption } from '@/components/shared/FilterPills';
 
 interface ProjectsListPageProps {
-  lang: Language
+  lang: Language;
+  initialProjects: Project[];
+  pageConfig: ProjectsListPageConfig;
 }
 
-export function ProjectsListPage({ lang }: ProjectsListPageProps) {
-  const { t } = useTranslations('projects')
-  const [allProjects, setAllProjects] = useState<Project[]>([])
-  const [loading, setLoading] = useState(true)
-  const [selectedCategory, setSelectedCategory] = useState<string>('all')
-  const [selectedStatus, setSelectedStatus] = useState<string>('all')
-  const [searchQuery, setSearchQuery] = useState('')
-
-  useEffect(() => {
-    const loadProjects = async () => {
-      try {
-        const repository = getProjectsRepository()
-        const data = await repository.findAll()
-        setAllProjects(data)
-      } catch (error) {
-        console.error('Failed to load projects:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-    loadProjects()
-  }, [])
+export function ProjectsListPage({
+  lang,
+  initialProjects,
+  pageConfig,
+}: ProjectsListPageProps) {
+  const [allProjects] = useState<Project[]>(initialProjects);
+  const sveCategory = pageConfig.categoryCategories.find(
+    (c) => c.slug === 'sve' || c.slug === 'all',
+  );
+  const sveStatus = pageConfig.statusCategories.find(
+    (c) => c.slug === 'sve' || c.slug === 'all',
+  );
+  const allValue = sveCategory ? 'sve' : 'all';
+  const allStatusValue = sveStatus ? 'sve' : 'all';
+  const [selectedCategory, setSelectedCategory] = useState<string>(allValue);
+  const [selectedStatus, setSelectedStatus] = useState<string>(allStatusValue);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const categoryOptions: FilterOption[] = [
-    { value: 'all', label: 'Sve' },
-    { value: 'istraživanje', label: 'Istraživanje' },
-    { value: 'očuvanje', label: 'Očuvanje' },
-    { value: 'edukacija', label: 'Edukacija' },
-    { value: 'razvoj', label: 'Razvoj' },
-  ]
+    {
+      value: allValue,
+      label: sveCategory?.name || pageConfig.allFilterLabel || 'Sve',
+    },
+    ...pageConfig.categoryCategories
+      .filter((c) => c.slug !== 'all' && c.slug !== 'sve')
+      .map((c) => ({ value: c.slug, label: c.name })),
+  ];
 
   const statusOptions: FilterOption[] = [
-    { value: 'all', label: 'Sve' },
-    { value: 'aktivno', label: t('status.active') },
-    { value: 'završeno', label: t('status.completed') },
-    { value: 'planirano', label: t('status.planned') },
-  ]
+    {
+      value: allStatusValue,
+      label: sveStatus?.name || pageConfig.allFilterLabel || 'Sve',
+    },
+    ...pageConfig.statusCategories
+      .filter((c) => c.slug !== 'all' && c.slug !== 'sve')
+      .map((c) => ({ value: c.slug, label: c.name })),
+  ];
 
   const filteredProjects = allProjects.filter((project) => {
-    const matchesCategory = selectedCategory === 'all' || project.category === selectedCategory
-    const matchesStatus = selectedStatus === 'all' || project.status === selectedStatus
+    const matchesCategory =
+      selectedCategory === 'all' ||
+      selectedCategory === 'sve' ||
+      project.category === selectedCategory;
+    const matchesStatus =
+      selectedStatus === 'all' ||
+      selectedStatus === 'sve' ||
+      project.status === selectedStatus;
     const matchesSearch =
       searchQuery === '' ||
       project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      project.excerpt.toLowerCase().includes(searchQuery.toLowerCase())
-    return matchesCategory && matchesStatus && matchesSearch
-  })
-
-  if (loading) {
-    return <ProjectListSkeleton />
-  }
+      project.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesStatus && matchesSearch;
+  });
 
   return (
     <Container>
       <div className="py-8">
-        <Breadcrumbs lang={lang} items={[{ label: t('title') }]} />
+        <Breadcrumbs lang={lang} items={[{ label: pageConfig.title }]} />
       </div>
 
       <PageHeader
-        title={t('title')}
-        description={t('description')}
+        title={pageConfig.title}
+        description={pageConfig.description}
       />
 
       {/* Filters */}
       <div className="space-y-6 py-8">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-          <Input
-            type="search"
-            placeholder="Pretraži projekte..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-
         <div className="space-y-4">
           <div>
-            <h3 className="text-sm font-medium mb-2">{t('filters.category')}</h3>
+            <h3 className="text-sm font-medium mb-2">
+              {pageConfig.categoryFilterLabel}
+            </h3>
             <FilterPills
               options={categoryOptions}
-              selected={selectedCategory === 'all' ? [] : [selectedCategory]}
+              selected={
+                selectedCategory === 'all' || selectedCategory === 'sve'
+                  ? [allValue]
+                  : [selectedCategory]
+              }
               onSelect={(value) => setSelectedCategory(value)}
             />
           </div>
           <div>
-            <h3 className="text-sm font-medium mb-2">{t('filters.status')}</h3>
+            <h3 className="text-sm font-medium mb-2">
+              {pageConfig.statusFilterLabel}
+            </h3>
             <FilterPills
               options={statusOptions}
-              selected={selectedStatus === 'all' ? [] : [selectedStatus]}
+              selected={
+                selectedStatus === 'all' || selectedStatus === 'sve'
+                  ? [allStatusValue]
+                  : [selectedStatus]
+              }
               onSelect={(value) => setSelectedStatus(value)}
             />
           </div>
@@ -118,8 +126,8 @@ export function ProjectsListPage({ lang }: ProjectsListPageProps) {
       {/* Projects List */}
       {filteredProjects.length === 0 ? (
         <EmptyState
-          title="Nema pronađenih projekata"
-          description="Pokušajte da promenite filtere ili pretragu."
+          title={pageConfig.emptyTitle}
+          description={pageConfig.emptyDescription}
         />
       ) : (
         <div className="space-y-6 py-8">
@@ -149,14 +157,21 @@ export function ProjectsListPage({ lang }: ProjectsListPageProps) {
                   <h3 className="text-xl md:text-2xl font-serif font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
                     {project.title}
                   </h3>
-                  <p className="text-muted-foreground mb-4">{project.excerpt}</p>
+                  <p className="text-muted-foreground mb-4">
+                    {project.excerpt}
+                  </p>
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <Calendar className="w-4 h-4" />
                     <span>{formatYear(project.year)}</span>
                   </div>
                 </div>
                 <Button variant="outline" asChild>
-                  <Link href={routes.projects.detail(lang, project.slug)}>Detalji</Link>
+                  <Link
+                    href={routes.projects.detail(lang, project.slug)}
+                    prefetch={false}
+                  >
+                    {pageConfig.detailsButton}
+                  </Link>
                 </Button>
               </div>
             </div>
@@ -164,5 +179,5 @@ export function ProjectsListPage({ lang }: ProjectsListPageProps) {
         </div>
       )}
     </Container>
-  )
+  );
 }

@@ -5,6 +5,8 @@ export interface Center {
   title: string
   excerpt: string
   description: string
+  /** Portable text blocks for detaljan opis (block content) */
+  descriptionBlocks?: unknown[]
   image: string
   category: string
   established: number

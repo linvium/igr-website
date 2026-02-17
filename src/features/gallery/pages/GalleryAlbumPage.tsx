@@ -1,108 +1,87 @@
-"use client"
+'use client';
 
-import { useState, useEffect } from "react"
-import Link from "next/link"
-import Image from "next/image"
-import { ArrowLeft, X, ChevronLeft, ChevronRight } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Container } from "@/components/layout"
-import { PageHeader, Breadcrumbs } from "@/components/shared"
-import { routes, type Language } from "@/lib"
-import { formatDateShort } from "@/lib/format"
-import { useTranslations } from "@/hooks/useTranslations"
-import { getGalleryRepository } from "@/repositories/factory"
-import type { GalleryAlbum } from "@/types/models"
-import { Dialog, DialogContent } from "@/components/ui/dialog"
-import { notFound } from "next/navigation"
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { ArrowLeft, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Container } from '@/components/layout';
+import { PageHeader, Breadcrumbs } from '@/components/shared';
+import { routes, type Language } from '@/lib';
+import { formatDateShort } from '@/lib/format';
+import type { GalleryListPageConfig } from '@/services/list-pages.service';
+import type { GalleryAlbum } from '@/types/models';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 
 interface GalleryAlbumPageProps {
-  lang: Language
-  slug: string
+  lang: Language;
+  slug: string;
+  initialAlbum: GalleryAlbum;
+  pageConfig: GalleryListPageConfig;
 }
 
-export function GalleryAlbumPage({ lang, slug }: GalleryAlbumPageProps) {
-  const { t } = useTranslations('gallery')
-  const { t: tc } = useTranslations('common')
-  const [album, setAlbum] = useState<GalleryAlbum | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [lightboxImage, setLightboxImage] = useState<string | null>(null)
-
-  useEffect(() => {
-    const loadAlbum = async () => {
-      try {
-        const repository = getGalleryRepository()
-        const data = await repository.findBySlug(slug)
-        
-        if (!data) {
-          notFound()
-          return
-        }
-        
-        setAlbum(data)
-      } catch (error) {
-        console.error('Failed to load album:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-    loadAlbum()
-  }, [slug])
+export function GalleryAlbumPage({
+  lang,
+  slug,
+  initialAlbum,
+  pageConfig,
+}: GalleryAlbumPageProps) {
+  const [album] = useState<GalleryAlbum>(initialAlbum);
+  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
 
   // Keyboard navigation for lightbox
   useEffect(() => {
-    if (!lightboxImage || !album) return
+    if (!lightboxImage || !album) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      const currentIndex = album.images.findIndex((img) => img.id === lightboxImage)
-      
+      const currentIndex = album.images.findIndex(
+        (img) => img.id === lightboxImage,
+      );
+
       if (e.key === 'Escape') {
-        setLightboxImage(null)
+        setLightboxImage(null);
       } else if (e.key === 'ArrowLeft') {
         // Previous image
         if (currentIndex > 0) {
-          setLightboxImage(album.images[currentIndex - 1].id)
+          setLightboxImage(album.images[currentIndex - 1].id);
         } else if (album.images.length > 0) {
-          setLightboxImage(album.images[album.images.length - 1].id)
+          setLightboxImage(album.images[album.images.length - 1].id);
         }
       } else if (e.key === 'ArrowRight') {
         // Next image
         if (currentIndex < album.images.length - 1) {
-          setLightboxImage(album.images[currentIndex + 1].id)
+          setLightboxImage(album.images[currentIndex + 1].id);
         } else if (album.images.length > 0) {
-          setLightboxImage(album.images[0].id)
+          setLightboxImage(album.images[0].id);
         }
       }
-    }
+    };
 
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [lightboxImage, album])
-
-  if (loading || !album) {
-    return null
-  }
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [lightboxImage, album]);
 
   const currentImageIndex = lightboxImage
     ? album.images.findIndex((img) => img.id === lightboxImage)
-    : -1
+    : -1;
 
   const handlePrev = () => {
     if (currentImageIndex > 0) {
-      setLightboxImage(album.images[currentImageIndex - 1].id)
+      setLightboxImage(album.images[currentImageIndex - 1].id);
     } else if (album.images.length > 0) {
-      setLightboxImage(album.images[album.images.length - 1].id)
+      setLightboxImage(album.images[album.images.length - 1].id);
     }
-  }
+  };
 
   const handleNext = () => {
     if (currentImageIndex < album.images.length - 1) {
-      setLightboxImage(album.images[currentImageIndex + 1].id)
+      setLightboxImage(album.images[currentImageIndex + 1].id);
     } else if (album.images.length > 0) {
-      setLightboxImage(album.images[0].id)
+      setLightboxImage(album.images[0].id);
     }
-  }
+  };
 
-  const currentImage = album.images.find((img) => img.id === lightboxImage)
+  const currentImage = album.images.find((img) => img.id === lightboxImage);
 
   return (
     <>
@@ -111,7 +90,7 @@ export function GalleryAlbumPage({ lang, slug }: GalleryAlbumPageProps) {
           <Breadcrumbs
             lang={lang}
             items={[
-              { label: t('title'), href: routes.gallery.list(lang) },
+              { label: pageConfig.title, href: routes.gallery.list(lang) },
               { label: album.title },
             ]}
           />
@@ -120,13 +99,13 @@ export function GalleryAlbumPage({ lang, slug }: GalleryAlbumPageProps) {
         <Button variant="ghost" className="mb-6" asChild>
           <Link href={routes.gallery.list(lang)}>
             <ArrowLeft className="w-4 h-4 mr-2" />
-            {tc('actions.back')}
+            {pageConfig.back}
           </Link>
         </Button>
 
         <PageHeader
           title={album.title}
-          description={`${album.description} • ${formatDateShort(album.date)} • ${album.images.length} ${album.images.length === 1 ? "slika" : "slika"}`}
+          description={`${album.description} • ${formatDateShort(album.date, lang)}`}
         />
 
         {/* Images Grid */}
@@ -150,7 +129,10 @@ export function GalleryAlbumPage({ lang, slug }: GalleryAlbumPageProps) {
       </Container>
 
       {/* Lightbox Dialog */}
-      <Dialog open={!!lightboxImage} onOpenChange={() => setLightboxImage(null)}>
+      <Dialog
+        open={!!lightboxImage}
+        onOpenChange={() => setLightboxImage(null)}
+      >
         <DialogContent className="max-w-[90vw] max-h-[90vh] p-0 bg-black border-none overflow-hidden">
           {currentImage && (
             <div className="relative w-full h-full flex items-center justify-center">
@@ -217,5 +199,5 @@ export function GalleryAlbumPage({ lang, slug }: GalleryAlbumPageProps) {
         </DialogContent>
       </Dialog>
     </>
-  )
+  );
 }

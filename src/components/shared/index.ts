@@ -1,4 +1,5 @@
 export * from "./PageHeader"
+export * from "./PortableTextRenderer"
 export * from "./Breadcrumbs"
 export * from "./Pagination"
 export * from "./FilterPills"

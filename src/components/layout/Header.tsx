@@ -9,15 +9,7 @@ import { LanguageSwitch } from "./LanguageSwitch"
 import { Container } from "./Container"
 import { routes, type Language } from "@/lib"
 import { getLanguage } from "@/lib/lang"
-
-const navigation = [
-  { name: "O Institutu", href: (lang: Language) => routes.about.overview(lang) },
-  { name: "Centri", href: (lang: Language) => routes.centers.list(lang) },
-  { name: "Projekti", href: (lang: Language) => routes.projects.list(lang) },
-  { name: "Novosti", href: (lang: Language) => routes.news.list(lang) },
-  { name: "Galerija", href: (lang: Language) => routes.gallery.list(lang) },
-  { name: "Kontakt", href: (lang: Language) => routes.contact(lang) },
-]
+import { useSiteSettings } from "@/contexts/SiteSettingsContext"
 
 export function Header() {
   const pathname = usePathname()
@@ -25,6 +17,10 @@ export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   const currentLang = getLanguage(pathname.split("/")[1] as Language)
+  const siteSettings = useSiteSettings()
+  const navigation = siteSettings.navbar
+
+  const isExternal = (href: string) => href.startsWith("http://") || href.startsWith("https://")
 
   useEffect(() => {
     const handleScroll = () => {
@@ -63,25 +59,37 @@ export function Header() {
               </div>
               <div className="hidden sm:block">
                 <h1 className="font-serif font-bold text-lg leading-tight text-foreground transition-colors">
-                  Institut za Genetičke Resurse
+                  {siteSettings.name}
                 </h1>
                 <p className="text-xs text-muted-foreground transition-colors">
-                  Centar za očuvanje i istraživanje
+                  {siteSettings.shortName || 'Centar za očuvanje i istraživanje'}
                 </p>
               </div>
             </Link>
 
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center gap-1">
-              {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href(currentLang)}
-                  className="px-4 py-2 rounded-lg font-medium transition-all duration-200 text-foreground hover:text-primary hover:bg-primary/10"
-                >
-                  {item.name}
-                </Link>
-              ))}
+              {navigation.map((item) =>
+                isExternal(item.href) ? (
+                  <a
+                    key={item.label}
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-4 py-2 rounded-lg font-medium transition-all duration-200 text-foreground hover:text-primary hover:bg-primary/10"
+                  >
+                    {item.label}
+                  </a>
+                ) : (
+                  <Link
+                    key={item.label}
+                    href={item.href}
+                    className="px-4 py-2 rounded-lg font-medium transition-all duration-200 text-foreground hover:text-primary hover:bg-primary/10"
+                  >
+                    {item.label}
+                  </Link>
+                )
+              )}
               <div className="ml-4">
                 <LanguageSwitch />
               </div>
@@ -105,16 +113,29 @@ export function Header() {
           {isMobileMenuOpen && (
             <div className="lg:hidden mt-4 py-4 border-t border-border/50 animate-fade-up">
               <div className="flex flex-col gap-2">
-                {navigation.map((item) => (
-                  <Link
-                    key={item.name}
-                    href={item.href(currentLang)}
-                    className="px-4 py-3 rounded-lg font-medium text-foreground hover:bg-primary/10 hover:text-primary transition-colors"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    {item.name}
-                  </Link>
-                ))}
+                {navigation.map((item) =>
+                  isExternal(item.href) ? (
+                    <a
+                      key={item.label}
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-4 py-3 rounded-lg font-medium text-foreground hover:bg-primary/10 hover:text-primary transition-colors"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      {item.label}
+                    </a>
+                  ) : (
+                    <Link
+                      key={item.label}
+                      href={item.href}
+                      className="px-4 py-3 rounded-lg font-medium text-foreground hover:bg-primary/10 hover:text-primary transition-colors"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      {item.label}
+                    </Link>
+                  )
+                )}
               </div>
             </div>
           )}

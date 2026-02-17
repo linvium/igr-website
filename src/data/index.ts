@@ -1,5 +1,0 @@
-export * from "./site"
-export * from "./centers"
-export * from "./projects"
-export * from "./news"
-export * from "./gallery"

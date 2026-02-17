@@ -1,17 +1,23 @@
 // News type definitions - will map to Sanity schemas later
-export type NewsCategory = 
-  | 'vesti' 
-  | 'dogadjaji' 
-  | 'istrazivanja' 
-  | 'edukacija' 
+export type NewsCategory =
+  | 'vesti'
+  | 'dogadjaji'
+  | 'istrazivanja'
+  | 'edukacija'
   | 'saradnja'
+
+/** Portable text blocks from Sanity (body / detaljan opis) */
+export type NewsBodyBlock = unknown;
 
 export interface News {
   id: string
   slug: string
   title: string
   excerpt: string
+  /** Plain text fallback when bodyBlocks not used */
   body: string
+  /** Sanity portable text blocks for rich body (detaljan opis) */
+  bodyBlocks?: NewsBodyBlock[]
   category: NewsCategory
   date: string
   image: string

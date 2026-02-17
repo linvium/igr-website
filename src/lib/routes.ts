@@ -26,4 +26,19 @@ export const routes = {
     detail: (lang: Language, slug: string) => `/${lang}/galerija/${slug}`,
   },
   contact: (lang: Language) => `/${lang}/kontakt`,
+};
+
+export type AboutSectionSlug = 'mission' | 'history' | 'team' | 'partners';
+
+export function aboutSectionRoute(
+  lang: Language,
+  slug: AboutSectionSlug,
+): string {
+  const map: Record<AboutSectionSlug, string> = {
+    mission: routes.about.mission(lang),
+    history: routes.about.history(lang),
+    team: routes.about.team(lang),
+    partners: routes.about.partners(lang),
+  };
+  return map[slug] ?? routes.about.overview(lang);
 }

@@ -2,59 +2,62 @@ import { NewsRepository } from './news.repository'
 import { CentersRepository } from './centers.repository'
 import { ProjectsRepository } from './projects.repository'
 import { GalleryRepository } from './gallery.repository'
-import { StaticNewsDataSource } from '@/data-sources/static/news.data-source'
-import { StaticCentersDataSource } from '@/data-sources/static/centers.data-source'
-import { StaticProjectsDataSource } from '@/data-sources/static/projects.data-source'
-import { StaticGalleryDataSource } from '@/data-sources/static/gallery.data-source'
+import { SanityNewsDataSource } from '@/data-sources/sanity/news.data-source'
+import { SanityCentersDataSource } from '@/data-sources/sanity/centers.data-source'
+import { SanityProjectsDataSource } from '@/data-sources/sanity/projects.data-source'
+import { SanityGalleryDataSource } from '@/data-sources/sanity/gallery.data-source'
+import type { Language } from '@/lib/lang'
 
 /**
  * Repository Factory
- * Provides singleton instances of repositories
- * 
- * To switch to Sanity CMS in the future:
- * 1. Create Sanity data sources (e.g., SanityNewsDataSource)
- * 2. Replace StaticXDataSource with SanityXDataSource below
- * 3. No component changes needed!
+ * All repositories use Sanity CMS - require lang for localized content
  */
 
-// Singleton instances
-let newsRepository: NewsRepository | null = null
-let centersRepository: CentersRepository | null = null
-let projectsRepository: ProjectsRepository | null = null
-let galleryRepository: GalleryRepository | null = null
+const newsRepositories = new Map<Language, NewsRepository>()
+const centersRepositories = new Map<Language, CentersRepository>()
+const projectsRepositories = new Map<Language, ProjectsRepository>()
+const galleryRepositories = new Map<Language, GalleryRepository>()
 
-export function getNewsRepository(): NewsRepository {
-  if (!newsRepository) {
-    newsRepository = new NewsRepository(new StaticNewsDataSource())
+export function getNewsRepository(lang: Language): NewsRepository {
+  let repo = newsRepositories.get(lang)
+  if (!repo) {
+    repo = new NewsRepository(new SanityNewsDataSource(lang))
+    newsRepositories.set(lang, repo)
   }
-  return newsRepository
+  return repo
 }
 
-export function getCentersRepository(): CentersRepository {
-  if (!centersRepository) {
-    centersRepository = new CentersRepository(new StaticCentersDataSource())
+export function getCentersRepository(lang: Language): CentersRepository {
+  let repo = centersRepositories.get(lang)
+  if (!repo) {
+    repo = new CentersRepository(new SanityCentersDataSource(lang))
+    centersRepositories.set(lang, repo)
   }
-  return centersRepository
+  return repo
 }
 
-export function getProjectsRepository(): ProjectsRepository {
-  if (!projectsRepository) {
-    projectsRepository = new ProjectsRepository(new StaticProjectsDataSource())
+export function getProjectsRepository(lang: Language): ProjectsRepository {
+  let repo = projectsRepositories.get(lang)
+  if (!repo) {
+    repo = new ProjectsRepository(new SanityProjectsDataSource(lang))
+    projectsRepositories.set(lang, repo)
   }
-  return projectsRepository
+  return repo
 }
 
-export function getGalleryRepository(): GalleryRepository {
-  if (!galleryRepository) {
-    galleryRepository = new GalleryRepository(new StaticGalleryDataSource())
+export function getGalleryRepository(lang: Language): GalleryRepository {
+  let repo = galleryRepositories.get(lang)
+  if (!repo) {
+    repo = new GalleryRepository(new SanityGalleryDataSource(lang))
+    galleryRepositories.set(lang, repo)
   }
-  return galleryRepository
+  return repo
 }
 
 // Reset function for testing
 export function resetRepositories(): void {
-  newsRepository = null
-  centersRepository = null
-  projectsRepository = null
-  galleryRepository = null
+  newsRepositories.clear()
+  centersRepositories.clear()
+  projectsRepositories.clear()
+  galleryRepositories.clear()
 }

@@ -1,63 +1,52 @@
-import { AboutSubPage } from "@/features/about"
-import { getLanguage } from "@/lib/lang"
-import { generatePageMetadata } from "@/lib/seo"
-import type { Metadata } from "next"
-import type { Language } from "@/lib"
+import { AboutSubPage } from '@/features/about';
+import { getLanguage } from '@/lib/lang';
+import { generatePageMetadata } from '@/lib/seo';
+import { getSiteSettings } from '@/services/site-settings.service';
+import {
+  getAboutPageConfig,
+  getAboutNavItems,
+} from '@/services/about.service';
+import type { Metadata } from 'next';
+import type { Language } from '@/lib';
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ lang: string }>
+  params: Promise<{ lang: string }>;
 }): Promise<Metadata> {
-  return generatePageMetadata("Tim", "Tim Instituta za Genetičke Resurse")
+  const resolvedParams = await params;
+  const lang = getLanguage(resolvedParams.lang as Language);
+  const siteSettings = await getSiteSettings(lang);
+  const aboutConfig = await getAboutPageConfig(lang);
+  return generatePageMetadata(
+    siteSettings,
+    aboutConfig.teamSection.title || 'Tim',
+    aboutConfig.teamSection.shortDescription ||
+      'Tim Instituta za Genetičke Resurse',
+  );
 }
 
 export default async function TeamPage({
   params,
 }: {
-  params: Promise<{ lang: string }>
+  params: Promise<{ lang: string }>;
 }) {
-  const resolvedParams = await params
-  const lang = getLanguage(resolvedParams.lang as Language)
+  const resolvedParams = await params;
+  const lang = getLanguage(resolvedParams.lang as Language);
+  const pageConfig = await getAboutPageConfig(lang);
+  const section = pageConfig.teamSection;
+  const navItems = getAboutNavItems(pageConfig, lang);
 
   return (
     <AboutSubPage
       lang={lang}
-      title="Tim"
-      description="Upoznajte naš tim stručnjaka"
-      breadcrumbLabel="Tim"
-      content={
-        <>
-          <h2>Naš Tim</h2>
-          <p>
-            Institut za Genetičke Resurse okuplja multidisciplinarni tim naučnika, istraživača i
-            stručnjaka posvećenih očuvanju genetičkog naslijeđa. Naš tim kombinuje ekspertizu iz
-            različitih oblasti kako bismo postigli najbolje rezultate.
-          </p>
-
-          <h2>Stručnjaci</h2>
-          <p>
-            Naš tim čine doktori nauka, istraživači, botaničari, genetičari i drugi stručnjaci koji
-            rade na različitim projektima očuvanja genetičkih resursa. Svaki član tima doprinosi
-            svojom ekspertizom i entuzijazmom.
-          </p>
-
-          <h2>Centri i Timovi</h2>
-          <ul>
-            <li>Gen Banka - tim za očuvanje genetičkih resursa</li>
-            <li>Botanička Bašta - tim za živu kolekciju biljaka</li>
-            <li>Centar za Biodiverzitet - istraživački tim</li>
-            <li>Rasadnik - tim za produkciju</li>
-            <li>Zaštićeno Područje - tim za upravljanje</li>
-          </ul>
-
-          <h2>Saradnja</h2>
-          <p>
-            Naš tim saraduje sa brojnim međunarodnim institucijama, univerzitetima i
-            organizacijama kako bismo delili znanje i najbolje prakse u očuvanju genetičkih resursa.
-          </p>
-        </>
-      }
+      title={section.title || 'Tim'}
+      description={section.shortDescription}
+      breadcrumbLabel={section.title || 'Tim'}
+      overviewBreadcrumbLabel={pageConfig.title}
+      contentBlocks={section.contentBlocks}
+      navItems={navItems}
+      navHeading={pageConfig.navigationHeading}
     />
-  )
+  );
 }
