@@ -82,7 +82,7 @@ export function generateOrganizationSchema() {
     name: siteName,
     description: siteDescription,
     url: siteUrl,
-    logo: `${siteUrl}/logo.png`,
+    logo: `${siteUrl}/leaf.png`,
     sameAs: [
       // Add social media links here
       // 'https://facebook.com/your-page',
@@ -124,7 +124,7 @@ export function generateArticleSchema(article: {
       name: siteName,
       logo: {
         '@type': 'ImageObject',
-        url: `${siteUrl}/logo.png`,
+        url: `${siteUrl}/leaf.png`,
       },
     },
   }

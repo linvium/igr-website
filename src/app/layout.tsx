@@ -73,6 +73,9 @@ export async function generateMetadata(): Promise<Metadata> {
         'en': `${siteUrl}/en`,
       },
     },
+    icons: {
+      icon: '/leaf.png',
+    },
   }
 }
 
