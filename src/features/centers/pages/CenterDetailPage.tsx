@@ -7,7 +7,7 @@ import { PortableText, type PortableTextComponents } from '@portabletext/react';
 import type { PortableTextBlock } from '@portabletext/types';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+// import { Badge } from '@/components/ui/badge';
 import { Container } from '@/components/layout';
 import { PageHeader, Breadcrumbs } from '@/components/shared';
 import { routes, type Language } from '@/lib';
@@ -31,7 +31,7 @@ const portableTextComponents: PortableTextComponents = {
       if (!src) return null;
       return (
         <figure className="my-6">
-          <div className="relative aspect-video rounded-lg overflow-hidden">
+          <div className="relative aspect-video overflow-hidden">
             <Image
               src={src}
               alt={value?.caption || ''}
@@ -87,7 +87,7 @@ export function CenterDetailPage({
         </Link>
       </Button>
 
-      <div className="relative h-96 rounded-2xl overflow-hidden mb-12">
+      <div className="relative h-96 overflow-hidden mb-12 rounded-[4px]">
         <Image
           src={center.image}
           alt={center.title}
@@ -134,7 +134,11 @@ export function CenterDetailPage({
                   <CardDescription>{related.excerpt}</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Button variant="link" className="p-0 h-auto group/btn" asChild>
+                  <Button
+                    variant="link"
+                    className="p-0 h-auto group/btn"
+                    asChild
+                  >
                     <Link
                       href={routes.centers.detail(lang, related.slug)}
                       className="inline-flex items-center gap-2"

@@ -113,7 +113,7 @@ export function GalleryAlbumPage({
           {album.images.map((image) => (
             <div
               key={image.id}
-              className="group relative aspect-square rounded-lg overflow-hidden cursor-pointer"
+              className="group relative aspect-square rounded-[4px] overflow-hidden cursor-pointer"
               onClick={() => setLightboxImage(image.id)}
             >
               <Image

@@ -76,9 +76,9 @@ export function ContactPage({ lang, pageConfig }: ContactPageProps) {
             {contactInfo.map((item) => (
               <div
                 key={item.title}
-                className="bg-card rounded-2xl p-6 card-elevated border border-border/50"
+                className="bg-card rounded-[4px] p-6 card-elevated border border-border/50"
               >
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
+                <div className="w-12 h-12 rounded-[4px] bg-primary/10 flex items-center justify-center mb-4">
                   <item.icon className="w-6 h-6 text-primary" />
                 </div>
                 <h3 className="font-serif font-semibold text-foreground mb-2">
@@ -95,7 +95,7 @@ export function ContactPage({ lang, pageConfig }: ContactPageProps) {
         </div>
 
         {/* Contact Form */}
-        <div className="bg-card rounded-2xl p-8 card-elevated border border-border/50">
+        <div className="bg-card rounded-[4px] p-8 card-elevated border border-border/50">
           <h3 className="text-2xl font-serif font-semibold text-foreground mb-6">
             {pageConfig.formTitle}
           </h3>

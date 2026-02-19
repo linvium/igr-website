@@ -87,7 +87,7 @@ export function NewsDetailPage({
       </Button>
 
       {item.image ? (
-        <div className="relative h-96 rounded-2xl overflow-hidden mb-12">
+        <div className="relative h-96 rounded-[4px] overflow-hidden mb-12">
           <Image
             src={item.image}
             alt={item.title}
@@ -105,7 +105,7 @@ export function NewsDetailPage({
 
       <PageHeader title={item.title} description={item.excerpt} />
 
-      <div className="grid lg:grid-cols-3 gap-12 py-8">
+      <div className="grid lg:grid-cols-2 gap-12 py-8">
         <div className="lg:col-span-2">
           <div className="flex items-center gap-4 mb-6">
             <Badge className="capitalize">
@@ -175,7 +175,11 @@ export function NewsDetailPage({
                   <CardDescription>{related.excerpt}</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Button variant="link" className="p-0 h-auto group/btn" asChild>
+                  <Button
+                    variant="link"
+                    className="p-0 h-auto group/btn"
+                    asChild
+                  >
                     <Link
                       href={routes.news.detail(lang, related.slug)}
                       className="inline-flex items-center gap-2 text-primary"

@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Calendar, Search } from 'lucide-react';
+import Image from 'next/image';
+import { Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Container } from '@/components/layout';
@@ -134,9 +135,25 @@ export function ProjectsListPage({
           {filteredProjects.map((project) => (
             <div
               key={project.id}
-              className="group bg-card rounded-2xl p-6 md:p-8 card-elevated border border-border/50 hover:border-primary/30 transition-all"
+              className="group bg-card rounded-[4px] p-6 md:p-8 card-elevated border border-border/50 hover:border-primary/30 transition-all"
             >
               <div className="flex flex-col md:flex-row md:items-center gap-6">
+                {/* Slika - lijevo */}
+                <div className="relative w-full md:w-48 lg:w-56 flex-shrink-0 aspect-[4/3] md:aspect-auto md:h-36 bg-muted rounded-[4px] overflow-hidden">
+                  {project.image ? (
+                    <Image
+                      src={project.image}
+                      alt={project.title}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      sizes="(max-width: 768px) 100vw, 224px"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center text-muted-foreground text-sm">
+                      Nema slike
+                    </div>
+                  )}
+                </div>
                 <div className="flex-1">
                   <div className="flex flex-wrap items-center gap-3 mb-2">
                     <span className="px-3 py-1 rounded-full bg-secondary text-secondary-foreground text-xs font-medium capitalize">

@@ -1,25 +1,35 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import Link from "next/link"
-import Image from "next/image"
-import { ArrowRight } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Container } from "@/components/layout"
-import { PageHeader, Breadcrumbs } from "@/components/shared"
-import { routes, type Language } from "@/lib"
-import type { CentersListPageConfig } from "@/services/list-pages.service"
-import type { Center } from "@/types/models"
+import { useState } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { ArrowRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Container } from '@/components/layout';
+import { PageHeader, Breadcrumbs } from '@/components/shared';
+import { routes, type Language } from '@/lib';
+import type { CentersListPageConfig } from '@/services/list-pages.service';
+import type { Center } from '@/types/models';
 
 interface CentersListPageProps {
-  lang: Language
-  initialCenters?: Center[]
-  pageConfig: CentersListPageConfig
+  lang: Language;
+  initialCenters?: Center[];
+  pageConfig: CentersListPageConfig;
 }
 
-export function CentersListPage({ lang, initialCenters = [], pageConfig }: CentersListPageProps) {
-  const [centers] = useState<Center[]>(initialCenters)
+export function CentersListPage({
+  lang,
+  initialCenters = [],
+  pageConfig,
+}: CentersListPageProps) {
+  const [centers] = useState<Center[]>(initialCenters);
 
   return (
     <Container>
@@ -44,11 +54,17 @@ export function CentersListPage({ lang, initialCenters = [], pageConfig }: Cente
               />
             </div>
             <CardHeader>
-              <CardTitle className="text-xl font-serif">{center.title}</CardTitle>
+              <CardTitle className="text-xl font-serif">
+                {center.title}
+              </CardTitle>
               <CardDescription>{center.excerpt}</CardDescription>
             </CardHeader>
             <CardContent>
-              <Button variant="link" className="p-0 h-auto w-full justify-between group/btn" asChild>
+              <Button
+                variant="link"
+                className="p-0 h-auto w-full justify-start group/btn"
+                asChild
+              >
                 <Link
                   href={routes.centers.detail(lang, center.slug)}
                   className="inline-flex items-center w-full"
@@ -62,5 +78,5 @@ export function CentersListPage({ lang, initialCenters = [], pageConfig }: Cente
         ))}
       </div>
     </Container>
-  )
+  );
 }

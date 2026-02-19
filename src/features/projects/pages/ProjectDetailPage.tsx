@@ -4,13 +4,13 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { PortableText, type PortableTextComponents } from '@portabletext/react';
 import type { PortableTextBlock } from '@portabletext/types';
-import { ArrowLeft, ArrowRight, Calendar } from 'lucide-react';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+// import { Badge } from '@/components/ui/badge';
 import { Container } from '@/components/layout';
 import { PageHeader, Breadcrumbs } from '@/components/shared';
 import { routes, type Language } from '@/lib';
-import { formatYear } from '@/lib/format';
+// import { formatYear } from '@/lib/format';
 import { urlForImage } from '@/lib/sanity';
 import type { ProjectsListPageConfig } from '@/services/list-pages.service';
 import type { Project } from '@/types/models';
@@ -31,7 +31,7 @@ const portableTextComponents: PortableTextComponents = {
       if (!src) return null;
       return (
         <figure className="my-6">
-          <div className="relative aspect-video rounded-lg overflow-hidden">
+          <div className="relative aspect-video overflow-hidden">
             <Image
               src={src}
               alt={value?.caption || ''}
@@ -85,7 +85,7 @@ export function ProjectDetailPage({
       </Button>
 
       {project.image ? (
-        <div className="relative h-96 rounded-2xl overflow-hidden mb-12">
+        <div className="relative h-96 rounded-[4px] overflow-hidden mb-12">
           <Image
             src={project.image}
             alt={project.title}
@@ -157,7 +157,11 @@ export function ProjectDetailPage({
                   <CardDescription>{related.excerpt}</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Button variant="link" className="p-0 h-auto group/btn" asChild>
+                  <Button
+                    variant="link"
+                    className="p-0 h-auto group/btn"
+                    asChild
+                  >
                     <Link
                       href={routes.projects.detail(lang, related.slug)}
                       prefetch={false}
