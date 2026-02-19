@@ -153,8 +153,11 @@ export function NewsDetailPage({
           </h2>
           <div className="grid md:grid-cols-2 gap-6">
             {relatedNews.map((related) => (
-              <Card key={related.id} className="card-elevated">
-                <div className="relative h-48">
+              <Card
+                key={related.id}
+                className="card-elevated rounded-[4px] overflow-hidden"
+              >
+                <div className="relative h-48 rounded-[4px]">
                   {related.image ? (
                     <Image
                       src={related.image}

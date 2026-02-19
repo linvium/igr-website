@@ -74,11 +74,11 @@ export function CentersSection({
             return (
               <div
                 key={center.id}
-                className="relative min-h-[320px] md:min-h-[380px] overflow-hidden rounded-lg"
+                className="relative min-h-[320px] md:min-h-[380px] overflow-hidden rounded-[4px]"
               >
                 {/* Image - lijevo ili desno ovisno o indexu */}
                 <div
-                  className={`absolute inset-0 ring-[0.5px] ring-border/60 rounded-lg overflow-hidden ${
+                  className={`absolute inset-0 ring-[0.5px] ring-border/60 rounded-[4px] overflow-hidden ${
                     isReversed ? 'md:left-[38%]' : 'md:right-[38%]'
                   }`}
                 >
@@ -106,7 +106,7 @@ export function CentersSection({
                     isReversed ? 'md:left-[4%]' : 'md:right-[4%]'
                   }`}
                 >
-                  <div className="bg-white rounded-lg shadow-lg p-8 md:p-10 ring-[0.5px] ring-border/40">
+                  <div className="bg-white rounded-[4px] shadow-lg p-8 md:p-10 ring-[0.5px] ring-border/40">
                     <h3 className="text-xl md:text-2xl font-serif font-bold text-foreground mb-4">
                       {center.title}
                     </h3>

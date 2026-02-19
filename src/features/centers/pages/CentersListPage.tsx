@@ -44,7 +44,10 @@ export function CentersListPage({
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 py-12">
         {centers.map((center) => (
-          <Card key={center.id} className="group card-elevated overflow-hidden">
+          <Card
+            key={center.id}
+            className="group card-elevated overflow-hidden rounded-[4px]"
+          >
             <div className="relative h-48">
               <Image
                 src={center.image}

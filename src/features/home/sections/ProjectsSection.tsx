@@ -66,12 +66,12 @@ export function ProjectsSection({
             return (
               <div
                 key={project.id}
-                className={`group flex flex-col overflow-hidden bg-card transition-all ${
+                className={`group rounded-[4px] flex flex-col overflow-hidden bg-card transition-all ${
                   isReversed ? 'md:flex-col-reverse' : ''
                 }`}
               >
                 {/* Slika */}
-                <div className="relative w-full flex-shrink-0 aspect-[16/10] bg-muted overflow-hidden">
+                <div className="relative rounded-[4px] w-full flex-shrink-0 aspect-[16/10] bg-muted overflow-hidden">
                   {project.image ? (
                     <Image
                       src={project.image}

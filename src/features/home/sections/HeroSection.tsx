@@ -98,7 +98,7 @@ export function HeroSection({
       </Container>
 
       <Link
-        href={`#about`}
+        href={`#centers`}
         className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/70 hover:text-white transition-colors animate-float"
       >
         <ChevronDown className="w-8 h-8" />

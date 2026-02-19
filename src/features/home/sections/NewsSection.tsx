@@ -82,9 +82,9 @@ export function NewsSection({
           {items.map((item: News) => (
             <div
               key={item.id}
-              className="group bg-white overflow-visible flex flex-col h-full"
+              className="group bg-white overflow-visible flex flex-col h-full rounded-[4px]"
             >
-              <div className="relative h-48 overflow-hidden flex-shrink-0">
+              <div className="relative h-48 overflow-hidden flex-shrink-0 rounded-[4px]">
                 <Image
                   src={item.image}
                   alt={item.title}
@@ -93,7 +93,7 @@ export function NewsSection({
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
               </div>
-              <div className="p-5 flex flex-col flex-1 bg-white -mt-6 relative z-10 w-full">
+              <div className="p-5 flex flex-col flex-1 bg-white -mt-6 relative z-10 w-full rounded-[4px]">
                 <span className="text-xs text-primary font-semibold uppercase tracking-wide mb-2">
                   {formatDate(item.date, lang)}
                 </span>

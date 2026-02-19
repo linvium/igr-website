@@ -101,7 +101,7 @@ export function GalleryListPage({
           {filteredAlbums.map((album) => (
             <Card
               key={album.id}
-              className="group card-elevated overflow-hidden"
+              className="group card-elevated overflow-hidden rounded-[4px]"
             >
               <div className="relative h-64">
                 <Image

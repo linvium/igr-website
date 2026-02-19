@@ -87,7 +87,7 @@ export function NewsListPage({
           <h2 className="font-serif text-2xl font-semibold mb-6">
             {pageConfig.featured}
           </h2>
-          <Card className="group card-elevated overflow-hidden">
+          <Card className="group card-elevated overflow-hidden rounded-[4px]">
             <div className="grid md:grid-cols-2 gap-0">
               <div className="relative h-64 md:h-full">
                 {featured.image ? (
@@ -165,7 +165,10 @@ export function NewsListPage({
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 py-8">
           {filteredNews.map((item) => (
-            <Card key={item.id} className="group card-elevated overflow-hidden">
+            <Card
+              key={item.id}
+              className="group card-elevated overflow-hidden rounded-[4px]"
+            >
               <Link
                 href={routes.news.detail(lang, item.slug)}
                 className="block"
@@ -208,7 +211,11 @@ export function NewsListPage({
                     <Calendar className="w-4 h-4" />
                     <span>{formatDateShort(item.date, lang)}</span>
                   </div>
-                  <Button variant="link" className="p-0 h-auto group/btn" asChild>
+                  <Button
+                    variant="link"
+                    className="p-0 h-auto group/btn"
+                    asChild
+                  >
                     <Link
                       href={routes.news.detail(lang, item.slug)}
                       className="inline-flex items-center gap-2 text-primary"
