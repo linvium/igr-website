@@ -74,11 +74,11 @@ export function CentersSection({
             return (
               <div
                 key={center.id}
-                className="relative min-h-[320px] md:min-h-[380px] overflow-hidden rounded-[4px]"
+                className="relative min-h-[320px] md:min-h-[380px] overflow-hidden rounded-[4px] max-md:flex max-md:flex-col"
               >
-                {/* Image - lijevo ili desno ovisno o indexu */}
+                {/* Image - na mobilnom gore (max-md), na md+ absolute lijevo/desno */}
                 <div
-                  className={`absolute inset-0 ring-[0.5px] ring-border/60 rounded-[4px] overflow-hidden ${
+                  className={`absolute inset-0 ring-[0.5px] ring-border/60 rounded-[4px] overflow-hidden max-md:relative max-md:inset-auto max-md:w-full max-md:aspect-[4/3] max-md:shrink-0 ${
                     isReversed ? 'md:left-[38%]' : 'md:right-[38%]'
                   }`}
                 >
@@ -100,7 +100,7 @@ export function CentersSection({
                   </Link>
                 </div>
 
-                {/* White card - desno ili lijevo ovisno o indexu */}
+                {/* White card - na mobilnom ispod slike, na md+ desno ili lijevo ovisno o indexu */}
                 <div
                   className={`relative md:absolute md:top-1/2 md:-translate-y-1/2 md:w-[52%] md:max-w-xl w-full mt-4 md:mt-0 z-10 ${
                     isReversed ? 'md:left-[4%]' : 'md:right-[4%]'
