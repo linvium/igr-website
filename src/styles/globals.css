@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    /* Natural, academic color palette */
+    /* Natural, academic color palette - zelene boje */
     --background: 45 20% 97%;
     --foreground: 150 25% 15%;
 
@@ -26,8 +26,8 @@
     --muted: 45 15% 92%;
     --muted-foreground: 150 10% 45%;
 
-    /* Botanical accent - warm amber */
-    --accent: 38 70% 50%;
+    /* Botanical accent - warm */
+    --accent: 152 40% 35%;
     --accent-foreground: 45 30% 98%;
 
     --destructive: 0 84.2% 60.2%;
@@ -39,8 +39,9 @@
 
     --radius: 0.75rem;
 
-    /* Custom tokens for genetics/nature theme */
-    --hero-gradient: linear-gradient(135deg, hsl(152 45% 25%) 0%, hsl(160 35% 35%) 50%, hsl(145 25% 45%) 100%);
+    /* Custom tokens */
+    --hero-gradient: linear-gradient(to right, hsl(152 50% 12%) 0%, hsl(152 45% 18% / 0.95) 50%, hsl(152 40% 25% / 0.6) 75%, transparent 100%);
+    --content-bg: 45 20% 97%;
     --card-shadow: 0 4px 20px -4px hsl(150 20% 20% / 0.08);
     --card-shadow-hover: 0 12px 40px -8px hsl(150 20% 20% / 0.15);
     --text-gradient: linear-gradient(135deg, hsl(152 45% 25%) 0%, hsl(145 35% 40%) 100%);
@@ -120,6 +121,10 @@
 @layer components {
   .hero-gradient {
     background: var(--hero-gradient);
+  }
+
+  .content-section-bg {
+    background-color: hsl(var(--content-bg));
   }
 
   .text-gradient {

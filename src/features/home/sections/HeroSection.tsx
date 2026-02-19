@@ -27,14 +27,14 @@ export function HeroSection({
   lang,
   title,
   description,
-  badgeLabel,
+  // badgeLabel,
   primaryButtonLabel,
-  secondaryButtonLabel,
+  // secondaryButtonLabel,
   heroStats,
 }: HeroSectionProps) {
   const stats = heroStats?.length ? heroStats : DEFAULT_STATS;
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-[65vh] flex items-center overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0 bg-cover bg-center bg-no-repeat">
         <Image
@@ -48,79 +48,58 @@ export function HeroSection({
         />
       </div>
 
-      {/* Gradient Overlay */}
-      <div className="absolute inset-0 hero-gradient opacity-85" />
+      {/* Dark overlay */}
+      <div className="absolute inset-0 hero-gradient opacity-90" />
 
-      {/* DNA Pattern Overlay */}
-      <div className="absolute inset-0 dna-helix opacity-30" />
-
-      {/* Content */}
-      <Container className="relative z-10 text-center">
-        <div className="max-w-4xl mx-auto space-y-8">
-          {/* Badge */}
-          {badgeLabel && (
-            <div className="animate-fade-up">
-              <span className="inline-block px-4 py-2 rounded-full bg-primary-foreground/10 border border-primary-foreground/20 text-primary-foreground text-sm font-medium backdrop-blur-sm">
-                {badgeLabel}
-              </span>
-            </div>
-          )}
-
-          {/* Heading */}
+      {/* Content - shifted right */}
+      <Container className="relative z-10 mr-auto ml-[10%]">
+        <div className="max-w-2xl ml-auto md:ml-[20%] lg:ml-[15%] space-y-6 text-left">
           {title && (
-            <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-serif font-bold text-primary-foreground leading-tight animate-fade-up delay-100">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight animate-fade-up">
               {title}
             </h1>
           )}
-
-          {/* Subtitle */}
           {description && (
-            <p className="text-lg md:text-xl lg:text-2xl text-primary-foreground/90 max-w-3xl mx-auto animate-fade-up delay-200 font-light">
+            <p className="text-lg md:text-xl text-white/90 animate-fade-up delay-100">
               {description}
             </p>
           )}
-
-          {/* CTA Buttons */}
-          {(primaryButtonLabel || secondaryButtonLabel) && (
-            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4 animate-fade-up delay-300">
-              {primaryButtonLabel && (
-                <Button variant="hero" size="xl" className="group" asChild>
-                  <Link href={routes.about.overview(lang)}>
-                    {primaryButtonLabel}
-                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                  </Link>
-                </Button>
-              )}
-              {secondaryButtonLabel && (
-                <Button variant="heroOutline" size="xl" asChild>
-                  <Link href={routes.projects.list(lang)}>
-                    {secondaryButtonLabel}
-                  </Link>
-                </Button>
-              )}
+          {primaryButtonLabel && (
+            <div className="pt-4 animate-fade-up delay-200">
+              <Button
+                size="lg"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg px-8 h-12 text-base font-medium"
+                asChild
+              >
+                <Link href={routes.about.overview(lang)} className="group">
+                  {primaryButtonLabel}
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </Button>
             </div>
           )}
-
-          {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 pt-12 animate-fade-up delay-400">
-            {stats.map((stat, i) => (
-              <div key={`${stat.number}-${stat.label}-${i}`} className="text-center">
-                <div className="text-3xl md:text-4xl font-serif font-bold text-primary-foreground">
-                  {stat.number}
+          {/* Stats - zakomentarisano po zahtjevu
+          stats.length > 0 && (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-12 animate-fade-up delay-300">
+              {stats.map((stat, i) => (
+                <div key={`${stat.number}-${stat.label}-${i}`}>
+                  <div className="text-2xl md:text-3xl font-bold text-white">
+                    {stat.number}
+                  </div>
+                  <div className="text-white/70 text-sm mt-1">
+                    {stat.label}
+                  </div>
                 </div>
-                <div className="text-primary-foreground/70 text-sm md:text-base mt-1">
-                  {stat.label}
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )
+          */}
         </div>
       </Container>
 
-      {/* Scroll Indicator */}
       <Link
         href={`#about`}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 text-primary-foreground/70 hover:text-primary-foreground transition-colors animate-float"
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/70 hover:text-white transition-colors animate-float"
       >
         <ChevronDown className="w-8 h-8" />
       </Link>

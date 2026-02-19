@@ -73,7 +73,7 @@ export function ContactSection({
   };
 
   return (
-    <section id="contact" className="py-24 bg-secondary/30 relative">
+    <section id="contact" className="py-24 content-section-bg relative">
       <Container>
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">

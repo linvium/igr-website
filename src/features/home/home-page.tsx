@@ -6,6 +6,7 @@ import { ProjectsSection } from './sections/ProjectsSection';
 import { NewsSection } from './sections/NewsSection';
 import { GallerySection } from './sections/GallerySection';
 import { ContactSection } from './sections/ContactSection';
+import { NewsletterSection } from './sections/NewsletterSection';
 import type { Language } from '@/lib';
 import type { HomePageData, ResolvedHomeSection } from '@/types/models';
 import type {
@@ -48,6 +49,9 @@ function SectionByType({
         />
       );
     case 'about':
+      // O institutu - zakomentarisano
+      return null;
+      /*
       return (
         <AboutSection
           lang={lang}
@@ -61,6 +65,7 @@ function SectionByType({
           partners={section.aboutPartners}
         />
       );
+      */
     case 'partners':
       return (
         <PartnersSection
@@ -153,6 +158,7 @@ export function HomePage({
           contactPageConfig={contactPageConfig}
         />
       ))}
+      <NewsletterSection />
     </>
   );
 }

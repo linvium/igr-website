@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight } from 'lucide-react';
+import { Plus, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Container } from '@/components/layout';
 import { routes, type Language } from '@/lib';
@@ -53,7 +53,7 @@ export function CentersSection({
   }, [initialCenters, lang]);
 
   return (
-    <section id="centers" className="py-24 bg-secondary/30 relative">
+    <section id="centers" className="py-24 content-section-bg relative">
       <Container>
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
@@ -67,45 +67,64 @@ export function CentersSection({
           <p className="text-lg text-muted-foreground">{description}</p>
         </div>
 
-        {/* Centers Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {centers.map((center) => (
-            <div
-              key={center.id}
-              className="group bg-card rounded-2xl overflow-hidden card-elevated border border-border/50 flex flex-col h-full"
-            >
-              <div className="relative overflow-hidden flex-shrink-0 h-48">
-                <Image
-                  src={center.image}
-                  alt={center.title}
-                  fill
-                  className="object-cover group-hover:scale-110 transition-transform duration-500"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 to-transparent" />
-                <div className="absolute bottom-4 left-4 right-4">
-                  <h3 className="text-lg font-serif font-bold text-primary-foreground line-clamp-2">
-                    {center.title}
-                  </h3>
+        {/* Centers - alternira: slika lijevo/kartica desno, pa kartica lijevo/slika desno */}
+        <div className="space-y-12">
+          {centers.map((center, index) => {
+            const isReversed = index % 2 === 1;
+            return (
+              <div
+                key={center.id}
+                className="relative min-h-[320px] md:min-h-[380px] overflow-hidden rounded-lg"
+              >
+                {/* Image - lijevo ili desno ovisno o indexu */}
+                <div
+                  className={`absolute inset-0 ring-[0.5px] ring-border/60 rounded-lg overflow-hidden ${
+                    isReversed ? 'md:left-[38%]' : 'md:right-[38%]'
+                  }`}
+                >
+                  <Image
+                    src={center.image}
+                    alt={center.title}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 100vw"
+                  />
+                  <Link
+                    href={routes.centers.detail(lang, center.slug)}
+                    className={`absolute bottom-4 w-10 h-10 rounded bg-primary flex items-center justify-center text-primary-foreground hover:bg-primary/90 transition-colors z-10 ${
+                      isReversed ? 'right-4' : 'left-4'
+                    }`}
+                    aria-label={center.title}
+                  >
+                    <Plus className="w-5 h-5" />
+                  </Link>
+                </div>
+
+                {/* White card - desno ili lijevo ovisno o indexu */}
+                <div
+                  className={`relative md:absolute md:top-1/2 md:-translate-y-1/2 md:w-[52%] md:max-w-xl w-full mt-4 md:mt-0 z-10 ${
+                    isReversed ? 'md:left-[4%]' : 'md:right-[4%]'
+                  }`}
+                >
+                  <div className="bg-white rounded-lg shadow-lg p-8 md:p-10 ring-[0.5px] ring-border/40">
+                    <h3 className="text-xl md:text-2xl font-serif font-bold text-foreground mb-4">
+                      {center.title}
+                    </h3>
+                    <p className="text-muted-foreground mb-6">
+                      {center.excerpt}
+                    </p>
+                    <Link
+                      href={routes.centers.detail(lang, center.slug)}
+                      className="inline-flex items-center gap-1 text-primary font-medium underline underline-offset-4 hover:text-primary/80 transition-colors"
+                    >
+                      {readMoreButton ?? buttonLabel ?? 'Saznaj više'}
+                      <ArrowRight className="w-4 h-4" />
+                    </Link>
+                  </div>
                 </div>
               </div>
-              <div className="p-5 flex flex-col flex-1">
-                <p className="text-muted-foreground text-sm mb-4 line-clamp-3 flex-1">
-                  {center.excerpt}
-                </p>
-                <Button
-                  variant="link"
-                  className="p-0 h-auto group/btn self-start"
-                  asChild
-                >
-                  <Link href={routes.centers.detail(lang, center.slug)}>
-                    {readMoreButton ?? buttonLabel ?? 'Saznaj više'}
-                    <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-                  </Link>
-                </Button>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         <div className="mt-12 text-center">

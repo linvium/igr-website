@@ -56,11 +56,8 @@ export function AboutSection({
   return (
     <section
       id="about"
-      className="py-24 bg-background relative overflow-hidden"
+      className="py-24 content-section-bg relative"
     >
-      {/* Background Pattern */}
-      <div className="absolute inset-0 botanical-pattern opacity-50" />
-
       <Container className="relative">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
@@ -94,8 +91,8 @@ export function AboutSection({
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
                   <CardHeader>
-                    <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:scale-110 transition-all duration-300">
-                      <Icon className="w-7 h-7 text-primary group-hover:text-primary-foreground transition-colors" />
+                    <div className="w-14 h-14 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:scale-105 transition-all duration-300">
+                      <Icon className="w-7 h-7 text-primary group-hover:text-white transition-colors" />
                     </div>
                     <CardTitle className="text-xl font-serif">
                       {feature.title}
@@ -106,16 +103,13 @@ export function AboutSection({
                       {feature.description}
                     </CardDescription>
                     {readMoreButton && hrefFn && (
-                      <Button
-                        variant="link"
-                        className="p-0 h-auto group/btn"
-                        asChild
+                      <Link
+                        href={hrefFn(lang)}
+                        className="inline-flex items-center gap-1 text-primary font-medium underline underline-offset-4 hover:text-primary/80 group/btn"
                       >
-                        <Link href={hrefFn(lang)}>
-                          {readMoreButton}
-                          <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-                        </Link>
-                      </Button>
+                        {readMoreButton}
+                        <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                      </Link>
                     )}
                   </CardContent>
                 </Card>

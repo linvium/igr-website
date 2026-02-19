@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { LanguageSwitch } from './LanguageSwitch';
 import { Container } from './Container';
@@ -46,20 +46,18 @@ export function Header() {
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
-          ? 'bg-background/95 backdrop-blur-md shadow-lg'
-          : 'bg-background/80 backdrop-blur-sm'
+        isScrolled ? 'bg-white/95 backdrop-blur-md shadow-sm' : 'bg-white'
       }`}
     >
       <Container>
         <nav className="py-4">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-4">
             {/* Logo */}
             <Link
               href={routes.home(currentLang)}
-              className="flex items-center gap-3 group"
+              className="flex items-center gap-3 group shrink-0"
             >
-              <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center group-hover:scale-105 transition-transform bg-[#005d8a]">
+              <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center group-hover:scale-105 transition-transform bg-primary">
                 <Image
                   src="/logo-white.svg"
                   alt=""
@@ -72,15 +70,16 @@ export function Header() {
                 <h1 className="font-serif font-bold text-lg leading-tight text-foreground transition-colors">
                   {siteSettings.name}
                 </h1>
-                <p className="text-xs text-muted-foreground transition-colors">
-                  {siteSettings.shortName ||
-                    'Centar za očuvanje i istraživanje'}
-                </p>
+                {siteSettings.shortName && (
+                  <p className="text-xs text-muted-foreground">
+                    {siteSettings.shortName}
+                  </p>
+                )}
               </div>
             </Link>
 
-            {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center gap-1">
+            {/* Desktop Navigation - centered, uppercase */}
+            <div className="hidden lg:flex items-center justify-center gap-6 flex-1">
               {navigation.map((item) =>
                 isExternal(item.href) ? (
                   <a
@@ -88,7 +87,7 @@ export function Header() {
                     href={item.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-4 py-2 rounded-lg font-medium transition-all duration-200 text-foreground hover:text-primary hover:bg-primary/10"
+                    className="text-sm font-medium uppercase tracking-wider text-foreground hover:text-primary transition-colors"
                   >
                     {item.label}
                   </a>
@@ -96,24 +95,21 @@ export function Header() {
                   <Link
                     key={item.label}
                     href={item.href}
-                    className="px-4 py-2 rounded-lg font-medium transition-all duration-200 text-foreground hover:text-primary hover:bg-primary/10"
+                    className="text-sm font-medium uppercase tracking-wider text-foreground hover:text-primary transition-colors"
                   >
                     {item.label}
                   </Link>
                 ),
               )}
-              <div className="ml-4">
-                <LanguageSwitch />
-              </div>
             </div>
 
-            {/* Mobile Menu Button */}
-            <div className="flex items-center gap-2 lg:hidden">
+            {/* Right: Language + Search + Mobile menu */}
+            <div className="flex items-center gap-2 shrink-0">
               <LanguageSwitch />
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-foreground"
+                className="lg:hidden text-foreground"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               >
                 {isMobileMenuOpen ? (

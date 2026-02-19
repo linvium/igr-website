@@ -51,7 +51,7 @@ export function GallerySection({
   }, [initialAlbums, lang]);
 
   return (
-    <section id="gallery" className="py-24 relative">
+    <section id="gallery" className="py-24 content-section-bg relative">
       <Container>
         <div className="text-center max-w-3xl mx-auto mb-16">
           <span className="inline-block px-4 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
@@ -69,7 +69,7 @@ export function GallerySection({
             <Link
               key={album.id}
               href={routes.gallery.detail(lang, album.slug)}
-              className="group relative aspect-square rounded-2xl overflow-hidden card-elevated"
+              className="group relative aspect-square overflow-hidden card-elevated"
             >
               <Image
                 src={album.coverImage}

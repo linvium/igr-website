@@ -30,12 +30,11 @@ export function PartnersSection({
   return (
     <section
       id="partners"
-      className="py-24 bg-background relative overflow-hidden"
+      className="py-24 content-section-bg relative"
     >
-      <div className="absolute inset-0 botanical-pattern opacity-50" />
       <Container className="relative">
         <div className="text-center max-w-3xl mx-auto mb-12">
-          <span className="inline-block px-4 py-1 rounded-full bg-secondary text-secondary-foreground text-sm font-medium mb-4">
+          <span className="inline-block px-4 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
             {badgeLabel ?? 'Partneri'}
           </span>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-foreground mb-6">

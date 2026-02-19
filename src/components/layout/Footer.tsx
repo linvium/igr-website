@@ -43,7 +43,7 @@ export function Footer({ lang }: FooterProps) {
                 href={routes.home(lang)}
                 className="flex items-center gap-3 mb-6"
               >
-                <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-[#005d8a]">
+                <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-primary">
                   <Image
                     src="/logo-white.svg"
                     alt=""
@@ -73,7 +73,7 @@ export function Footer({ lang }: FooterProps) {
                     href={social.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-10 h-10 rounded-full bg-primary-foreground/10 flex items-center justify-center hover:bg-primary-foreground/20 transition-colors"
+                    className="w-10 h-10 rounded-full bg-primary-foreground/10 flex items-center justify-center hover:bg-primary-foreground/20 transition-colors text-primary-foreground"
                     aria-label={social.name}
                   >
                     <social.icon className="w-5 h-5" />
