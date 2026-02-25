@@ -8,23 +8,24 @@ import { urlForImage } from '@/lib/sanity';
 export const portableTextComponents: PortableTextComponents = {
   types: {
     figure: ({ value }) => {
-      const src = value?.asset
-        ? urlForImage(value as { asset?: { _ref?: string } })
-        : '';
+      const imageSource = value?.image || value?.asset ? (value.image || value) : null;
+      const src = imageSource ? urlForImage(imageSource as { asset?: { _ref?: string } }) : '';
       if (!src) return null;
+      const alt = value?.alt || value?.caption || '';
+      const caption = value?.caption || '';
       return (
         <figure className="my-6">
           <div className="relative aspect-video rounded-lg overflow-hidden">
             <Image
               src={src}
-              alt={value?.caption || ''}
+              alt={alt}
               fill
               className="object-cover"
             />
           </div>
-          {value?.caption && (
+          {caption && (
             <figcaption className="mt-2 text-sm text-muted-foreground text-center">
-              {value.caption}
+              {caption}
             </figcaption>
           )}
         </figure>

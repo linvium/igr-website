@@ -21,8 +21,8 @@ export function SiteSettingsProvider({
 
 const DEFAULT_NAVBAR = [
   { label: 'O Institutu', href: '/' },
-  { label: 'Centri', href: '/' },
-  { label: 'Projekti', href: '/' },
+  { label: 'Organizacija i aktivnosti', href: '/' },
+  { label: 'Projekti i usluge', href: '/' },
   { label: 'Novosti', href: '/' },
   { label: 'Galerija', href: '/' },
   { label: 'Kontakt', href: '/' },
@@ -40,17 +40,22 @@ const DEFAULT_FOOTER = {
   },
   centri: {
     title: 'Centri',
+    links: [] as { label: string; href: string }[],
+  },
+  organizacija: {
+    title: 'Organizacija i aktivnosti',
     links: [
-      { label: 'Centar za biodiverzitet', href: '/' },
       { label: 'Banka gena', href: '/' },
       { label: 'Botanička bašta', href: '/' },
-      { label: 'Rasadnik', href: '/' },
+      { label: 'Poljske kolekcije', href: '/' },
+      { label: 'Laboratorije', href: '/' },
+      { label: 'Zaštićeno područje', href: '/' },
     ],
   },
   resursi: {
     title: 'Resursi',
     links: [
-      { label: 'Projekti', href: '/' },
+      { label: 'Projekti i usluge', href: '/' },
       { label: 'Publikacije', href: '/' },
       { label: 'Galerija', href: '/' },
       { label: 'Novosti', href: '/' },

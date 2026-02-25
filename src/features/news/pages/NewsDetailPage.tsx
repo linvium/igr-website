@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { PortableText, type PortableTextComponents } from '@portabletext/react';
 import type { PortableTextBlock } from '@portabletext/types';
-import { ArrowLeft, ArrowRight, Calendar } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Calendar, Download, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Container } from '@/components/layout';
@@ -145,6 +145,36 @@ export function NewsDetailPage({
                 Link
               </a>
             </p>
+          )}
+
+          {item.documents && item.documents.length > 0 && (
+            <div className="mb-8 max-w-[50%]">
+              {item.documentsLabel && (
+                <h3 className="text-sm font-medium mb-3">
+                  {item.documentsLabel}
+                </h3>
+              )}
+              <ul className="space-y-3">
+                {item.documents.map((doc, index) => (
+                  <li key={index}>
+                    <a
+                      href={`${doc.fileUrl}?dl=`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-4 p-4 rounded-lg border border-border bg-card hover:bg-muted/50 transition-colors group"
+                    >
+                      <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                        <FileText className="w-5 h-5 text-primary" />
+                      </div>
+                      <span className="flex-1 font-medium text-foreground group-hover:text-primary transition-colors">
+                        {doc.title}
+                      </span>
+                      <Download className="w-5 h-5 text-muted-foreground shrink-0" />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
           )}
 
           {item.tags.length > 0 && (

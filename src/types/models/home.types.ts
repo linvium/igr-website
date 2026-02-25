@@ -8,6 +8,7 @@ export type HomeSectionType =
   | 'about'
   | 'partners'
   | 'centers'
+  | 'orgActivities'
   | 'projects'
   | 'news'
   | 'gallery'
@@ -29,6 +30,18 @@ export interface AboutFeature {
   description: string;
   icon: string;
   sectionSlug: 'mission' | 'history' | 'team' | 'partners' | 'regulations';
+}
+
+export interface OrgActivitiesOverviewCard {
+  title: string;
+  description: string;
+  image?: string;
+  sectionSlug:
+    | 'banka-gena'
+    | 'botanicka-basta'
+    | 'poljske-kolekcije'
+    | 'laboratorije'
+    | 'zasticeno-podrucje';
 }
 
 /** Resolved section: title/description in current lang, data resolved from refs or defaults */
@@ -59,6 +72,8 @@ export interface ResolvedHomeSection {
   news?: News[];
   /** For centers section */
   centers?: Center[];
+  /** For org activities section */
+  orgActivitiesCards?: OrgActivitiesOverviewCard[];
   /** For gallery section */
   galleryAlbums?: GalleryAlbum[];
   /** For partners section */

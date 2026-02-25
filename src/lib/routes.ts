@@ -14,9 +14,21 @@ export const routes = {
     list: (lang: Language) => `/${lang}/centri`,
     detail: (lang: Language, slug: string) => `/${lang}/centri/${slug}`,
   },
+  orgActivities: {
+    overview: (lang: Language) => `/${lang}/organizacija-i-aktivnosti`,
+    bankaGen: (lang: Language) => `/${lang}/organizacija-i-aktivnosti/banka-gena`,
+    botanickaBasta: (lang: Language) =>
+      `/${lang}/organizacija-i-aktivnosti/botanicka-basta`,
+    poljskeKolekcije: (lang: Language) =>
+      `/${lang}/organizacija-i-aktivnosti/poljske-kolekcije`,
+    laboratorije: (lang: Language) =>
+      `/${lang}/organizacija-i-aktivnosti/laboratorije`,
+    zasticenoPodrucje: (lang: Language) =>
+      `/${lang}/organizacija-i-aktivnosti/zasticeno-podrucje`,
+  },
   projects: {
-    list: (lang: Language) => `/${lang}/projekti`,
-    detail: (lang: Language, slug: string) => `/${lang}/projekti/${slug}`,
+    list: (lang: Language) => `/${lang}/projekti-i-usluge`,
+    detail: (lang: Language, slug: string) => `/${lang}/projekti-i-usluge/${slug}`,
   },
   news: {
     list: (lang: Language) => `/${lang}/novosti`,
@@ -30,6 +42,27 @@ export const routes = {
 };
 
 export type AboutSectionSlug = 'mission' | 'history' | 'team' | 'partners' | 'regulations';
+
+export type OrgActivitiesSectionSlug =
+  | 'banka-gena'
+  | 'botanicka-basta'
+  | 'poljske-kolekcije'
+  | 'laboratorije'
+  | 'zasticeno-podrucje';
+
+export function orgActivitiesSectionRoute(
+  lang: Language,
+  slug: OrgActivitiesSectionSlug,
+): string {
+  const map: Record<OrgActivitiesSectionSlug, string> = {
+    'banka-gena': routes.orgActivities.bankaGen(lang),
+    'botanicka-basta': routes.orgActivities.botanickaBasta(lang),
+    'poljske-kolekcije': routes.orgActivities.poljskeKolekcije(lang),
+    laboratorije: routes.orgActivities.laboratorije(lang),
+    'zasticeno-podrucje': routes.orgActivities.zasticenoPodrucje(lang),
+  };
+  return map[slug] ?? routes.orgActivities.overview(lang);
+}
 
 export function aboutSectionRoute(
   lang: Language,

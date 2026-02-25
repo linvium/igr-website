@@ -17,7 +17,7 @@ const isExternal = (href: string) =>
 
 export function Footer({ lang }: FooterProps) {
   const siteSettings = useSiteSettings();
-  const { institut, centri, resursi } = siteSettings.footer;
+  const { institut, organizacija, resursi } = siteSettings.footer;
   const socialLinks = [
     { name: 'Facebook', icon: Facebook, href: siteSettings.social.facebook },
     { name: 'Twitter', icon: Twitter, href: siteSettings.social.twitter },
@@ -121,10 +121,10 @@ export function Footer({ lang }: FooterProps) {
 
             <div>
               <h4 className="font-serif font-semibold text-primary-foreground mb-4">
-                {centri.title}
+                {organizacija.title}
               </h4>
               <ul className="space-y-3">
-                {centri.links.map((link) => (
+                {organizacija.links.map((link) => (
                   <li key={link.label}>
                     {isExternal(link.href) ? (
                       <a

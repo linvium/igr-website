@@ -85,7 +85,7 @@ export function Header() {
               />
             </Link>
 
-            {/* Desktop Navigation - centered, uppercase */}
+            {/* Desktop Navigation - centered */}
             <div className="hidden lg:flex items-center justify-center gap-6 flex-1">
               {navigation.map((item) =>
                 isExternal(item.href) ? (
@@ -94,7 +94,7 @@ export function Header() {
                     href={item.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm font-medium uppercase tracking-wider text-foreground hover:text-primary transition-colors"
+                    className="text-sm font-medium text-foreground hover:text-primary transition-colors"
                   >
                     {item.label}
                   </a>
@@ -102,7 +102,7 @@ export function Header() {
                   <Link
                     key={item.label}
                     href={item.href}
-                    className="text-sm font-medium uppercase tracking-wider text-foreground hover:text-primary transition-colors"
+                    className="text-sm font-medium text-foreground hover:text-primary transition-colors"
                   >
                     {item.label}
                   </Link>

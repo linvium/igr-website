@@ -6,3 +6,4 @@ export * from './centers.service';
 export * from './gallery.service';
 export * from './home-page.service';
 export * from './about.service';
+export * from './org-activities.service';

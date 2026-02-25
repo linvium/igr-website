@@ -8,6 +8,11 @@ import {
 import type { Language } from '@/lib/lang';
 import type { News, NewsCategory } from '@/types/models';
 
+interface SanityNewsDocument {
+  titleLabel?: { en?: string; sr?: string; srCyr?: string } | null;
+  fileUrl?: string | null;
+}
+
 interface SanityNews {
   _id: string;
   slug?: { current?: string } | null;
@@ -16,6 +21,8 @@ interface SanityNews {
   body?: { en?: unknown[]; sr?: unknown[]; srCyr?: unknown[] } | null;
   externalLink?: string | null;
   externalLinkLabel?: { en?: string; sr?: string; srCyr?: string } | null;
+  documents?: SanityNewsDocument[] | null;
+  documentsLabel?: { en?: string; sr?: string; srCyr?: string } | null;
   category?: { _ref?: string; slug?: string } | null;
   date?: string | null;
   image?: { asset?: { _ref?: string } } | null;
@@ -32,6 +39,11 @@ const NEWS_QUERY = `*[_type == "news"] | order(date desc) {
   body,
   externalLink,
   externalLinkLabel,
+  documents[] {
+    titleLabel,
+    "fileUrl": file.asset->url
+  },
+  documentsLabel,
   "category": category->{ slug },
   date,
   image,
@@ -48,6 +60,11 @@ const NEWS_BY_SLUG_QUERY = `*[_type == "news" && slug.current == $slug][0] {
   body,
   externalLink,
   externalLinkLabel,
+  documents[] {
+    titleLabel,
+    "fileUrl": file.asset->url
+  },
+  documentsLabel,
   "category": category->{ slug },
   date,
   image,
@@ -63,6 +80,16 @@ function mapNews(raw: SanityNews, lang: Language): News {
     (typeof raw.category === 'object' && raw.category?.slug) ||
     (typeof raw.category === 'string' ? raw.category : null) ||
     'vesti';
+  const documents =
+    raw.documents
+      ?.filter((d): d is SanityNewsDocument & { fileUrl: string } =>
+        Boolean(d?.fileUrl),
+      )
+      .map((d) => ({
+        title: pickLocaleString(d.titleLabel, lang) || 'Dokument',
+        fileUrl: d.fileUrl,
+      })) ?? [];
+
   return {
     id: raw._id,
     slug,
@@ -74,6 +101,11 @@ function mapNews(raw: SanityNews, lang: Language): News {
     externalLinkLabel: raw.externalLinkLabel
       ? pickLocaleString(raw.externalLinkLabel, lang)
       : undefined,
+    documents: documents.length > 0 ? documents : undefined,
+    documentsLabel:
+      documents.length > 0 && raw.documentsLabel
+        ? pickLocaleString(raw.documentsLabel, lang)
+        : undefined,
     category: (categorySlug as NewsCategory) || 'vesti',
     date: raw.date ?? new Date().toISOString(),
     image: raw.image ? urlForImage(raw.image) : '',
@@ -107,6 +139,11 @@ const NEWS_BY_IDS_QUERY = `*[_type == "news" && _id in $ids] | order(date desc) 
   body,
   externalLink,
   externalLinkLabel,
+  documents[] {
+    titleLabel,
+    "fileUrl": file.asset->url
+  },
+  documentsLabel,
   "category": category->{ slug },
   date,
   image,

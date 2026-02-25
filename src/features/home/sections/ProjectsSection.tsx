@@ -9,7 +9,7 @@ import { routes, type Language } from '@/lib';
 import { formatYear } from '@/lib/format';
 import type { Project } from '@/types/models';
 
-const DEFAULT_TITLE = 'Projekti';
+const DEFAULT_TITLE = 'Projekti i usluge';
 const DEFAULT_DESCRIPTION =
   'Aktivni i završeni projekti koji doprinose očuvanju genetičkih resursa i biodiverziteta.';
 
@@ -40,7 +40,7 @@ export function ProjectsSection({
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-10">
           <div className="max-w-2xl">
             <span className="inline-block px-4 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
-              {badgeLabel ?? 'Projekti'}
+              {badgeLabel ?? 'Projekti i usluge'}
             </span>
             <h2 className="text-2xl md:text-3xl lg:text-4xl font-serif font-bold text-foreground mb-4">
               {title}

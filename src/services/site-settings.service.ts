@@ -39,6 +39,7 @@ export interface SanitySiteSettings {
   footer?: {
     institut?: SanityFooterSection | null;
     centri?: SanityFooterSection | null;
+    organizacija?: SanityFooterSection | null;
     resursi?: SanityFooterSection | null;
   } | null;
   social?: {
@@ -98,7 +99,9 @@ export interface SiteSettings {
   navbar: NavItem[];
   footer: {
     institut: FooterSection;
+    /** @deprecated Use organizacija. Kept for backward compatibility. */
     centri: FooterSection;
+    organizacija: FooterSection;
     resursi: FooterSection;
   };
   social: {
@@ -133,8 +136,11 @@ function resolveFooterLinkHref(
   if (link.linkType === 'external' && link.externalUrl) {
     return link.externalUrl;
   }
-  const path = link.path?.trim() || '/';
-  return path.startsWith('/') ? `/${lang}${path}` : `/${lang}/${path}`;
+  let path = (link.path?.trim() || '/').replace(/^\/+/, '');
+  if (path === 'projekti') path = 'projekti-i-usluge';
+  else if (path.startsWith('projekti/')) path = 'projekti-i-usluge/' + path.slice(9);
+  const fullPath = path.startsWith('/') ? path : `/${path}`;
+  return `/${lang}${fullPath}`;
 }
 
 function mapNavItems(
@@ -142,12 +148,24 @@ function mapNavItems(
   lang: Language,
 ): NavItem[] {
   if (!items?.length) return [];
+  const langSlug = lang === 'en' ? 'en' : lang === 'sr-cy' ? 'sr-cy' : 'sr-lat';
+  const orgActivitiesHref = `/${langSlug}/organizacija-i-aktivnosti`;
   return items
     .filter((i) => pickLocaleString(i.label, lang))
-    .map((i) => ({
-      label: pickLocaleString(i.label, lang)!,
-      href: resolveNavHref(i, lang),
-    }));
+    .map((i) => {
+      const label = pickLocaleString(i.label, lang)!;
+      let href = resolveNavHref(i, lang);
+      // Migracija: Centri -> Organizacija i aktivnosti (čak i kad CMS ima stare podatke)
+      const path = (i.path?.trim() || '').replace(/^\/+/, '');
+      if (path === 'centri' || href.endsWith('/centri')) {
+        return { label: 'Organizacija i aktivnosti', href: orgActivitiesHref };
+      }
+      // Projekti i usluge - label i putanja /projekti-i-usluge
+      if (path === 'projekti' || path === 'projekti-i-usluge' || href.endsWith('/projekti') || href.endsWith('/projekti-i-usluge')) {
+        return { label: 'Projekti i usluge', href: `/${langSlug}/projekti-i-usluge` };
+      }
+      return { label, href };
+    });
 }
 
 function mapFooterSection(
@@ -175,6 +193,7 @@ const SITE_SETTINGS_QUERY = `coalesce(*[_id == "siteSettings"][0], *[_type == "s
   footer {
     institut { title, links[] { label, path, linkType, externalUrl } },
     centri { title, links[] { label, path, linkType, externalUrl } },
+    organizacija { title, links[] { label, path, linkType, externalUrl } },
     resursi { title, links[] { label, path, linkType, externalUrl } }
   },
   social,
@@ -203,6 +222,7 @@ export async function getSiteSettings(lang: Language): Promise<SiteSettings> {
 
   const mappedInstitut = mapFooterSection(raw.footer?.institut, lang);
   const mappedCentri = mapFooterSection(raw.footer?.centri, lang);
+  const mappedOrganizacija = mapFooterSection(raw.footer?.organizacija, lang);
   const mappedResursi = mapFooterSection(raw.footer?.resursi, lang);
 
   const em = raw.errorMessages;
@@ -239,6 +259,18 @@ export async function getSiteSettings(lang: Language): Promise<SiteSettings> {
       centri: raw.footer?.centri
         ? { title: mappedCentri.title || 'Centri', links: mappedCentri.links }
         : defaultSettings.footer.centri,
+      organizacija:
+        raw.footer?.organizacija || raw.footer?.centri
+          ? {
+              title:
+                (mappedOrganizacija.title || mappedCentri.title) ||
+                'Organizacija i aktivnosti',
+              links:
+                mappedOrganizacija.links.length > 0
+                  ? mappedOrganizacija.links
+                  : defaultSettings.footer.organizacija.links,
+            }
+          : defaultSettings.footer.organizacija,
       resursi: raw.footer?.resursi
         ? { title: mappedResursi.title || 'Resursi', links: mappedResursi.links }
         : defaultSettings.footer.resursi,
@@ -270,8 +302,8 @@ function getDefaultSiteSettings(lang: Language): SiteSettings {
     logo: '/logo.svg',
     navbar: [
       { label: 'O Institutu', href: r('/o-institutu') },
-      { label: 'Centri', href: r('/centri') },
-      { label: 'Projekti', href: r('/projekti') },
+      { label: 'Organizacija i aktivnosti', href: r('/organizacija-i-aktivnosti') },
+      { label: 'Projekti i usluge', href: r('/projekti-i-usluge') },
       { label: 'Novosti', href: r('/novosti') },
       { label: 'Galerija', href: r('/galerija') },
       { label: 'Kontakt', href: r('/kontakt') },
@@ -288,18 +320,26 @@ function getDefaultSiteSettings(lang: Language): SiteSettings {
       },
       centri: {
         title: 'Centri',
+        links: [],
+      },
+      organizacija: {
+        title: 'Organizacija i aktivnosti',
         links: [
-          { label: 'Centar za biodiverzitet', href: r('/centri') },
-          { label: 'Banka gena', href: r('/centri') },
-          { label: 'Botanička bašta', href: r('/centri') },
-          { label: 'Rasadnik', href: r('/centri') },
+          { label: 'Banka gena', href: r('/organizacija-i-aktivnosti/banka-gena') },
+          { label: 'Botanička bašta', href: r('/organizacija-i-aktivnosti/botanicka-basta') },
+          { label: 'Poljske kolekcije', href: r('/organizacija-i-aktivnosti/poljske-kolekcije') },
+          { label: 'Laboratorije', href: r('/organizacija-i-aktivnosti/laboratorije') },
+          {
+            label: 'Zaštićeno područje',
+            href: r('/organizacija-i-aktivnosti/zasticeno-podrucje'),
+          },
         ],
       },
       resursi: {
         title: 'Resursi',
         links: [
-          { label: 'Projekti', href: r('/projekti') },
-          { label: 'Publikacije', href: r('/projekti') },
+          { label: 'Projekti i usluge', href: r('/projekti-i-usluge') },
+          { label: 'Publikacije', href: r('/projekti-i-usluge') },
           { label: 'Galerija', href: r('/galerija') },
           { label: 'Novosti', href: r('/novosti') },
         ],

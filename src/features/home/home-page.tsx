@@ -2,6 +2,7 @@ import { HeroSection } from './sections/HeroSection';
 import { AboutSection } from './sections/AboutSection';
 import { PartnersSection } from './sections/PartnersSection';
 import { CentersSection } from './sections/CentersSection';
+import { OrgActivitiesSection } from './sections/OrgActivitiesSection';
 import { ProjectsSection } from './sections/ProjectsSection';
 import { NewsSection } from './sections/NewsSection';
 import { GallerySection } from './sections/GallerySection';
@@ -87,6 +88,18 @@ function SectionByType({
           buttonLabel={buttonLabel}
           readMoreButton={readMoreButton}
           initialCenters={section.centers ?? []}
+        />
+      );
+    case 'orgActivities':
+      return (
+        <OrgActivitiesSection
+          lang={lang}
+          title={title || undefined}
+          description={description || undefined}
+          badgeLabel={badgeLabel}
+          buttonLabel={buttonLabel}
+          readMoreButton={readMoreButton}
+          orgActivitiesCards={section.orgActivitiesCards ?? []}
         />
       );
     case 'projects':

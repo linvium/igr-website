@@ -22,6 +22,10 @@ export interface News {
   externalLink?: string
   /** Optional custom label for the link (defaults to URL if not set) */
   externalLinkLabel?: string
+  /** Optional PDF documents for download */
+  documents?: { title: string; fileUrl: string }[]
+  /** Label for documents section (required when documents exist) */
+  documentsLabel?: string
   category: NewsCategory
   date: string
   image: string

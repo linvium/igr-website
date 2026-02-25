@@ -20,6 +20,7 @@ import { getAllNews } from './news.service';
 import { getAllCenters } from './centers.service';
 import { getAllGalleryAlbums } from './gallery.service';
 import { getAboutPageConfig } from './about.service';
+import { getOrgActivitiesPageConfig } from './org-activities.service';
 
 interface SanityLocaleString {
   en?: string | null;
@@ -57,6 +58,7 @@ interface SanityHomeSection {
   newsLimit?: number | null;
   featuredCenters?: Array<{ _id?: string }> | null;
   centersLimit?: number | null;
+  selectedOrgActivitiesCardSlugs?: (string | null)[] | null;
   featuredAlbums?: Array<{ _id?: string }> | null;
   galleryLimit?: number | null;
   partners?: SanityPartner[] | null;
@@ -96,6 +98,7 @@ const HOMEPAGE_QUERY = `*[_id == "homePage"][0] {
     projectsLimit,
     newsLimit,
     centersLimit,
+    selectedOrgActivitiesCardSlugs,
     galleryLimit,
     partners[] {
       name,
@@ -179,10 +182,11 @@ function mapPartners(
 }
 
 export async function getHomePageData(lang: Language): Promise<HomePageData> {
-  const [raw, aboutConfig, allProjects, allNews, allCenters, allAlbums] =
+  const [raw, aboutConfig, orgActivitiesConfig, allProjects, allNews, allCenters, allAlbums] =
     await Promise.all([
       sanityClient.fetch<SanityHomePage | null>(HOMEPAGE_QUERY),
       getAboutPageConfig(lang),
+      getOrgActivitiesPageConfig(lang),
       getAllProjects(lang),
       getAllNews(lang),
       getAllCenters(lang),
@@ -240,6 +244,24 @@ export async function getHomePageData(lang: Language): Promise<HomePageData> {
 
       const aboutPartners = mapPartners(s.aboutPartners, lang);
 
+      const orgActivitiesSlugs = (s.selectedOrgActivitiesCardSlugs ?? []).filter(
+        (slug): slug is string => Boolean(slug),
+      );
+      const orgActivitiesCards =
+        sectionType === 'orgActivities' && orgActivitiesConfig.overviewCards.length > 0
+          ? orgActivitiesSlugs.length > 0
+            ? orgActivitiesSlugs
+                .map((slug) =>
+                  orgActivitiesConfig.overviewCards.find(
+                    (c) => c.sectionSlug === slug,
+                  ),
+                )
+                .filter(
+                  (c): c is NonNullable<typeof c> => Boolean(c),
+                )
+            : [...orgActivitiesConfig.overviewCards]
+          : undefined;
+
       const heroBackgroundImage =
         sectionType === 'hero' && s.heroBackgroundImage
           ? urlForImage(s.heroBackgroundImage)
@@ -259,6 +281,10 @@ export async function getHomePageData(lang: Language): Promise<HomePageData> {
         aboutFeatures:
           aboutFeatures && aboutFeatures.length > 0 ? aboutFeatures : undefined,
         aboutPartners: aboutPartners.length > 0 ? aboutPartners : undefined,
+        orgActivitiesCards:
+          orgActivitiesCards && orgActivitiesCards.length > 0
+            ? orgActivitiesCards
+            : undefined,
       };
 
       if (sectionType === 'projects') {
@@ -281,7 +307,7 @@ export async function getHomePageData(lang: Language): Promise<HomePageData> {
     const defaultTypes: HomeSectionType[] = [
       'hero',
       'about',
-      'centers',
+      'orgActivities',
       'projects',
       'news',
       'gallery',
@@ -301,7 +327,8 @@ export async function getHomePageData(lang: Language): Promise<HomePageData> {
       if (sectionType === 'projects')
         section.projects = allProjects.slice(0, 4);
       if (sectionType === 'news') section.news = allNews.slice(0, 3);
-      if (sectionType === 'centers') section.centers = allCenters.slice(0, 5);
+      if (sectionType === 'orgActivities')
+        section.orgActivitiesCards = orgActivitiesConfig.overviewCards;
       if (sectionType === 'gallery')
         section.galleryAlbums = allAlbums.slice(0, 4);
       return section;

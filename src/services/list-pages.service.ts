@@ -296,7 +296,7 @@ export async function getProjectsListPageConfig(
   return {
     title: raw?.titleLabel?.text
       ? resolveText(raw.titleLabel.text, lang)
-      : '',
+      : 'Projekti i usluge',
     description: raw?.description ? resolveTextBlock(raw.description, lang) : '',
     searchPlaceholder: raw?.searchPlaceholderLabel?.text
       ? resolveText(raw.searchPlaceholderLabel.text, lang)
