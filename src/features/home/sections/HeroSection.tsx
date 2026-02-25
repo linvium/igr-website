@@ -13,32 +13,25 @@ interface HeroSectionProps {
   badgeLabel?: string;
   primaryButtonLabel?: string;
   secondaryButtonLabel?: string;
-  heroStats?: HeroStat[];
+  backgroundImage?: string;
 }
 
-const DEFAULT_STATS: HeroStat[] = [
-  { number: '30+', label: 'Godina tradicije' },
-  { number: '5', label: 'Centara' },
-  { number: '50+', label: 'Projekata' },
-  { number: '1000+', label: 'Vrsta u banci gena' },
-];
+const DEFAULT_HERO_BG = '/assets/hero-bg.jpg';
 
 export function HeroSection({
   lang,
   title,
   description,
-  // badgeLabel,
   primaryButtonLabel,
-  // secondaryButtonLabel,
-  heroStats,
+  backgroundImage,
 }: HeroSectionProps) {
-  const stats = heroStats?.length ? heroStats : DEFAULT_STATS;
+  const bgSrc = backgroundImage || DEFAULT_HERO_BG;
   return (
     <section className="relative min-h-[65vh] flex items-center overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0 bg-cover bg-center bg-no-repeat">
         <Image
-          src="/assets/hero-bg.jpg"
+          src={bgSrc}
           alt="Hero background"
           fill
           className="object-cover"
@@ -78,22 +71,6 @@ export function HeroSection({
               </Button>
             </div>
           )}
-          {/* Stats - zakomentarisano po zahtjevu
-          stats.length > 0 && (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-12 animate-fade-up delay-300">
-              {stats.map((stat, i) => (
-                <div key={`${stat.number}-${stat.label}-${i}`}>
-                  <div className="text-2xl md:text-3xl font-bold text-white">
-                    {stat.number}
-                  </div>
-                  <div className="text-white/70 text-sm mt-1">
-                    {stat.label}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )
-          */}
         </div>
       </Container>
 

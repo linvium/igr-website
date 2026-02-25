@@ -8,6 +8,7 @@ export const routes = {
     history: (lang: Language) => `/${lang}/o-institutu/istorijat`,
     team: (lang: Language) => `/${lang}/o-institutu/tim`,
     partners: (lang: Language) => `/${lang}/o-institutu/partneri`,
+    regulations: (lang: Language) => `/${lang}/o-institutu/propisi-i-akti`,
   },
   centers: {
     list: (lang: Language) => `/${lang}/centri`,
@@ -28,7 +29,7 @@ export const routes = {
   contact: (lang: Language) => `/${lang}/kontakt`,
 };
 
-export type AboutSectionSlug = 'mission' | 'history' | 'team' | 'partners';
+export type AboutSectionSlug = 'mission' | 'history' | 'team' | 'partners' | 'regulations';
 
 export function aboutSectionRoute(
   lang: Language,
@@ -39,6 +40,7 @@ export function aboutSectionRoute(
     history: routes.about.history(lang),
     team: routes.about.team(lang),
     partners: routes.about.partners(lang),
+    regulations: routes.about.regulations(lang),
   };
   return map[slug] ?? routes.about.overview(lang);
 }

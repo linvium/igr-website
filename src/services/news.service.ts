@@ -14,6 +14,8 @@ interface SanityNews {
   title?: { en?: string; sr?: string; srCyr?: string } | null;
   excerpt?: { en?: string; sr?: string; srCyr?: string } | null;
   body?: { en?: unknown[]; sr?: unknown[]; srCyr?: unknown[] } | null;
+  externalLink?: string | null;
+  externalLinkLabel?: { en?: string; sr?: string; srCyr?: string } | null;
   category?: { _ref?: string; slug?: string } | null;
   date?: string | null;
   image?: { asset?: { _ref?: string } } | null;
@@ -28,6 +30,8 @@ const NEWS_QUERY = `*[_type == "news"] | order(date desc) {
   title,
   excerpt,
   body,
+  externalLink,
+  externalLinkLabel,
   "category": category->{ slug },
   date,
   image,
@@ -42,6 +46,8 @@ const NEWS_BY_SLUG_QUERY = `*[_type == "news" && slug.current == $slug][0] {
   title,
   excerpt,
   body,
+  externalLink,
+  externalLinkLabel,
   "category": category->{ slug },
   date,
   image,
@@ -64,6 +70,10 @@ function mapNews(raw: SanityNews, lang: Language): News {
     excerpt: pickLocaleText(raw.excerpt, lang) || '',
     body: '',
     bodyBlocks: bodyBlocks.length > 0 ? bodyBlocks : undefined,
+    externalLink: raw.externalLink || undefined,
+    externalLinkLabel: raw.externalLinkLabel
+      ? pickLocaleString(raw.externalLinkLabel, lang)
+      : undefined,
     category: (categorySlug as NewsCategory) || 'vesti',
     date: raw.date ?? new Date().toISOString(),
     image: raw.image ? urlForImage(raw.image) : '',
@@ -95,6 +105,8 @@ const NEWS_BY_IDS_QUERY = `*[_type == "news" && _id in $ids] | order(date desc) 
   title,
   excerpt,
   body,
+  externalLink,
+  externalLinkLabel,
   "category": category->{ slug },
   date,
   image,

@@ -18,6 +18,10 @@ export interface News {
   body: string
   /** Sanity portable text blocks for rich body (detaljan opis) */
   bodyBlocks?: NewsBodyBlock[]
+  /** Optional external link shown below content (opens in new tab) */
+  externalLink?: string
+  /** Optional custom label for the link (defaults to URL if not set) */
+  externalLinkLabel?: string
   category: NewsCategory
   date: string
   image: string

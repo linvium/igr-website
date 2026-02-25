@@ -29,6 +29,7 @@ const NEWS_LIST_QUERY = `*[_id == "newsListPage"][0] {
   learnMoreButton->{ text },
   viewAllButton->{ text },
   backButton->{ text },
+  externalLinkLabel->{ text },
   detailTagsLabel->{ text },
   detailPublishedLabel->{ text },
   detailRelatedLabel->{ text },
@@ -49,6 +50,7 @@ export interface NewsListPageConfig {
   learnMore: string;
   viewAll: string;
   back: string;
+  externalLinkLabel: string;
   detailTags: string;
   detailPublished: string;
   detailRelated: string;
@@ -72,6 +74,7 @@ export async function getNewsListPageConfig(
     learnMoreButton?: { text?: LocaleObj };
     viewAllButton?: { text?: LocaleObj };
     backButton?: { text?: LocaleObj };
+    externalLinkLabel?: { text?: LocaleObj };
     detailTagsLabel?: { text?: LocaleObj };
     detailPublishedLabel?: { text?: LocaleObj };
     detailRelatedLabel?: { text?: LocaleObj };
@@ -124,6 +127,9 @@ export async function getNewsListPageConfig(
       ? resolveText(raw.viewAllButton.text, lang)
       : '',
     back: raw?.backButton?.text ? resolveText(raw.backButton.text, lang) : '',
+    externalLinkLabel: raw?.externalLinkLabel?.text
+      ? resolveText(raw.externalLinkLabel.text, lang)
+      : 'Tekst linka:',
     detailTags: raw?.detailTagsLabel?.text
       ? resolveText(raw.detailTagsLabel.text, lang)
       : '',

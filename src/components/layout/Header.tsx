@@ -57,13 +57,13 @@ export function Header() {
               href={routes.home(currentLang)}
               className="flex items-center gap-3 group shrink-0"
             >
-              <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center group-hover:scale-105 transition-transform bg-primary">
+              <div className="w-18 h-18 rounded-full overflow-hidden flex items-center justify-center group-hover:scale-105 transition-transform bg-primary">
                 <Image
                   src="/logo-white.svg"
                   alt=""
-                  width={48}
-                  height={48}
-                  className="object-contain"
+                  width={68}
+                  height={68}
+                  className="object-cover"
                 />
               </div>
               <div className="hidden sm:block">
@@ -76,6 +76,13 @@ export function Header() {
                   </p>
                 )}
               </div>
+              <Image
+                src="/igr-bl-logo.jpg"
+                alt=""
+                width={160}
+                height={80}
+                className="hidden sm:block object-contain h-16 w-auto"
+              />
             </Link>
 
             {/* Desktop Navigation - centered, uppercase */}

@@ -42,6 +42,7 @@ interface SanityHomeSection {
   sectionType?: string | null;
   enabled?: boolean | null;
   badgeLabel?: { text?: SanityLocaleString } | null;
+  heroBackgroundImage?: { asset?: { _ref?: string } } | null;
   title?: SanityLocaleString | null;
   description?: SanityLocaleString | null;
   buttonLabel?: { text?: SanityLocaleString } | null;
@@ -72,6 +73,7 @@ const HOMEPAGE_QUERY = `*[_id == "homePage"][0] {
     sectionType,
     enabled,
     "badgeLabel": badgeLabel->{ text },
+    heroBackgroundImage,
     title,
     description,
     "buttonLabel": buttonLabel->{ text },
@@ -238,6 +240,11 @@ export async function getHomePageData(lang: Language): Promise<HomePageData> {
 
       const aboutPartners = mapPartners(s.aboutPartners, lang);
 
+      const heroBackgroundImage =
+        sectionType === 'hero' && s.heroBackgroundImage
+          ? urlForImage(s.heroBackgroundImage)
+          : undefined;
+
       const section: ResolvedHomeSection = {
         sectionType,
         enabled,
@@ -248,6 +255,7 @@ export async function getHomePageData(lang: Language): Promise<HomePageData> {
         readMoreButton,
         partnersHeadingLabel,
         heroStats: heroStats.length > 0 ? heroStats : undefined,
+        heroBackgroundImage,
         aboutFeatures:
           aboutFeatures && aboutFeatures.length > 0 ? aboutFeatures : undefined,
         aboutPartners: aboutPartners.length > 0 ? aboutPartners : undefined,

@@ -6,6 +6,7 @@ import {
   History,
   Users,
   Handshake,
+  FileText,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -26,6 +27,7 @@ const iconMap = {
   history: History,
   users: Users,
   handshake: Handshake,
+  'file-text': FileText,
 } as const;
 
 interface AboutOverviewPageProps {

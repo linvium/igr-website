@@ -129,6 +129,24 @@ export function NewsDetailPage({
             ) : null}
           </div>
 
+          {item.externalLink && (
+            <p className="mb-8">
+              {(item.externalLinkLabel || pageConfig.externalLinkLabel)?.replace(
+                ':',
+                ' →'
+              )}
+              {' '}
+              <a
+                href={item.externalLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary font-medium underline underline-offset-4 hover:text-primary/80"
+              >
+                Link
+              </a>
+            </p>
+          )}
+
           {item.tags.length > 0 && (
             <div>
               <h3 className="text-sm font-medium mb-3">

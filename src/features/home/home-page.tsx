@@ -45,7 +45,7 @@ function SectionByType({
           badgeLabel={badgeLabel}
           primaryButtonLabel={buttonLabel}
           secondaryButtonLabel={readMoreButton}
-          heroStats={section.heroStats}
+          backgroundImage={section.heroBackgroundImage}
         />
       );
     case 'about':

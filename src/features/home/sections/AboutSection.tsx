@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Target, Eye, History, Users, ArrowRight } from 'lucide-react';
+import { Target, Eye, History, Users, Handshake, ArrowRight, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Container } from '@/components/layout';
 import {
@@ -18,16 +18,19 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   eye: Eye,
   history: History,
   users: Users,
+  handshake: Handshake,
+  'file-text': FileText,
 };
 
 const SLUG_TO_HREF: Record<
-  'mission' | 'history' | 'team' | 'partners',
+  'mission' | 'history' | 'team' | 'partners' | 'regulations',
   (lang: Language) => string
 > = {
   mission: routes.about.mission,
   history: routes.about.history,
   team: routes.about.team,
   partners: routes.about.partners,
+  regulations: routes.about.regulations,
 };
 
 interface AboutSectionProps {

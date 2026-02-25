@@ -1,4 +1,4 @@
-import { AboutSubPage } from '@/features/about';
+import { TeamPage } from '@/features/about';
 import { getLanguage } from '@/lib/lang';
 import { generatePageMetadata } from '@/lib/seo';
 import { getSiteSettings } from '@/services/site-settings.service';
@@ -26,7 +26,7 @@ export async function generateMetadata({
   );
 }
 
-export default async function TeamPage({
+export default async function TeamRoute({
   params,
 }: {
   params: Promise<{ lang: string }>;
@@ -38,13 +38,13 @@ export default async function TeamPage({
   const navItems = getAboutNavItems(pageConfig, lang);
 
   return (
-    <AboutSubPage
+    <TeamPage
       lang={lang}
       title={section.title || 'Tim'}
       description={section.shortDescription}
       breadcrumbLabel={section.title || 'Tim'}
       overviewBreadcrumbLabel={pageConfig.title}
-      contentBlocks={section.contentBlocks}
+      teamSection={section}
       navItems={navItems}
       navHeading={pageConfig.navigationHeading}
     />

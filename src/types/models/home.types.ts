@@ -28,7 +28,7 @@ export interface AboutFeature {
   title: string;
   description: string;
   icon: string;
-  sectionSlug: 'mission' | 'history' | 'team' | 'partners';
+  sectionSlug: 'mission' | 'history' | 'team' | 'partners' | 'regulations';
 }
 
 /** Resolved section: title/description in current lang, data resolved from refs or defaults */
@@ -47,6 +47,8 @@ export interface ResolvedHomeSection {
   partnersHeadingLabel?: string;
   /** Hero stats (hero section only) */
   heroStats?: HeroStat[];
+  /** Hero background image URL (hero section only) */
+  heroBackgroundImage?: string;
   /** About features cards (about section only) */
   aboutFeatures?: AboutFeature[];
   /** About section partners (about section only) */

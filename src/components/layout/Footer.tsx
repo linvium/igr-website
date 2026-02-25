@@ -43,13 +43,13 @@ export function Footer({ lang }: FooterProps) {
                 href={routes.home(lang)}
                 className="flex items-center gap-3 mb-6"
               >
-                <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-primary">
+                <div className="w-18 h-18 rounded-full overflow-hidden flex items-center justify-center bg-primary">
                   <Image
                     src="/logo-white.svg"
                     alt=""
-                    width={48}
-                    height={48}
-                    className="object-contain"
+                    width={68}
+                    height={68}
+                    className="object-cover"
                   />
                 </div>
                 <div>
@@ -62,6 +62,13 @@ export function Footer({ lang }: FooterProps) {
                     </p>
                   )}
                 </div>
+                <Image
+                  src="/igr-bl-logo.jpg"
+                  alt=""
+                  width={160}
+                  height={80}
+                  className="object-contain h-16 w-auto"
+                />
               </Link>
               <p className="text-primary-foreground/70 mb-6 max-w-sm">
                 {siteSettings.description}
