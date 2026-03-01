@@ -10,7 +10,6 @@ interface HeroSectionProps {
   lang: Language;
   title?: string;
   description?: string;
-  badgeLabel?: string;
   primaryButtonLabel?: string;
   secondaryButtonLabel?: string;
   backgroundImage?: string;

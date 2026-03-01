@@ -1,4 +1,10 @@
-import { sanityClient, pickLocaleString, pickLocaleText } from '@/lib/sanity';
+import {
+  sanityClient,
+  pickLocaleString,
+  pickLocaleText,
+  pickLocaleBlocks,
+} from '@/lib/sanity';
+import { routes } from '@/lib/routes';
 import type { Language } from '@/lib/lang';
 
 type LocaleObj = { en?: string; sr?: string; srCyr?: string } | null;
@@ -231,8 +237,50 @@ const PROJECTS_LIST_QUERY = `*[_id == "projectsListPage"][0] {
   learnMoreButton->{ text },
   noImageLabel->{ text },
   categoryCategories[]->{ slug, name },
-  statusCategories[]->{ slug, name }
+  statusCategories[]->{ slug, name },
+  projectsTabLabel->{ text },
+  projectsTabTitleLabel->{ text },
+  projectsTabShortDescription,
+  servicesTabLabel->{ text },
+  servicesTabTitleLabel->{ text },
+  servicesTabShortDescription,
+  servicesNavigationHeadingLabel->{ text },
+  servicesNavigationItems[] {
+    label->{ text },
+    sectionSlug
+  },
+  laboratorijskeUslugeSection {
+    titleLabel->{ text },
+    shortDescription,
+    content
+  },
+  savjetodavneUslugeSection {
+    titleLabel->{ text },
+    shortDescription,
+    content
+  },
+  rasadnikSection {
+    titleLabel->{ text },
+    shortDescription,
+    content
+  }
 }`;
+
+export type ProjectsServicesSectionSlug =
+  | 'laboratorijske-usluge'
+  | 'savjetodavne-usluge'
+  | 'rasadnik';
+
+export interface ProjectsServicesSection {
+  title: string;
+  shortDescription: string;
+  contentBlocks: unknown[];
+}
+
+export interface ProjectsServicesNavItem {
+  label: string;
+  href: string;
+}
 
 export interface ProjectsListPageConfig {
   title: string;
@@ -254,6 +302,45 @@ export interface ProjectsListPageConfig {
   noImageLabel: string;
   categoryCategories: { slug: string; name: string }[];
   statusCategories: { slug: string; name: string }[];
+  projectsTabLabel: string;
+  projectsTabTitle: string;
+  projectsTabShortDescription: string;
+  servicesTabLabel: string;
+  servicesTabTitle: string;
+  servicesTabShortDescription: string;
+  servicesNavigationHeading: string;
+  servicesNavigationItems: { label: string; sectionSlug: ProjectsServicesSectionSlug }[];
+  laboratorijskeUslugeSection: ProjectsServicesSection;
+  savjetodavneUslugeSection: ProjectsServicesSection;
+  rasadnikSection: ProjectsServicesSection;
+}
+
+function mapProjectsServicesSection(
+  raw: {
+    titleLabel?: { text?: LocaleObj };
+    shortDescription?: LocaleObj;
+    content?: { en?: unknown[]; sr?: unknown[]; srCyr?: unknown[] };
+  } | null,
+  lang: Language,
+): ProjectsServicesSection {
+  if (!raw) {
+    return { title: '', shortDescription: '', contentBlocks: [] };
+  }
+  return {
+    title: resolveText(raw.titleLabel?.text, lang),
+    shortDescription: pickLocaleText(raw.shortDescription, lang),
+    contentBlocks: pickLocaleBlocks(raw.content, lang),
+  };
+}
+
+export function getProjectsServicesNavItems(
+  config: ProjectsListPageConfig,
+  lang: Language,
+): ProjectsServicesNavItem[] {
+  return config.servicesNavigationItems.map((item) => ({
+    label: item.label,
+    href: routes.projects.serviceDetail(lang, item.sectionSlug),
+  }));
 }
 
 export async function getProjectsListPageConfig(
@@ -279,6 +366,32 @@ export async function getProjectsListPageConfig(
     noImageLabel?: { text?: LocaleObj };
     categoryCategories?: Array<{ slug?: string; name?: LocaleObj }>;
     statusCategories?: Array<{ slug?: string; name?: LocaleObj }>;
+    projectsTabLabel?: { text?: LocaleObj };
+    projectsTabTitleLabel?: { text?: LocaleObj };
+    projectsTabShortDescription?: LocaleObj;
+    servicesTabLabel?: { text?: LocaleObj };
+    servicesTabTitleLabel?: { text?: LocaleObj };
+    servicesTabShortDescription?: LocaleObj;
+    servicesNavigationHeadingLabel?: { text?: LocaleObj };
+    servicesNavigationItems?: Array<{
+      label?: { text?: LocaleObj };
+      sectionSlug?: string;
+    }>;
+    laboratorijskeUslugeSection?: {
+      titleLabel?: { text?: LocaleObj };
+      shortDescription?: LocaleObj;
+      content?: { en?: unknown[]; sr?: unknown[]; srCyr?: unknown[] };
+    };
+    savjetodavneUslugeSection?: {
+      titleLabel?: { text?: LocaleObj };
+      shortDescription?: LocaleObj;
+      content?: { en?: unknown[]; sr?: unknown[]; srCyr?: unknown[] };
+    };
+    rasadnikSection?: {
+      titleLabel?: { text?: LocaleObj };
+      shortDescription?: LocaleObj;
+      content?: { en?: unknown[]; sr?: unknown[]; srCyr?: unknown[] };
+    };
   } | null>(PROJECTS_LIST_QUERY);
 
   const categoryCategories =
@@ -293,10 +406,28 @@ export async function getProjectsListPageConfig(
       name: resolveText(c.name, lang),
     })) ?? [];
 
+  const validServicesSlugs: ProjectsServicesSectionSlug[] = [
+    'laboratorijske-usluge',
+    'savjetodavne-usluge',
+    'rasadnik',
+  ];
+  const normalizeServicesSlug = (
+    slug?: string,
+  ): ProjectsServicesSectionSlug =>
+    validServicesSlugs.includes(slug as ProjectsServicesSectionSlug)
+      ? (slug as ProjectsServicesSectionSlug)
+      : 'laboratorijske-usluge';
+
+  const servicesNavigationItems =
+    raw?.servicesNavigationItems?.map((item) => ({
+      label: resolveText(item.label?.text, lang),
+      sectionSlug: normalizeServicesSlug(item.sectionSlug),
+    })) ?? [];
+
   return {
     title: raw?.titleLabel?.text
       ? resolveText(raw.titleLabel.text, lang)
-      : 'Projekti i usluge',
+      : '',
     description: raw?.description ? resolveTextBlock(raw.description, lang) : '',
     searchPlaceholder: raw?.searchPlaceholderLabel?.text
       ? resolveText(raw.searchPlaceholderLabel.text, lang)
@@ -306,10 +437,10 @@ export async function getProjectsListPageConfig(
       : '',
     categoryFilterLabel: raw?.categoryFilterLabel?.text
       ? resolveText(raw.categoryFilterLabel.text, lang)
-      : 'Kategorija',
+      : '',
     statusFilterLabel: raw?.statusFilterLabel?.text
       ? resolveText(raw.statusFilterLabel.text, lang)
-      : 'Status',
+      : '',
     emptyTitle: raw?.emptyTitleLabel?.text
       ? resolveText(raw.emptyTitleLabel.text, lang)
       : '',
@@ -340,9 +471,43 @@ export async function getProjectsListPageConfig(
       : '',
     noImageLabel: raw?.noImageLabel?.text
       ? resolveText(raw.noImageLabel.text, lang)
-      : 'Nema slike',
+      : '',
     categoryCategories,
     statusCategories,
+    projectsTabLabel: raw?.projectsTabLabel?.text
+      ? resolveText(raw.projectsTabLabel.text, lang)
+      : '',
+    projectsTabTitle: raw?.projectsTabTitleLabel?.text
+      ? resolveText(raw.projectsTabTitleLabel.text, lang)
+      : '',
+    projectsTabShortDescription: raw?.projectsTabShortDescription
+      ? pickLocaleText(raw.projectsTabShortDescription, lang)
+      : '',
+    servicesTabLabel: raw?.servicesTabLabel?.text
+      ? resolveText(raw.servicesTabLabel.text, lang)
+      : '',
+    servicesTabTitle: raw?.servicesTabTitleLabel?.text
+      ? resolveText(raw.servicesTabTitleLabel.text, lang)
+      : '',
+    servicesTabShortDescription: raw?.servicesTabShortDescription
+      ? pickLocaleText(raw.servicesTabShortDescription, lang)
+      : '',
+    servicesNavigationHeading: raw?.servicesNavigationHeadingLabel?.text
+      ? resolveText(raw.servicesNavigationHeadingLabel.text, lang)
+      : '',
+    servicesNavigationItems,
+    laboratorijskeUslugeSection: mapProjectsServicesSection(
+      raw?.laboratorijskeUslugeSection ?? null,
+      lang,
+    ),
+    savjetodavneUslugeSection: mapProjectsServicesSection(
+      raw?.savjetodavneUslugeSection ?? null,
+      lang,
+    ),
+    rasadnikSection: mapProjectsServicesSection(
+      raw?.rasadnikSection ?? null,
+      lang,
+    ),
   };
 }
 
@@ -353,6 +518,7 @@ const GALLERY_LIST_QUERY = `*[_id == "galleryListPage"][0] {
   viewAlbumButton->{ text },
   backButton->{ text },
   allCategoryLabel->{ text },
+  categoryFilterLabel->{ text },
   emptyTitleLabel->{ text },
   emptyDescriptionLabel->{ text },
   categories[]->{ slug, name }
@@ -364,6 +530,7 @@ export interface GalleryListPageConfig {
   viewAlbum: string;
   back: string;
   allCategoryLabel: string;
+  categoryFilterLabel: string;
   emptyTitle: string;
   emptyDescription: string;
   categories: { slug: string; name: string }[];
@@ -378,6 +545,7 @@ export async function getGalleryListPageConfig(
     viewAlbumButton?: { text?: LocaleObj };
     backButton?: { text?: LocaleObj };
     allCategoryLabel?: { text?: LocaleObj };
+    categoryFilterLabel?: { text?: LocaleObj };
     emptyTitleLabel?: { text?: LocaleObj };
     emptyDescriptionLabel?: { text?: LocaleObj };
     categories?: Array<{ slug?: string; name?: LocaleObj }>;
@@ -400,6 +568,9 @@ export async function getGalleryListPageConfig(
     back: raw?.backButton?.text ? resolveText(raw.backButton.text, lang) : '',
     allCategoryLabel: raw?.allCategoryLabel?.text
       ? resolveText(raw.allCategoryLabel.text, lang)
+      : '',
+    categoryFilterLabel: raw?.categoryFilterLabel?.text
+      ? resolveText(raw.categoryFilterLabel.text, lang)
       : '',
     emptyTitle: raw?.emptyTitleLabel?.text
       ? resolveText(raw.emptyTitleLabel.text, lang)

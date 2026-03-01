@@ -82,4 +82,6 @@ export interface ResolvedHomeSection {
 
 export interface HomePageData {
   sections: ResolvedHomeSection[];
+  projectsListPageConfig: import('@/services/list-pages.service').ProjectsListPageConfig;
+  orgActivitiesPageConfig: import('@/services/org-activities.service').OrgActivitiesPageConfig;
 }

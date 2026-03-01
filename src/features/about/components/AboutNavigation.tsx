@@ -8,16 +8,19 @@ import type { AboutNavItem } from "@/services/about.service"
 interface AboutNavigationProps {
   heading: string
   items: AboutNavItem[]
+  /** Kad je prosleđen, koristi se umjesto pathname za određivanje aktivne stavke (npr. na overview stranici) */
+  activeHref?: string
 }
 
-export function AboutNavigation({ heading, items }: AboutNavigationProps) {
+export function AboutNavigation({ heading, items, activeHref }: AboutNavigationProps) {
   const pathname = usePathname()
+  const activeRef = activeHref ?? pathname
 
   return (
     <nav className="space-y-2">
       <h2 className="font-serif text-lg font-semibold mb-4">{heading}</h2>
       {items.map((item) => {
-        const isActive = pathname === item.href
+        const isActive = activeRef === item.href
         return (
           <Link
             key={item.label}

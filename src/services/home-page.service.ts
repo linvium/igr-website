@@ -21,6 +21,7 @@ import { getAllCenters } from './centers.service';
 import { getAllGalleryAlbums } from './gallery.service';
 import { getAboutPageConfig } from './about.service';
 import { getOrgActivitiesPageConfig } from './org-activities.service';
+import { getProjectsListPageConfig } from './list-pages.service';
 
 interface SanityLocaleString {
   en?: string | null;
@@ -182,16 +183,25 @@ function mapPartners(
 }
 
 export async function getHomePageData(lang: Language): Promise<HomePageData> {
-  const [raw, aboutConfig, orgActivitiesConfig, allProjects, allNews, allCenters, allAlbums] =
-    await Promise.all([
-      sanityClient.fetch<SanityHomePage | null>(HOMEPAGE_QUERY),
-      getAboutPageConfig(lang),
-      getOrgActivitiesPageConfig(lang),
-      getAllProjects(lang),
-      getAllNews(lang),
-      getAllCenters(lang),
-      getAllGalleryAlbums(lang),
-    ]);
+  const [
+    raw,
+    aboutConfig,
+    orgActivitiesConfig,
+    projectsListPageConfig,
+    allProjects,
+    allNews,
+    allCenters,
+    allAlbums,
+  ] = await Promise.all([
+    sanityClient.fetch<SanityHomePage | null>(HOMEPAGE_QUERY),
+    getAboutPageConfig(lang),
+    getOrgActivitiesPageConfig(lang),
+    getProjectsListPageConfig(lang),
+    getAllProjects(lang),
+    getAllNews(lang),
+    getAllCenters(lang),
+    getAllGalleryAlbums(lang),
+  ]);
 
   const sections = raw?.sections ?? [];
   let resolved: ResolvedHomeSection[] = sections
@@ -335,5 +345,9 @@ export async function getHomePageData(lang: Language): Promise<HomePageData> {
     });
   }
 
-  return { sections: resolved };
+  return {
+    sections: resolved,
+    projectsListPageConfig,
+    orgActivitiesPageConfig: orgActivitiesConfig,
+  };
 }

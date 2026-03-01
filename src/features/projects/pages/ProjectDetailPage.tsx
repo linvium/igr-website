@@ -96,7 +96,7 @@ export function ProjectDetailPage({
       ) : (
         <div className="h-96 rounded-2xl bg-muted mb-12 flex items-center justify-center">
           <span className="text-muted-foreground">
-            {pageConfig.noImageLabel || 'Nema slike'}
+            {pageConfig.noImageLabel}
           </span>
         </div>
       )}

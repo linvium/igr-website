@@ -10,9 +10,10 @@ import { Container } from '@/components/layout';
 import {
   PageHeader,
   Breadcrumbs,
-  FilterPills,
+  FilterSelect,
   EmptyState,
 } from '@/components/shared';
+import { ProjectsTabs } from '../components/ProjectsTabs';
 import { routes, type Language } from '@/lib';
 import { formatYear } from '@/lib/format';
 import type { ProjectsListPageConfig } from '@/services/list-pages.service';
@@ -46,7 +47,7 @@ export function ProjectsListPage({
   const categoryOptions: FilterOption[] = [
     {
       value: allValue,
-      label: sveCategory?.name || pageConfig.allFilterLabel || 'Sve',
+      label: sveCategory?.name || pageConfig.allFilterLabel,
     },
     ...pageConfig.categoryCategories
       .filter((c) => c.slug !== 'all' && c.slug !== 'sve')
@@ -56,7 +57,7 @@ export function ProjectsListPage({
   const statusOptions: FilterOption[] = [
     {
       value: allStatusValue,
-      label: sveStatus?.name || pageConfig.allFilterLabel || 'Sve',
+      label: sveStatus?.name || pageConfig.allFilterLabel,
     },
     ...pageConfig.statusCategories
       .filter((c) => c.slug !== 'all' && c.slug !== 'sve')
@@ -85,42 +86,32 @@ export function ProjectsListPage({
         <Breadcrumbs lang={lang} items={[{ label: pageConfig.title }]} />
       </div>
 
+      <ProjectsTabs
+        lang={lang}
+        projectsTabLabel={pageConfig.projectsTabLabel}
+        servicesTabLabel={pageConfig.servicesTabLabel}
+      />
+
       <PageHeader
-        title={pageConfig.title}
-        description={pageConfig.description}
+        title={pageConfig.projectsTabTitle}
+        description={pageConfig.projectsTabShortDescription}
       />
 
       {/* Filters */}
-      <div className="space-y-6 py-8">
-        <div className="space-y-4">
-          <div>
-            <h3 className="text-sm font-medium mb-2">
-              {pageConfig.categoryFilterLabel}
-            </h3>
-            <FilterPills
-              options={categoryOptions}
-              selected={
-                selectedCategory === 'all' || selectedCategory === 'sve'
-                  ? [allValue]
-                  : [selectedCategory]
-              }
-              onSelect={(value) => setSelectedCategory(value)}
-            />
-          </div>
-          <div>
-            <h3 className="text-sm font-medium mb-2">
-              {pageConfig.statusFilterLabel}
-            </h3>
-            <FilterPills
-              options={statusOptions}
-              selected={
-                selectedStatus === 'all' || selectedStatus === 'sve'
-                  ? [allStatusValue]
-                  : [selectedStatus]
-              }
-              onSelect={(value) => setSelectedStatus(value)}
-            />
-          </div>
+      <div className="py-8">
+        <div className="flex flex-wrap gap-6 items-end">
+          <FilterSelect
+            label={pageConfig.categoryFilterLabel}
+            options={categoryOptions}
+            value={selectedCategory}
+            onValueChange={setSelectedCategory}
+          />
+          <FilterSelect
+            label={pageConfig.statusFilterLabel}
+            options={statusOptions}
+            value={selectedStatus}
+            onValueChange={setSelectedStatus}
+          />
         </div>
       </div>
 
@@ -150,7 +141,7 @@ export function ProjectsListPage({
                     />
                   ) : (
                     <div className="absolute inset-0 flex items-center justify-center text-muted-foreground text-sm">
-                      Nema slike
+                      {pageConfig.noImageLabel}
                     </div>
                   )}
                 </div>

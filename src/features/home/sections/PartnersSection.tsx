@@ -11,7 +11,6 @@ interface PartnersSectionProps {
   lang: Language;
   title?: string;
   description?: string;
-  badgeLabel?: string;
   buttonLabel?: string;
   partners: HomePartner[];
 }
@@ -20,7 +19,6 @@ export function PartnersSection({
   lang,
   title = 'Naši partneri',
   description,
-  badgeLabel,
   buttonLabel,
   partners,
 }: PartnersSectionProps) {
@@ -34,9 +32,6 @@ export function PartnersSection({
     >
       <Container className="relative">
         <div className="text-center max-w-3xl mx-auto mb-12">
-          <span className="inline-block px-4 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
-            {badgeLabel ?? 'Partneri'}
-          </span>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-foreground mb-6">
             {title}
           </h2>

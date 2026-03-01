@@ -16,7 +16,6 @@ interface NewsSectionProps {
   lang: Language;
   title?: string;
   description?: string;
-  badgeLabel?: string;
   buttonLabel?: string;
   readMoreButton?: string;
   initialNews?: News[];
@@ -27,14 +26,13 @@ export function NewsSection({
   lang,
   title,
   description,
-  badgeLabel,
   buttonLabel,
   readMoreButton,
   initialNews,
   newsPageConfig,
 }: NewsSectionProps) {
   const displayTitle =
-    title || badgeLabel || newsPageConfig?.title || 'Novosti';
+    title || newsPageConfig?.title || 'Novosti';
   const displayDescription = description || newsPageConfig?.description || '';
   const displayButtonLabel =
     buttonLabel || newsPageConfig?.viewAll || 'Pogledaj sve';

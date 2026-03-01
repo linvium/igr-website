@@ -9,7 +9,7 @@ import { Container } from '@/components/layout';
 import {
   PageHeader,
   Breadcrumbs,
-  FilterPills,
+  FilterSelect,
   EmptyState,
 } from '@/components/shared';
 import { routes, type Language } from '@/lib';
@@ -137,23 +137,15 @@ export function NewsListPage({
       )}
 
       {/* Filters */}
-      <div className="space-y-6 py-8">
-        <div>
-          <h3 className="text-sm font-medium mb-2">
-            {pageConfig.categoryFilterLabel}
-          </h3>
-          <FilterPills
-            options={categoryOptions}
-            selected={
-              selectedCategory === 'all' || selectedCategory === 'sve'
-                ? [allValue]
-                : [selectedCategory]
-            }
-            onSelect={(value) =>
-              setSelectedCategory(value as NewsCategory | 'all' | 'sve')
-            }
-          />
-        </div>
+      <div className="py-8">
+        <FilterSelect
+          label={pageConfig.categoryFilterLabel}
+          options={categoryOptions}
+          value={selectedCategory}
+          onValueChange={(value) =>
+            setSelectedCategory(value as NewsCategory | 'all' | 'sve')
+          }
+        />
       </div>
 
       {/* News List */}

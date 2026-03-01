@@ -28,7 +28,11 @@ export const routes = {
   },
   projects: {
     list: (lang: Language) => `/${lang}/projekti-i-usluge`,
-    detail: (lang: Language, slug: string) => `/${lang}/projekti-i-usluge/${slug}`,
+    detail: (lang: Language, slug: string) =>
+      `/${lang}/projekti-i-usluge/${slug}`,
+    services: (lang: Language) => `/${lang}/projekti-i-usluge/usluge`,
+    serviceDetail: (lang: Language, slug: string) =>
+      `/${lang}/projekti-i-usluge/usluge/${slug}`,
   },
   news: {
     list: (lang: Language) => `/${lang}/novosti`,
@@ -76,4 +80,16 @@ export function aboutSectionRoute(
     regulations: routes.about.regulations(lang),
   };
   return map[slug] ?? routes.about.overview(lang);
+}
+
+export type ProjectsServicesSectionSlug =
+  | 'laboratorijske-usluge'
+  | 'savjetodavne-usluge'
+  | 'rasadnik';
+
+export function projectsServicesSectionRoute(
+  lang: Language,
+  slug: ProjectsServicesSectionSlug,
+): string {
+  return routes.projects.serviceDetail(lang, slug);
 }

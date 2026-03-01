@@ -8,17 +8,12 @@ import { Container } from '@/components/layout';
 import { orgActivitiesSectionRoute, routes, type Language } from '@/lib';
 import type { OrgActivitiesOverviewCard } from '@/types/models/home.types';
 
-const DEFAULT_TITLE = 'Organizacija i aktivnosti';
-const DEFAULT_DESCRIPTION =
-  'Banka gena, Botanička bašta, Poljske kolekcije, Laboratorije i Zaštićeno područje Spomenik parkovske arhitekture „Univerzitetski grad".';
-
 const PLACEHOLDER_IMAGE = '/placeholder.svg';
 
 interface OrgActivitiesSectionProps {
   lang: Language;
   title?: string;
   description?: string;
-  badgeLabel?: string;
   buttonLabel?: string;
   readMoreButton?: string;
   orgActivitiesCards?: OrgActivitiesOverviewCard[];
@@ -26,9 +21,8 @@ interface OrgActivitiesSectionProps {
 
 export function OrgActivitiesSection({
   lang,
-  title = DEFAULT_TITLE,
-  description = DEFAULT_DESCRIPTION,
-  badgeLabel,
+  title,
+  description,
   buttonLabel,
   readMoreButton,
   orgActivitiesCards = [],
@@ -39,14 +33,15 @@ export function OrgActivitiesSection({
     <section id="organizacija" className="py-24 content-section-bg relative">
       <Container>
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="inline-block px-4 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
-            {badgeLabel ?? 'Organizacija i aktivnosti'}
-          </span>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-foreground mb-6">
-            {title}
-          </h2>
+          {title && (
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-foreground mb-6">
+              {title}
+            </h2>
+          )}
           <div className="section-divider mb-6" />
-          <p className="text-lg text-muted-foreground">{description}</p>
+          {description && (
+            <p className="text-lg text-muted-foreground">{description}</p>
+          )}
         </div>
 
         {/* Kartice - slika lijevo, bijeli boks desno preko slike (alternira lijevo/desno) */}
@@ -101,7 +96,7 @@ export function OrgActivitiesSection({
                       href={href}
                       className="inline-flex items-center gap-1 text-primary font-medium underline underline-offset-4 hover:text-primary/80 transition-colors"
                     >
-                      {readMoreButton ?? buttonLabel ?? 'Saznaj više'}
+                      {readMoreButton ?? buttonLabel}
                       <ArrowRight className="w-4 h-4" />
                     </Link>
                   </div>
@@ -111,13 +106,15 @@ export function OrgActivitiesSection({
           })}
         </div>
 
-        <div className="mt-12 text-center">
-          <Button variant="outline" size="lg" asChild>
-            <Link href={routes.orgActivities.overview(lang)}>
-              {buttonLabel ?? 'Pogledaj sve'}
-            </Link>
-          </Button>
-        </div>
+        {buttonLabel && (
+          <div className="mt-12 text-center">
+            <Button variant="outline" size="lg" asChild>
+              <Link href={routes.orgActivities.overview(lang)}>
+                {buttonLabel}
+              </Link>
+            </Button>
+          </div>
+        )}
       </Container>
     </section>
   );

@@ -27,13 +27,17 @@ function SectionByType({
   lang,
   newsPageConfig,
   contactPageConfig,
+  projectsListPageConfig,
+  orgActivitiesPageConfig,
 }: {
   section: ResolvedHomeSection;
   lang: Language;
   newsPageConfig?: NewsListPageConfig;
   contactPageConfig?: ContactPageConfig;
+  projectsListPageConfig?: HomePageData['projectsListPageConfig'];
+  orgActivitiesPageConfig?: HomePageData['orgActivitiesPageConfig'];
 }) {
-  const { sectionType, title, description, badgeLabel, buttonLabel, readMoreButton, enabled } = section;
+  const { sectionType, title, description, buttonLabel, readMoreButton, enabled } = section;
   if (!enabled) return null;
 
   switch (sectionType) {
@@ -43,7 +47,6 @@ function SectionByType({
           lang={lang}
           title={title || undefined}
           description={description || undefined}
-          badgeLabel={badgeLabel}
           primaryButtonLabel={buttonLabel}
           secondaryButtonLabel={readMoreButton}
           backgroundImage={section.heroBackgroundImage}
@@ -73,7 +76,6 @@ function SectionByType({
           lang={lang}
           title={title || undefined}
           description={description || undefined}
-          badgeLabel={badgeLabel}
           buttonLabel={buttonLabel}
           partners={section.partners ?? []}
         />
@@ -84,7 +86,6 @@ function SectionByType({
           lang={lang}
           title={title || undefined}
           description={description || undefined}
-          badgeLabel={badgeLabel}
           buttonLabel={buttonLabel}
           readMoreButton={readMoreButton}
           initialCenters={section.centers ?? []}
@@ -96,7 +97,6 @@ function SectionByType({
           lang={lang}
           title={title || undefined}
           description={description || undefined}
-          badgeLabel={badgeLabel}
           buttonLabel={buttonLabel}
           readMoreButton={readMoreButton}
           orgActivitiesCards={section.orgActivitiesCards ?? []}
@@ -106,11 +106,10 @@ function SectionByType({
       return (
         <ProjectsSection
           lang={lang}
-          title={title || undefined}
-          description={description || undefined}
-          badgeLabel={badgeLabel}
-          buttonLabel={buttonLabel}
-          readMoreButton={readMoreButton}
+          title={title || projectsListPageConfig?.title}
+          description={description || projectsListPageConfig?.description}
+          buttonLabel={buttonLabel || projectsListPageConfig?.learnMore}
+          readMoreButton={readMoreButton || projectsListPageConfig?.learnMore}
           initialProjects={section.projects ?? []}
         />
       );
@@ -120,7 +119,6 @@ function SectionByType({
           lang={lang}
           title={title || undefined}
           description={description || undefined}
-          badgeLabel={badgeLabel}
           buttonLabel={buttonLabel}
           readMoreButton={readMoreButton}
           initialNews={section.news ?? []}
@@ -133,7 +131,6 @@ function SectionByType({
           lang={lang}
           title={title || undefined}
           description={description || undefined}
-          badgeLabel={badgeLabel}
           buttonLabel={buttonLabel}
           initialAlbums={section.galleryAlbums ?? []}
         />
@@ -169,6 +166,8 @@ export function HomePage({
           lang={lang}
           newsPageConfig={newsPageConfig}
           contactPageConfig={contactPageConfig}
+          projectsListPageConfig={homePageData.projectsListPageConfig}
+          orgActivitiesPageConfig={homePageData.orgActivitiesPageConfig}
         />
       ))}
       <NewsletterSection />

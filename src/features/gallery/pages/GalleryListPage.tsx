@@ -9,7 +9,7 @@ import { Container } from '@/components/layout';
 import {
   PageHeader,
   Breadcrumbs,
-  FilterPills,
+  FilterSelect,
   EmptyState,
 } from '@/components/shared';
 import { routes, type Language } from '@/lib';
@@ -71,14 +71,11 @@ export function GalleryListPage({
 
       {/* Filters */}
       <div className="py-8">
-        <FilterPills
+        <FilterSelect
+          label={pageConfig.categoryFilterLabel}
           options={categoryOptions}
-          selected={
-            selectedCategory === 'all' || selectedCategory === 'sve'
-              ? [allValue]
-              : [selectedCategory]
-          }
-          onSelect={(value) =>
+          value={selectedCategory}
+          onValueChange={(value) =>
             setSelectedCategory(
               value === 'all' || value === 'sve'
                 ? (value as 'all' | 'sve')

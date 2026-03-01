@@ -9,15 +9,10 @@ import { routes, type Language } from '@/lib';
 import { formatYear } from '@/lib/format';
 import type { Project } from '@/types/models';
 
-const DEFAULT_TITLE = 'Projekti i usluge';
-const DEFAULT_DESCRIPTION =
-  'Aktivni i završeni projekti koji doprinose očuvanju genetičkih resursa i biodiverziteta.';
-
 interface ProjectsSectionProps {
   lang: Language;
   title?: string;
   description?: string;
-  badgeLabel?: string;
   buttonLabel?: string;
   readMoreButton?: string;
   initialProjects: Project[];
@@ -25,9 +20,8 @@ interface ProjectsSectionProps {
 
 export function ProjectsSection({
   lang,
-  title = DEFAULT_TITLE,
-  description = DEFAULT_DESCRIPTION,
-  badgeLabel,
+  title,
+  description,
   buttonLabel,
   readMoreButton,
   initialProjects,
@@ -39,25 +33,28 @@ export function ProjectsSection({
       <Container>
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-10">
           <div className="max-w-2xl">
-            <span className="inline-block px-4 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
-              {badgeLabel ?? 'Projekti i usluge'}
-            </span>
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-serif font-bold text-foreground mb-4">
-              {title}
-            </h2>
-            <p className="text-base text-muted-foreground">{description}</p>
+            {title && (
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-serif font-bold text-foreground mb-4">
+                {title}
+              </h2>
+            )}
+            {description && (
+              <p className="text-base text-muted-foreground">{description}</p>
+            )}
           </div>
-          <Button
-            variant="outline"
-            size="lg"
-            className="self-start lg:self-auto"
-            asChild
-          >
-            <Link href={routes.projects.list(lang)}>
-              {buttonLabel ?? 'Pogledaj sve'}
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          </Button>
+          {buttonLabel && (
+            <Button
+              variant="outline"
+              size="lg"
+              className="self-start lg:self-auto"
+              asChild
+            >
+              <Link href={routes.projects.list(lang)}>
+                {buttonLabel}
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </Button>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -115,20 +112,22 @@ export function ProjectsSection({
                       <Calendar className="w-3.5 h-3.5" />
                       <span>{formatYear(project.year)}</span>
                     </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-8 text-xs"
-                      asChild
-                    >
-                      <Link
-                        href={routes.projects.detail(lang, project.slug)}
-                        prefetch={false}
+                    {(readMoreButton || buttonLabel) && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-8 text-xs"
+                        asChild
                       >
-                        {readMoreButton ?? buttonLabel ?? 'Saznaj više'}
-                        <ArrowRight className="w-3 h-3" />
-                      </Link>
-                    </Button>
+                        <Link
+                          href={routes.projects.detail(lang, project.slug)}
+                          prefetch={false}
+                        >
+                          {readMoreButton ?? buttonLabel}
+                          <ArrowRight className="w-3 h-3" />
+                        </Link>
+                      </Button>
+                    )}
                   </div>
                 </div>
               </div>

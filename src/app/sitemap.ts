@@ -68,6 +68,24 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
     },
     {
+      url: `${siteUrl}/sr-lat/projekti-i-usluge/usluge/laboratorijske-usluge`,
+      lastModified: currentDate,
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
+      url: `${siteUrl}/sr-lat/projekti-i-usluge/usluge/savjetodavne-usluge`,
+      lastModified: currentDate,
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
+      url: `${siteUrl}/sr-lat/projekti-i-usluge/usluge/rasadnik`,
+      lastModified: currentDate,
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
       url: `${siteUrl}/sr-lat/galerija`,
       lastModified: currentDate,
       changeFrequency: 'weekly',

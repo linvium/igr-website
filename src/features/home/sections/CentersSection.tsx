@@ -18,7 +18,6 @@ interface CentersSectionProps {
   lang: Language;
   title?: string;
   description?: string;
-  badgeLabel?: string;
   buttonLabel?: string;
   readMoreButton?: string;
   initialCenters?: Center[];
@@ -28,7 +27,6 @@ export function CentersSection({
   lang,
   title = DEFAULT_TITLE,
   description = DEFAULT_DESCRIPTION,
-  badgeLabel,
   buttonLabel,
   readMoreButton,
   initialCenters,
@@ -57,9 +55,6 @@ export function CentersSection({
       <Container>
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="inline-block px-4 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
-            {badgeLabel ?? 'Centri'}
-          </span>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-foreground mb-6">
             {title}
           </h2>

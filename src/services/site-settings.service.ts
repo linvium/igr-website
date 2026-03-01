@@ -155,10 +155,10 @@ function mapNavItems(
     .map((i) => {
       const label = pickLocaleString(i.label, lang)!;
       let href = resolveNavHref(i, lang);
-      // Migracija: Centri -> Organizacija i aktivnosti (čak i kad CMS ima stare podatke)
+      // Migracija: Centri -> Organizacija i aktivnosti (href se mijenja, label ostaje iz CMS-a)
       const path = (i.path?.trim() || '').replace(/^\/+/, '');
       if (path === 'centri' || href.endsWith('/centri')) {
-        return { label: 'Organizacija i aktivnosti', href: orgActivitiesHref };
+        return { label, href: orgActivitiesHref };
       }
       // Projekti i usluge - label i putanja /projekti-i-usluge
       if (path === 'projekti' || path === 'projekti-i-usluge' || href.endsWith('/projekti') || href.endsWith('/projekti-i-usluge')) {
@@ -264,7 +264,7 @@ export async function getSiteSettings(lang: Language): Promise<SiteSettings> {
           ? {
               title:
                 (mappedOrganizacija.title || mappedCentri.title) ||
-                'Organizacija i aktivnosti',
+                defaultSettings.footer.organizacija.title,
               links:
                 mappedOrganizacija.links.length > 0
                   ? mappedOrganizacija.links
@@ -290,8 +290,94 @@ export async function getSiteSettings(lang: Language): Promise<SiteSettings> {
   };
 }
 
+const DEFAULT_LABELS: Record<
+  'en' | 'sr-cy' | 'sr-lat',
+  {
+    about: string;
+    orgActivities: string;
+    projectsAndServices: string;
+    news: string;
+    gallery: string;
+    contact: string;
+    institut: string;
+    aboutUs: string;
+    team: string;
+    partners: string;
+    career: string;
+    resources: string;
+    publications: string;
+    bankaGena: string;
+    botanickaBasta: string;
+    poljskeKolekcije: string;
+    laboratorije: string;
+    zasticenoPodrucje: string;
+  }
+> = {
+  en: {
+    about: 'About the Institute',
+    orgActivities: 'Organization and activities',
+    projectsAndServices: 'Projects and services',
+    news: 'News',
+    gallery: 'Gallery',
+    contact: 'Contact',
+    institut: 'Institute',
+    aboutUs: 'About us',
+    team: 'Team',
+    partners: 'Partners',
+    career: 'Career',
+    resources: 'Resources',
+    publications: 'Publications',
+    bankaGena: 'Gene bank',
+    botanickaBasta: 'Botanical garden',
+    poljskeKolekcije: 'Field collections',
+    laboratorije: 'Laboratories',
+    zasticenoPodrucje: 'Protected area',
+  },
+  'sr-cy': {
+    about: 'О Институту',
+    orgActivities: 'Организација и активности',
+    projectsAndServices: 'Пројекти и услуге',
+    news: 'Новости',
+    gallery: 'Галерија',
+    contact: 'Контакт',
+    institut: 'Институт',
+    aboutUs: 'О нама',
+    team: 'Тим',
+    partners: 'Партнери',
+    career: 'Каријера',
+    resources: 'Ресурси',
+    publications: 'Публикације',
+    bankaGena: 'Банка гена',
+    botanickaBasta: 'Ботаничка башта',
+    poljskeKolekcije: 'Пољске колекције',
+    laboratorije: 'Лабораторије',
+    zasticenoPodrucje: 'Заштићено подручје',
+  },
+  'sr-lat': {
+    about: 'O Institutu',
+    orgActivities: 'Organizacija i aktivnosti',
+    projectsAndServices: 'Projekti i usluge',
+    news: 'Novosti',
+    gallery: 'Galerija',
+    contact: 'Kontakt',
+    institut: 'Institut',
+    aboutUs: 'O nama',
+    team: 'Tim',
+    partners: 'Partneri',
+    career: 'Karijera',
+    resources: 'Resursi',
+    publications: 'Publikacije',
+    bankaGena: 'Banka gena',
+    botanickaBasta: 'Botanička bašta',
+    poljskeKolekcije: 'Poljske kolekcije',
+    laboratorije: 'Laboratorije',
+    zasticenoPodrucje: 'Zaštićeno područje',
+  },
+};
+
 function getDefaultSiteSettings(lang: Language): SiteSettings {
   const langSlug = lang === 'en' ? 'en' : lang === 'sr-cy' ? 'sr-cy' : 'sr-lat';
+  const t = DEFAULT_LABELS[langSlug];
   const r = (path: string) => `/${langSlug}${path}`;
   return {
     name: 'Institut za Genetičke Resurse',
@@ -301,21 +387,21 @@ function getDefaultSiteSettings(lang: Language): SiteSettings {
     url: 'https://igr.rs',
     logo: '/logo.svg',
     navbar: [
-      { label: 'O Institutu', href: r('/o-institutu') },
-      { label: 'Organizacija i aktivnosti', href: r('/organizacija-i-aktivnosti') },
-      { label: 'Projekti i usluge', href: r('/projekti-i-usluge') },
-      { label: 'Novosti', href: r('/novosti') },
-      { label: 'Galerija', href: r('/galerija') },
-      { label: 'Kontakt', href: r('/kontakt') },
+      { label: t.about, href: r('/o-institutu') },
+      { label: t.orgActivities, href: r('/organizacija-i-aktivnosti') },
+      { label: t.projectsAndServices, href: r('/projekti-i-usluge') },
+      { label: t.news, href: r('/novosti') },
+      { label: t.gallery, href: r('/galerija') },
+      { label: t.contact, href: r('/kontakt') },
     ],
     footer: {
       institut: {
-        title: 'Institut',
+        title: t.institut,
         links: [
-          { label: 'O nama', href: r('/o-institutu') },
-          { label: 'Tim', href: r('/o-institutu/tim') },
-          { label: 'Partneri', href: r('/o-institutu/partneri') },
-          { label: 'Karijera', href: r('/o-institutu') },
+          { label: t.aboutUs, href: r('/o-institutu') },
+          { label: t.team, href: r('/o-institutu/tim') },
+          { label: t.partners, href: r('/o-institutu/partneri') },
+          { label: t.career, href: r('/o-institutu') },
         ],
       },
       centri: {
@@ -323,25 +409,25 @@ function getDefaultSiteSettings(lang: Language): SiteSettings {
         links: [],
       },
       organizacija: {
-        title: 'Organizacija i aktivnosti',
+        title: t.orgActivities,
         links: [
-          { label: 'Banka gena', href: r('/organizacija-i-aktivnosti/banka-gena') },
-          { label: 'Botanička bašta', href: r('/organizacija-i-aktivnosti/botanicka-basta') },
-          { label: 'Poljske kolekcije', href: r('/organizacija-i-aktivnosti/poljske-kolekcije') },
-          { label: 'Laboratorije', href: r('/organizacija-i-aktivnosti/laboratorije') },
+          { label: t.bankaGena, href: r('/organizacija-i-aktivnosti/banka-gena') },
+          { label: t.botanickaBasta, href: r('/organizacija-i-aktivnosti/botanicka-basta') },
+          { label: t.poljskeKolekcije, href: r('/organizacija-i-aktivnosti/poljske-kolekcije') },
+          { label: t.laboratorije, href: r('/organizacija-i-aktivnosti/laboratorije') },
           {
-            label: 'Zaštićeno područje',
+            label: t.zasticenoPodrucje,
             href: r('/organizacija-i-aktivnosti/zasticeno-podrucje'),
           },
         ],
       },
       resursi: {
-        title: 'Resursi',
+        title: t.resources,
         links: [
-          { label: 'Projekti i usluge', href: r('/projekti-i-usluge') },
-          { label: 'Publikacije', href: r('/projekti-i-usluge') },
-          { label: 'Galerija', href: r('/galerija') },
-          { label: 'Novosti', href: r('/novosti') },
+          { label: t.projectsAndServices, href: r('/projekti-i-usluge') },
+          { label: t.publications, href: r('/projekti-i-usluge') },
+          { label: t.gallery, href: r('/galerija') },
+          { label: t.news, href: r('/novosti') },
         ],
       },
     },

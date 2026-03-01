@@ -18,7 +18,6 @@ interface GallerySectionProps {
   lang: Language;
   title?: string;
   description?: string;
-  badgeLabel?: string;
   buttonLabel?: string;
   initialAlbums?: GalleryAlbum[];
 }
@@ -27,7 +26,6 @@ export function GallerySection({
   lang,
   title = DEFAULT_TITLE,
   description = DEFAULT_DESCRIPTION,
-  badgeLabel,
   buttonLabel,
   initialAlbums,
 }: GallerySectionProps) {
@@ -54,9 +52,6 @@ export function GallerySection({
     <section id="gallery" className="py-24 content-section-bg relative">
       <Container>
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="inline-block px-4 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
-            {badgeLabel ?? 'Galerija'}
-          </span>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-foreground mb-6">
             {title}
           </h2>

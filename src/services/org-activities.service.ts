@@ -245,11 +245,11 @@ export async function getOrgActivitiesPageConfig(
     ];
 
   return {
-    title: resolveText(raw?.titleLabel?.text, lang) || 'Organizacija i aktivnosti',
+    title: resolveText(raw?.titleLabel?.text, lang) || '',
     description: pickLocaleText(raw?.description, lang) || '',
-    learnMore: resolveText(raw?.learnMoreButton?.text, lang) || 'Saznaj više',
+    learnMore: resolveText(raw?.learnMoreButton?.text, lang) || '',
     navigationHeading:
-      resolveText(raw?.navigationHeadingLabel?.text, lang) || 'Navigacija',
+      resolveText(raw?.navigationHeadingLabel?.text, lang) || '',
     navigationItems,
     overviewCards,
     bankaGenSection: mapSection(
