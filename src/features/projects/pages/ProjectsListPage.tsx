@@ -90,6 +90,14 @@ export function ProjectsListPage({
         lang={lang}
         projectsTabLabel={pageConfig.projectsTabLabel}
         servicesTabLabel={pageConfig.servicesTabLabel}
+        servicesHref={
+          pageConfig.servicesNavigationItems[0]?.sectionSlug
+            ? routes.projects.serviceDetail(
+                lang,
+                pageConfig.servicesNavigationItems[0].sectionSlug,
+              )
+            : undefined
+        }
       />
 
       <PageHeader

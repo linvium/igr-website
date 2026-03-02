@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react';
 import Image from 'next/image';
 import { Container } from '@/components/layout';
-import { PageHeader, Breadcrumbs } from '@/components/shared';
+import { PageHeader, Breadcrumbs, FilterSelect } from '@/components/shared';
 import { AboutNavigation } from '../components/AboutNavigation';
 import { routes, type Language } from '@/lib';
 import type {
@@ -14,6 +14,7 @@ import type {
 } from '@/services/about.service';
 import { TEAM_CATEGORY_LABELS } from '@/services/about.service';
 import { cn } from '@/lib/utils';
+import type { FilterOption } from '@/components/shared/FilterPills';
 
 interface TeamPageProps {
   lang: Language;
@@ -45,10 +46,12 @@ export function TeamPage({
     return teamSection.members.filter((m) => m.category === activeFilter);
   }, [teamSection.members, activeFilter]);
 
-  const categories = Object.entries(TEAM_CATEGORY_LABELS) as [
-    TeamCategorySlug,
-    string,
-  ][];
+  const categoryOptions: FilterOption[] = [
+    { value: 'all', label: 'Svi' },
+    ...(Object.entries(TEAM_CATEGORY_LABELS) as [TeamCategorySlug, string][]).map(
+      ([slug, label]) => ({ value: slug, label }),
+    ),
+  ];
 
   return (
     <Container>
@@ -72,37 +75,15 @@ export function TeamPage({
         <div className="lg:col-span-3">
           <PageHeader title={title} description={description} />
 
-          {/* Filter buttons - fixed size to prevent flickering */}
-          <div className="flex flex-wrap gap-2 mb-8">
-            <button
-              type="button"
-              onClick={() => setActiveFilter('all')}
-              className={cn(
-                'h-9 px-4 rounded-md text-sm font-medium transition-colors',
-                'border-2 box-border',
-                activeFilter === 'all'
-                  ? 'border-primary bg-primary text-primary-foreground'
-                  : 'border-border bg-transparent text-foreground hover:bg-muted/50',
-              )}
-            >
-              Svi
-            </button>
-            {categories.map(([slug, label]) => (
-              <button
-                key={slug}
-                type="button"
-                onClick={() => setActiveFilter(slug)}
-                className={cn(
-                  'h-9 px-4 rounded-md text-sm font-medium transition-colors',
-                  'border-2 box-border',
-                  activeFilter === slug
-                    ? 'border-primary bg-primary text-primary-foreground'
-                    : 'border-border bg-transparent text-foreground hover:bg-muted/50',
-                )}
-              >
-                {label}
-              </button>
-            ))}
+          <div className="mb-8">
+            <FilterSelect
+              label="Kategorija"
+              options={categoryOptions}
+              value={activeFilter}
+              onValueChange={(v) =>
+                setActiveFilter(v as TeamCategorySlug | 'all')
+              }
+            />
           </div>
 
           {/* Team cards */}

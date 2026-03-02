@@ -32,7 +32,7 @@ export function FilterSelect({
         <h3 className="text-sm font-medium mb-2">{label}</h3>
       )}
       <Select value={value} onValueChange={onValueChange}>
-        <SelectTrigger className="w-full min-w-[180px]">
+        <SelectTrigger className="w-auto min-w-[180px] max-w-[280px]">
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent>

@@ -18,7 +18,7 @@ export default async function LangLayout({
   return (
     <SiteSettingsProvider value={siteSettings}>
       <Header />
-      <main className="pt-20">{children}</main>
+      <main className="pt-28">{children}</main>
       <Footer lang={lang} />
     </SiteSettingsProvider>
   );
