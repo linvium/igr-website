@@ -18,6 +18,14 @@ export interface Project {
   body: string;
   /** Sanity portable text blocks for rich body (detaljan opis) */
   bodyBlocks?: PortableTextBlock[];
+  /** Optional external link shown below content (opens in new tab) */
+  externalLink?: string;
+  /** Optional custom label for the link (defaults to page config if not set) */
+  externalLinkLabel?: string;
+  /** Optional PDF documents for download */
+  documents?: { title: string; fileUrl: string; showOnPublications?: boolean }[];
+  /** Label for documents section (required when documents exist) */
+  documentsLabel?: string;
   category: ProjectCategory;
   status: ProjectStatus;
   year: number;

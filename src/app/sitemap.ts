@@ -62,6 +62,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     },
     {
+      url: `${siteUrl}/sr-lat/organizacija-i-aktivnosti/publikacije`,
+      lastModified: currentDate,
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
       url: `${siteUrl}/sr-lat/projekti-i-usluge`,
       lastModified: currentDate,
       changeFrequency: 'weekly',

@@ -43,7 +43,7 @@ export function Footer({ lang }: FooterProps) {
                 href={routes.home(lang)}
                 className="flex items-center gap-3 mb-6"
               >
-                <div className="w-18 h-18 rounded-full overflow-hidden flex items-center justify-center bg-primary">
+                <div className="w-18 h-18 rounded-full overflow-hidden flex items-center justify-center bg-[#005d8a]">
                   <Image
                     src="/logo-white.svg"
                     alt=""

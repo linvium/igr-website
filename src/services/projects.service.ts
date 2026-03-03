@@ -8,6 +8,12 @@ import {
 import type { Language } from '@/lib/lang';
 import type { Project, ProjectCategory, ProjectStatus } from '@/types/models';
 
+interface SanityProjectDocument {
+  titleLabel?: { en?: string; sr?: string; srCyr?: string } | null;
+  fileUrl?: string | null;
+  showOnPublications?: boolean | null;
+}
+
 // Raw from Sanity (locale objects)
 interface SanityProject {
   _id: string;
@@ -15,6 +21,10 @@ interface SanityProject {
   title?: { en?: string; sr?: string; srCyr?: string } | null;
   excerpt?: { en?: string; sr?: string; srCyr?: string } | null;
   body?: { en?: unknown[]; sr?: unknown[]; srCyr?: unknown[] } | null;
+  externalLink?: string | null;
+  externalLinkLabel?: { en?: string; sr?: string; srCyr?: string } | null;
+  documents?: SanityProjectDocument[] | null;
+  documentsLabel?: { en?: string; sr?: string; srCyr?: string } | null;
   category?: string | null;
   status?: string | null;
   year?: number | null;
@@ -30,6 +40,14 @@ const PROJECTS_QUERY = `*[_type == "project"] | order(year desc) {
   title,
   excerpt,
   body,
+  externalLink,
+  externalLinkLabel,
+  documents[] {
+    titleLabel,
+    "fileUrl": file.asset->url,
+    showOnPublications
+  },
+  documentsLabel,
   category,
   status,
   year,
@@ -45,6 +63,14 @@ const PROJECT_BY_SLUG_QUERY = `*[_type == "project" && slug.current == $slug][0]
   title,
   excerpt,
   body,
+  externalLink,
+  externalLinkLabel,
+  documents[] {
+    titleLabel,
+    "fileUrl": file.asset->url,
+    showOnPublications
+  },
+  documentsLabel,
   category,
   status,
   year,
@@ -57,6 +83,17 @@ const PROJECT_BY_SLUG_QUERY = `*[_type == "project" && slug.current == $slug][0]
 function mapProject(raw: SanityProject, lang: Language): Project {
   const slug = raw.slug?.current ?? raw._id;
   const bodyBlocks = pickLocaleBlocks(raw.body, lang);
+  const documents =
+    raw.documents
+      ?.filter((d): d is SanityProjectDocument & { fileUrl: string } =>
+        Boolean(d?.fileUrl),
+      )
+      .map((d) => ({
+        title: pickLocaleString(d.titleLabel, lang) || 'Dokument',
+        fileUrl: d.fileUrl,
+        showOnPublications: d.showOnPublications ?? false,
+      })) ?? [];
+
   return {
     id: raw._id,
     slug,
@@ -64,6 +101,15 @@ function mapProject(raw: SanityProject, lang: Language): Project {
     excerpt: pickLocaleText(raw.excerpt, lang) || '',
     body: '',
     bodyBlocks: bodyBlocks.length > 0 ? bodyBlocks : undefined,
+    externalLink: raw.externalLink || undefined,
+    externalLinkLabel: raw.externalLinkLabel
+      ? pickLocaleString(raw.externalLinkLabel, lang)
+      : undefined,
+    documents: documents.length > 0 ? documents : undefined,
+    documentsLabel:
+      documents.length > 0 && raw.documentsLabel
+        ? pickLocaleString(raw.documentsLabel, lang)
+        : undefined,
     category: (raw.category as ProjectCategory) || 'istraživanje',
     status: (raw.status as ProjectStatus) || 'aktivno',
     year: raw.year ?? new Date().getFullYear(),
@@ -97,4 +143,55 @@ export async function getProjectBySlug(
   );
   if (!raw) return null;
   return mapProject(raw, lang);
+}
+
+/** PDF documents from projects marked "Dodaj na Publikacije" for the Publications page */
+export interface PublicationDocument {
+  title: string;
+  fileUrl: string;
+}
+
+const PUBLICATION_DOCS_QUERY = `*[_type == "project"] {
+  documents[] {
+    titleLabel,
+    "fileUrl": file.asset->url,
+    "createdAt": file.asset->_createdAt,
+    showOnPublications
+  }
+}`;
+
+export async function getPublicationDocuments(
+  lang: Language,
+): Promise<PublicationDocument[]> {
+  const raw = await sanityClient.fetch<{
+    documents?: Array<{
+      titleLabel?: { en?: string; sr?: string; srCyr?: string } | null;
+      fileUrl?: string | null;
+      createdAt?: string | null;
+      showOnPublications?: boolean | null;
+    }>;
+  }[]>(PUBLICATION_DOCS_QUERY);
+
+  interface DocWithDate extends PublicationDocument {
+    createdAt: string;
+  }
+
+  const docs: DocWithDate[] = [];
+  for (const project of raw ?? []) {
+    if (!project.documents) continue;
+    for (const doc of project.documents) {
+      if (doc.showOnPublications && doc.fileUrl) {
+        docs.push({
+          title: pickLocaleString(doc.titleLabel, lang) || 'Dokument',
+          fileUrl: doc.fileUrl,
+          createdAt: doc.createdAt ?? '',
+        });
+      }
+    }
+  }
+
+  // Hronološki: najnoviji (zadnji dodan) na vrhu
+  docs.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+
+  return docs.map(({ title, fileUrl }) => ({ title, fileUrl }));
 }

@@ -6,9 +6,8 @@ import { Plus, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Container } from '@/components/layout';
 import { orgActivitiesSectionRoute, routes, type Language } from '@/lib';
+import { PLACEHOLDER_IMAGE } from '@/lib/constants';
 import type { OrgActivitiesOverviewCard } from '@/types/models/home.types';
-
-const PLACEHOLDER_IMAGE = '/placeholder.svg';
 
 interface OrgActivitiesSectionProps {
   lang: Language;

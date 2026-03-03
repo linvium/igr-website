@@ -12,6 +12,7 @@ import {
 import { Container } from '@/components/layout';
 import { PageHeader } from '@/components/shared';
 import { orgActivitiesSectionRoute, type Language } from '@/lib';
+import { PLACEHOLDER_IMAGE } from '@/lib/constants';
 import type { OrgActivitiesPageConfig } from '@/services/org-activities.service';
 
 interface OrgActivitiesOverviewPageProps {
@@ -40,16 +41,14 @@ export function OrgActivitiesOverviewPage({
               key={`${card.title}-${card.sectionSlug}`}
               className="card-elevated rounded-[4px] overflow-hidden"
             >
-              {card.image && (
-                <div className="relative h-48 w-full">
-                  <Image
-                    src={card.image}
-                    alt={card.title}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-              )}
+              <div className="relative h-48 w-full">
+                <Image
+                  src={card.image || PLACEHOLDER_IMAGE}
+                  alt={card.title}
+                  fill
+                  className="object-cover"
+                />
+              </div>
               <CardHeader>
                 <CardTitle className="text-xl font-serif">
                   {card.title}

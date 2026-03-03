@@ -4,20 +4,21 @@ import Image from 'next/image';
 import { PortableText, type PortableTextComponents } from '@portabletext/react';
 import type { PortableTextBlock } from '@portabletext/types';
 import { urlForImage } from '@/lib/sanity';
+import { PLACEHOLDER_IMAGE } from '@/lib/constants';
 
 export const portableTextComponents: PortableTextComponents = {
   types: {
     figure: ({ value }) => {
       const imageSource = value?.image || value?.asset ? (value.image || value) : null;
       const src = imageSource ? urlForImage(imageSource as { asset?: { _ref?: string } }) : '';
-      if (!src) return null;
+      const imageSrc = src || PLACEHOLDER_IMAGE;
       const alt = value?.alt || value?.caption || '';
       const caption = value?.caption || '';
       return (
         <figure className="my-6">
           <div className="relative aspect-video rounded-lg overflow-hidden">
             <Image
-              src={src}
+              src={imageSrc}
               alt={alt}
               fill
               className="object-cover"

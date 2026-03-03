@@ -4,12 +4,13 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { PortableText, type PortableTextComponents } from '@portabletext/react';
 import type { PortableTextBlock } from '@portabletext/types';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Download, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 // import { Badge } from '@/components/ui/badge';
 import { Container } from '@/components/layout';
 import { PageHeader, Breadcrumbs } from '@/components/shared';
 import { routes, type Language } from '@/lib';
+import { PLACEHOLDER_IMAGE } from '@/lib/constants';
 // import { formatYear } from '@/lib/format';
 import { urlForImage } from '@/lib/sanity';
 import type { ProjectsListPageConfig } from '@/services/list-pages.service';
@@ -28,12 +29,12 @@ const portableTextComponents: PortableTextComponents = {
       const src = value?.asset
         ? urlForImage(value as { asset?: { _ref?: string } })
         : '';
-      if (!src) return null;
+      const imageSrc = src || PLACEHOLDER_IMAGE;
       return (
         <figure className="my-6">
           <div className="relative aspect-video overflow-hidden">
             <Image
-              src={src}
+              src={imageSrc}
               alt={value?.caption || ''}
               fill
               className="object-cover"
@@ -84,22 +85,14 @@ export function ProjectDetailPage({
         </Link>
       </Button>
 
-      {project.image ? (
-        <div className="relative h-96 rounded-[4px] overflow-hidden mb-12">
-          <Image
-            src={project.image}
-            alt={project.title}
-            fill
-            className="object-cover"
-          />
-        </div>
-      ) : (
-        <div className="h-96 rounded-2xl bg-muted mb-12 flex items-center justify-center">
-          <span className="text-muted-foreground">
-            {pageConfig.noImageLabel}
-          </span>
-        </div>
-      )}
+      <div className="relative h-96 rounded-[4px] overflow-hidden mb-12">
+        <Image
+          src={project.image || PLACEHOLDER_IMAGE}
+          alt={project.title}
+          fill
+          className="object-cover"
+        />
+      </div>
 
       <PageHeader title={project.title} description={project.excerpt} />
 
@@ -116,6 +109,54 @@ export function ProjectDetailPage({
             ) : null}
           </div>
 
+          {project.externalLink && (
+            <p className="mb-8">
+              {(project.externalLinkLabel || pageConfig.externalLinkLabel)?.replace(
+                ':',
+                ' →'
+              )}
+              {' '}
+              <a
+                href={project.externalLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary font-medium underline underline-offset-4 hover:text-primary/80"
+              >
+                Link
+              </a>
+            </p>
+          )}
+
+          {project.documents && project.documents.length > 0 && (
+            <div className="mb-8 max-w-[50%]">
+              {(project.documentsLabel || pageConfig.documentsLabel) && (
+                <h3 className="text-sm font-medium mb-3">
+                  {project.documentsLabel || pageConfig.documentsLabel}
+                </h3>
+              )}
+              <ul className="space-y-3">
+                {project.documents.map((doc, index) => (
+                  <li key={index}>
+                    <a
+                      href={`${doc.fileUrl}?dl=`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-4 p-4 rounded-lg border border-border bg-card hover:bg-muted/50 transition-colors group"
+                    >
+                      <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                        <FileText className="w-5 h-5 text-primary" />
+                      </div>
+                      <span className="flex-1 font-medium text-foreground group-hover:text-primary transition-colors">
+                        {doc.title}
+                      </span>
+                      <Download className="w-5 h-5 text-muted-foreground shrink-0" />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
           {project.gallery && project.gallery.length > 0 && (
             <div className="grid grid-cols-2 gap-4 mb-8">
               {project.gallery.map((img, index) => (
@@ -124,7 +165,7 @@ export function ProjectDetailPage({
                   className="relative aspect-video rounded-lg overflow-hidden"
                 >
                   <Image
-                    src={img}
+                    src={img || PLACEHOLDER_IMAGE}
                     alt={`${project.title} - slika ${index + 1}`}
                     fill
                     className="object-cover"
@@ -146,7 +187,7 @@ export function ProjectDetailPage({
               <Card key={related.id} className="card-elevated">
                 <div className="relative h-48">
                   <Image
-                    src={related.image}
+                    src={related.image || PLACEHOLDER_IMAGE}
                     alt={related.title}
                     fill
                     className="object-cover"

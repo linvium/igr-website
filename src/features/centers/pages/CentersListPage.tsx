@@ -15,6 +15,7 @@ import {
 import { Container } from '@/components/layout';
 import { PageHeader, Breadcrumbs } from '@/components/shared';
 import { routes, type Language } from '@/lib';
+import { PLACEHOLDER_IMAGE } from '@/lib/constants';
 import type { CentersListPageConfig } from '@/services/list-pages.service';
 import type { Center } from '@/types/models';
 
@@ -50,7 +51,7 @@ export function CentersListPage({
           >
             <div className="relative h-48">
               <Image
-                src={center.image}
+                src={center.image || PLACEHOLDER_IMAGE}
                 alt={center.title}
                 fill
                 className="object-cover group-hover:scale-110 transition-transform duration-500"

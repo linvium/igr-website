@@ -25,6 +25,8 @@ export const routes = {
       `/${lang}/organizacija-i-aktivnosti/laboratorije`,
     zasticenoPodrucje: (lang: Language) =>
       `/${lang}/organizacija-i-aktivnosti/zasticeno-podrucje`,
+    publikacije: (lang: Language) =>
+      `/${lang}/organizacija-i-aktivnosti/publikacije`,
   },
   projects: {
     list: (lang: Language) => `/${lang}/projekti-i-usluge`,
@@ -52,7 +54,8 @@ export type OrgActivitiesSectionSlug =
   | 'botanicka-basta'
   | 'poljske-kolekcije'
   | 'laboratorije'
-  | 'zasticeno-podrucje';
+  | 'zasticeno-podrucje'
+  | 'publikacije';
 
 export function orgActivitiesSectionRoute(
   lang: Language,
@@ -64,6 +67,7 @@ export function orgActivitiesSectionRoute(
     'poljske-kolekcije': routes.orgActivities.poljskeKolekcije(lang),
     laboratorije: routes.orgActivities.laboratorije(lang),
     'zasticeno-podrucje': routes.orgActivities.zasticenoPodrucje(lang),
+    publikacije: routes.orgActivities.publikacije(lang),
   };
   return map[slug] ?? routes.orgActivities.overview(lang);
 }

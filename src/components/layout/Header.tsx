@@ -57,7 +57,7 @@ export function Header() {
               href={routes.home(currentLang)}
               className="flex items-center gap-3 group shrink-0"
             >
-              <div className="w-18 h-18 rounded-full overflow-hidden flex items-center justify-center group-hover:scale-105 transition-transform bg-primary">
+              <div className="w-18 h-18 rounded-full overflow-hidden flex items-center justify-center group-hover:scale-105 transition-transform bg-[#005d8a]">
                 <Image
                   src="/logo-white.svg"
                   alt=""

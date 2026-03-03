@@ -7,6 +7,7 @@ import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Container } from '@/components/layout';
 import { routes, type Language } from '@/lib';
+import { PLACEHOLDER_IMAGE } from '@/lib/constants';
 import { getGalleryRepository } from '@/repositories/factory';
 import type { GalleryAlbum } from '@/types/models';
 
@@ -67,7 +68,7 @@ export function GallerySection({
               className="group relative aspect-square overflow-hidden card-elevated"
             >
               <Image
-                src={album.coverImage}
+                src={album.coverImage || PLACEHOLDER_IMAGE}
                 alt={album.title}
                 fill
                 className="object-cover group-hover:scale-110 transition-transform duration-500"

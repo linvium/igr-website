@@ -13,6 +13,7 @@ import {
   EmptyState,
 } from '@/components/shared';
 import { routes, type Language } from '@/lib';
+import { PLACEHOLDER_IMAGE } from '@/lib/constants';
 import type { GalleryListPageConfig } from '@/services/list-pages.service';
 import type { GalleryAlbum, GalleryCategory } from '@/types/models';
 import type { FilterOption } from '@/components/shared/FilterPills';
@@ -102,7 +103,7 @@ export function GalleryListPage({
             >
               <div className="relative h-64">
                 <Image
-                  src={album.coverImage}
+                  src={album.coverImage || PLACEHOLDER_IMAGE}
                   alt={album.title}
                   fill
                   className="object-cover group-hover:scale-110 transition-transform duration-500"

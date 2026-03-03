@@ -57,7 +57,13 @@ const ABOUT_PAGE_QUERY = `coalesce(
     shortDescription,
     documents[] {
       titleLabel,
-      "fileUrl": file.asset->url
+      "fileUrl": file.asset->url,
+      "createdAt": file.asset->_createdAt
+    },
+    externalLinks[] {
+      titleLabel,
+      url,
+      date
     }
   }
 }`;
@@ -72,12 +78,26 @@ export interface AboutOverviewCard {
 export interface RegulationDocument {
   title: string;
   fileUrl: string;
+  createdAt: string;
 }
+
+export interface RegulationExternalLink {
+  title: string;
+  url: string;
+  date?: string;
+}
+
+export type RegulationItem =
+  | { type: 'document'; title: string; fileUrl: string }
+  | { type: 'externalLink'; title: string; url: string };
 
 export interface RegulationsSection {
   title: string;
   shortDescription: string;
   documents: RegulationDocument[];
+  externalLinks: RegulationExternalLink[];
+  /** PDF-ovi i linkovi spojeni i sortirani hronološki (najnoviji na vrhu) */
+  items: RegulationItem[];
 }
 
 export interface AboutSection {
@@ -217,6 +237,12 @@ export async function getAboutPageConfig(lang: Language): Promise<AboutPageConfi
       documents?: Array<{
         titleLabel?: LocaleObj;
         fileUrl?: string;
+        createdAt?: string;
+      }>;
+      externalLinks?: Array<{
+        titleLabel?: LocaleObj;
+        url?: string;
+        date?: string;
       }>;
     };
   } | null>(ABOUT_PAGE_QUERY);
@@ -293,23 +319,65 @@ export async function getAboutPageConfig(lang: Language): Promise<AboutPageConfi
   const rawRegulations = raw?.regulationsSection as {
     titleLabel?: { text?: LocaleObj };
     shortDescription?: LocaleObj;
-    documents?: Array<{ titleLabel?: LocaleObj; fileUrl?: string }>;
+    documents?: Array<{
+      titleLabel?: LocaleObj;
+      fileUrl?: string;
+      createdAt?: string;
+    }>;
+    externalLinks?: Array<{
+      titleLabel?: LocaleObj;
+      url?: string;
+      date?: string;
+    }>;
   } | null | undefined;
+  const rawDocs =
+    rawRegulations?.documents
+      ?.filter((d): d is { titleLabel?: LocaleObj; fileUrl: string; createdAt?: string } =>
+        Boolean(d?.fileUrl),
+      )
+      .map((d) => ({
+        title: pickLocaleString(d.titleLabel, lang) || 'Dokument',
+        fileUrl: d.fileUrl,
+        createdAt: d.createdAt ?? '',
+      })) ?? [];
+  const docItems: { sortDate: string; item: RegulationItem }[] = rawDocs.map(
+    (d) => ({
+      sortDate: d.createdAt,
+      item: { type: 'document' as const, title: d.title, fileUrl: d.fileUrl },
+    }),
+  );
+  const rawLinks =
+    rawRegulations?.externalLinks
+      ?.filter((l): l is { titleLabel?: LocaleObj; url: string; date?: string } =>
+        Boolean(l?.url),
+      )
+      .map((l) => ({
+        title: pickLocaleString(l.titleLabel, lang) || 'Link',
+        url: l.url,
+        date: l.date ?? '',
+      })) ?? [];
+  // Link bez datuma = pretpostavljamo da je zadnji dodan, stavljamo na vrh (budući datum)
+  const FUTURE_DATE = '2099-12-31T23:59:59Z';
+  const linkItems: { sortDate: string; item: RegulationItem }[] = rawLinks.map(
+    (l) => ({
+      sortDate: l.date || FUTURE_DATE,
+      item: { type: 'externalLink' as const, title: l.title, url: l.url },
+    }),
+  );
+  // Najnoviji (zadnji dodan) na vrhu – sortiranje po datumu silazno
+  const toTimestamp = (s: string) => (s ? new Date(s).getTime() : 0);
+  const allItems = [...docItems, ...linkItems].sort(
+    (a, b) => toTimestamp(b.sortDate) - toTimestamp(a.sortDate),
+  );
   const regulationsSection: RegulationsSection = {
     title:
       (rawRegulations?.titleLabel?.text &&
         resolveText(rawRegulations.titleLabel.text, lang)) ||
       'Propisi i Akti',
     shortDescription: pickLocaleText(rawRegulations?.shortDescription, lang),
-    documents:
-      rawRegulations?.documents
-        ?.filter((d): d is { titleLabel?: LocaleObj; fileUrl: string } =>
-          Boolean(d?.fileUrl),
-        )
-        .map((d) => ({
-          title: pickLocaleString(d.titleLabel, lang) || 'Dokument',
-          fileUrl: d.fileUrl,
-        })) ?? [],
+    documents: rawDocs,
+    externalLinks: rawLinks,
+    items: allItems.map((x) => x.item),
   };
 
   return {

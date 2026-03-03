@@ -15,6 +15,7 @@ import {
 } from '@/components/shared';
 import { ProjectsTabs } from '../components/ProjectsTabs';
 import { routes, type Language } from '@/lib';
+import { PLACEHOLDER_IMAGE } from '@/lib/constants';
 import { formatYear } from '@/lib/format';
 import type { ProjectsListPageConfig } from '@/services/list-pages.service';
 import type { Project, ProjectCategory, ProjectStatus } from '@/types/models';
@@ -139,19 +140,13 @@ export function ProjectsListPage({
               <div className="flex flex-col md:flex-row md:items-center gap-6">
                 {/* Slika - lijevo */}
                 <div className="relative w-full md:w-48 lg:w-56 flex-shrink-0 aspect-[4/3] md:aspect-auto md:h-36 bg-muted rounded-[4px] overflow-hidden">
-                  {project.image ? (
-                    <Image
-                      src={project.image}
-                      alt={project.title}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-500"
-                      sizes="(max-width: 768px) 100vw, 224px"
-                    />
-                  ) : (
-                    <div className="absolute inset-0 flex items-center justify-center text-muted-foreground text-sm">
-                      {pageConfig.noImageLabel}
-                    </div>
-                  )}
+                  <Image
+                    src={project.image || PLACEHOLDER_IMAGE}
+                    alt={project.title}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    sizes="(max-width: 768px) 100vw, 224px"
+                  />
                 </div>
                 <div className="flex-1">
                   <div className="flex flex-wrap items-center gap-3 mb-2">

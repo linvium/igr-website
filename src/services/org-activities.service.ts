@@ -19,7 +19,8 @@ export type OrgActivitiesSectionSlug =
   | 'botanicka-basta'
   | 'poljske-kolekcije'
   | 'laboratorije'
-  | 'zasticeno-podrucje';
+  | 'zasticeno-podrucje'
+  | 'publikacije';
 
 export type OrgActivitiesNavSectionSlug =
   | 'overview'
@@ -50,6 +51,9 @@ export interface OrgActivitiesPageConfig {
   poljskeKolekcijeSection: OrgActivitiesSection;
   laboratorijeSection: OrgActivitiesSection;
   zasticenoPodrucjeSection: OrgActivitiesSection;
+  publikacijeSection: OrgActivitiesSection;
+  /** Label for PDF documents list on Publications page (like documentsLabel on News) */
+  publicationDocumentsLabel?: string;
 }
 
 const ORG_ACTIVITIES_PAGE_QUERY = `coalesce(
@@ -94,7 +98,13 @@ const ORG_ACTIVITIES_PAGE_QUERY = `coalesce(
     titleLabel->{ text },
     shortDescription,
     content
-  }
+  },
+  publikacijeSection {
+    titleLabel->{ text },
+    shortDescription,
+    content
+  },
+  publicationDocumentsLabel->{ text }
 }`;
 
 function mapSection(
@@ -134,6 +144,7 @@ export function getOrgActivitiesNavItems(
     'poljske-kolekcije': routes.orgActivities.poljskeKolekcije,
     laboratorije: routes.orgActivities.laboratorije,
     'zasticeno-podrucje': routes.orgActivities.zasticenoPodrucje,
+    publikacije: routes.orgActivities.publikacije,
   };
   return config.navigationItems.map((item) => ({
     label: item.label,
@@ -164,6 +175,8 @@ export async function getOrgActivitiesPageConfig(
     poljskeKolekcijeSection?: unknown;
     laboratorijeSection?: unknown;
     zasticenoPodrucjeSection?: unknown;
+    publikacijeSection?: unknown;
+    publicationDocumentsLabel?: { text?: LocaleObj };
   } | null>(ORG_ACTIVITIES_PAGE_QUERY);
 
   const validSectionSlugs = [
@@ -172,6 +185,7 @@ export async function getOrgActivitiesPageConfig(
     'poljske-kolekcije',
     'laboratorije',
     'zasticeno-podrucje',
+    'publikacije',
   ] as const;
   const validNavSlugs = [
     'overview',
@@ -226,6 +240,11 @@ export async function getOrgActivitiesPageConfig(
         description: '',
         sectionSlug: 'zasticeno-podrucje' as const,
       },
+      {
+        title: 'Publikacije',
+        description: '',
+        sectionSlug: 'publikacije' as const,
+      },
     ];
 
   const navigationItems =
@@ -242,6 +261,7 @@ export async function getOrgActivitiesPageConfig(
         label: 'Zaštićeno područje',
         sectionSlug: 'zasticeno-podrucje' as const,
       },
+      { label: 'Publikacije', sectionSlug: 'publikacije' as const },
     ];
 
   return {
@@ -272,5 +292,12 @@ export async function getOrgActivitiesPageConfig(
       raw?.zasticenoPodrucjeSection as Parameters<typeof mapSection>[0],
       lang,
     ),
+    publikacijeSection: mapSection(
+      raw?.publikacijeSection as Parameters<typeof mapSection>[0],
+      lang,
+    ),
+    publicationDocumentsLabel: raw?.publicationDocumentsLabel?.text
+      ? resolveText(raw.publicationDocumentsLabel.text, lang)
+      : undefined,
   };
 }

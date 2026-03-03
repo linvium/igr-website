@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Container } from '@/components/layout';
 import { PageHeader, Breadcrumbs } from '@/components/shared';
 import { routes, type Language } from '@/lib';
+import { PLACEHOLDER_IMAGE } from '@/lib/constants';
 import { urlForImage } from '@/lib/sanity';
 import type { CentersListPageConfig } from '@/services/list-pages.service';
 import type { Center } from '@/types/models';
@@ -28,12 +29,12 @@ const portableTextComponents: PortableTextComponents = {
       const src = value?.asset
         ? urlForImage(value as { asset?: { _ref?: string } })
         : '';
-      if (!src) return null;
+      const imageSrc = src || PLACEHOLDER_IMAGE;
       return (
         <figure className="my-6">
           <div className="relative aspect-video overflow-hidden">
             <Image
-              src={src}
+              src={imageSrc}
               alt={value?.caption || ''}
               fill
               className="object-cover"
@@ -89,7 +90,7 @@ export function CenterDetailPage({
 
       <div className="relative h-96 overflow-hidden mb-12 rounded-[4px]">
         <Image
-          src={center.image}
+          src={center.image || PLACEHOLDER_IMAGE}
           alt={center.title}
           fill
           className="object-cover"
@@ -123,7 +124,7 @@ export function CenterDetailPage({
               <Card key={related.id} className="card-elevated">
                 <div className="relative h-48">
                   <Image
-                    src={related.image}
+                    src={related.image || PLACEHOLDER_IMAGE}
                     alt={related.title}
                     fill
                     className="object-cover"

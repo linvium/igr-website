@@ -7,6 +7,7 @@ import { Plus, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Container } from '@/components/layout';
 import { routes, type Language } from '@/lib';
+import { PLACEHOLDER_IMAGE } from '@/lib/constants';
 import { getCentersRepository } from '@/repositories/factory';
 import type { Center } from '@/types/models';
 
@@ -78,7 +79,7 @@ export function CentersSection({
                   }`}
                 >
                   <Image
-                    src={center.image}
+                    src={center.image || PLACEHOLDER_IMAGE}
                     alt={center.title}
                     fill
                     className="object-cover"

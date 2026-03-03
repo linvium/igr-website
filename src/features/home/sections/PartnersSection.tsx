@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Container } from '@/components/layout';
 import { routes, type Language } from '@/lib';
+import { PLACEHOLDER_IMAGE } from '@/lib/constants';
 import type { HomePartner } from '@/types/models';
 
 interface PartnersSectionProps {
@@ -52,31 +53,23 @@ export function PartnersSection({
                   rel="noopener noreferrer"
                   className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-lg bg-secondary/50 flex items-center justify-center overflow-hidden group-hover:opacity-100 opacity-90 transition-opacity"
                 >
-                  {partner.logo ? (
-                    <Image
-                      src={partner.logo}
-                      alt={partner.name}
-                      width={96}
-                      height={96}
-                      className="object-contain p-2"
-                    />
-                  ) : (
-                    <span className="text-sm text-muted-foreground">Logo</span>
-                  )}
+                  <Image
+                    src={partner.logo || PLACEHOLDER_IMAGE}
+                    alt={partner.name}
+                    width={96}
+                    height={96}
+                    className="object-contain p-2"
+                  />
                 </Link>
               ) : (
                 <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-lg bg-secondary/50 flex items-center justify-center overflow-hidden">
-                  {partner.logo ? (
-                    <Image
-                      src={partner.logo}
-                      alt={partner.name}
-                      width={96}
-                      height={96}
-                      className="object-contain p-2"
-                    />
-                  ) : (
-                    <span className="text-sm text-muted-foreground">Logo</span>
-                  )}
+                  <Image
+                    src={partner.logo || PLACEHOLDER_IMAGE}
+                    alt={partner.name}
+                    width={96}
+                    height={96}
+                    className="object-contain p-2"
+                  />
                 </div>
               )}
               <span className="text-sm font-medium text-muted-foreground text-center">

@@ -13,6 +13,7 @@ import {
   EmptyState,
 } from '@/components/shared';
 import { routes, type Language } from '@/lib';
+import { PLACEHOLDER_IMAGE } from '@/lib/constants';
 import { formatDateShort } from '@/lib/format';
 import type { NewsListPageConfig } from '@/services/list-pages.service';
 import type { News, NewsCategory } from '@/types/models';
@@ -90,20 +91,12 @@ export function NewsListPage({
           <Card className="group card-elevated overflow-hidden rounded-[4px]">
             <div className="grid md:grid-cols-2 gap-0">
               <div className="relative h-64 md:h-full">
-                {featured.image ? (
-                  <Image
-                    src={featured.image}
-                    alt={featured.title}
-                    fill
-                    className="object-cover"
-                  />
-                ) : (
-                  <div className="absolute inset-0 bg-muted flex items-center justify-center">
-                    <span className="text-muted-foreground text-sm">
-                      {pageConfig.noImageLabel}
-                    </span>
-                  </div>
-                )}
+                <Image
+                  src={featured.image || PLACEHOLDER_IMAGE}
+                  alt={featured.title}
+                  fill
+                  className="object-cover"
+                />
               </div>
               <CardHeader className="p-8">
                 <span className="w-fit inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium mb-3 capitalize">
@@ -166,20 +159,12 @@ export function NewsListPage({
                 className="block"
               >
                 <div className="relative h-48">
-                  {item.image ? (
-                    <Image
-                      src={item.image}
-                      alt={item.title}
-                      fill
-                      className="object-cover"
-                    />
-                  ) : (
-                    <div className="absolute inset-0 bg-muted flex items-center justify-center">
-                      <span className="text-muted-foreground text-sm">
-                        {pageConfig.noImageLabel}
-                      </span>
-                    </div>
-                  )}
+                  <Image
+                    src={item.image || PLACEHOLDER_IMAGE}
+                    alt={item.title}
+                    fill
+                    className="object-cover"
+                  />
                 </div>
               </Link>
               <CardHeader>

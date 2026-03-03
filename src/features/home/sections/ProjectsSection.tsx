@@ -6,6 +6,7 @@ import { Calendar, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Container } from '@/components/layout';
 import { routes, type Language } from '@/lib';
+import { PLACEHOLDER_IMAGE } from '@/lib/constants';
 import { formatYear } from '@/lib/format';
 import type { Project } from '@/types/models';
 
@@ -69,19 +70,13 @@ export function ProjectsSection({
               >
                 {/* Slika */}
                 <div className="relative rounded-[4px] w-full flex-shrink-0 aspect-[16/10] bg-muted overflow-hidden">
-                  {project.image ? (
-                    <Image
-                      src={project.image}
-                      alt={project.title}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-500"
-                      sizes="(max-width: 768px) 100vw, 256px"
-                    />
-                  ) : (
-                    <div className="absolute inset-0 flex items-center justify-center text-muted-foreground text-sm">
-                      Nema slike
-                    </div>
-                  )}
+                  <Image
+                    src={project.image || PLACEHOLDER_IMAGE}
+                    alt={project.title}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    sizes="(max-width: 768px) 100vw, 256px"
+                  />
                 </div>
                 {/* Tekst */}
                 <div className="flex flex-1 flex-col justify-center p-4 md:p-5">

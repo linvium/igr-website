@@ -236,6 +236,8 @@ const PROJECTS_LIST_QUERY = `*[_id == "projectsListPage"][0] {
   detailRelatedLabel->{ text },
   learnMoreButton->{ text },
   noImageLabel->{ text },
+  externalLinkLabel->{ text },
+  documentsLabel->{ text },
   categoryCategories[]->{ slug, name },
   statusCategories[]->{ slug, name },
   projectsTabLabel->{ text },
@@ -300,6 +302,8 @@ export interface ProjectsListPageConfig {
   detailRelated: string;
   learnMore: string;
   noImageLabel: string;
+  externalLinkLabel: string;
+  documentsLabel: string;
   categoryCategories: { slug: string; name: string }[];
   statusCategories: { slug: string; name: string }[];
   projectsTabLabel: string;
@@ -364,6 +368,8 @@ export async function getProjectsListPageConfig(
     detailRelatedLabel?: { text?: LocaleObj };
     learnMoreButton?: { text?: LocaleObj };
     noImageLabel?: { text?: LocaleObj };
+    externalLinkLabel?: { text?: LocaleObj };
+    documentsLabel?: { text?: LocaleObj };
     categoryCategories?: Array<{ slug?: string; name?: LocaleObj }>;
     statusCategories?: Array<{ slug?: string; name?: LocaleObj }>;
     projectsTabLabel?: { text?: LocaleObj };
@@ -472,6 +478,12 @@ export async function getProjectsListPageConfig(
     noImageLabel: raw?.noImageLabel?.text
       ? resolveText(raw.noImageLabel.text, lang)
       : '',
+    externalLinkLabel: raw?.externalLinkLabel?.text
+      ? resolveText(raw.externalLinkLabel.text, lang)
+      : 'Tekst linka:',
+    documentsLabel: raw?.documentsLabel?.text
+      ? resolveText(raw.documentsLabel.text, lang)
+      : 'Dokumenti',
     categoryCategories,
     statusCategories,
     projectsTabLabel: raw?.projectsTabLabel?.text

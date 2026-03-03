@@ -1,4 +1,4 @@
-import { FileText, Download } from 'lucide-react';
+import { FileText, Download, ExternalLink } from 'lucide-react';
 import { getLanguage } from '@/lib/lang';
 import { generatePageMetadata } from '@/lib/seo';
 import { getSiteSettings } from '@/services/site-settings.service';
@@ -69,26 +69,45 @@ export default async function RegulationsPage({
             description={section.shortDescription}
           />
 
-          {section.documents.length > 0 ? (
+          {section.items.length > 0 ? (
             <ul className="space-y-4">
-              {section.documents.map((doc, index) => (
-                <li key={index}>
-                  <a
-                    href={`${doc.fileUrl}?dl=`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-4 p-4 rounded-lg border border-border bg-card hover:bg-muted/50 transition-colors group"
-                  >
-                    <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                      <FileText className="w-6 h-6 text-primary" />
-                    </div>
-                    <span className="flex-1 font-medium text-foreground group-hover:text-primary transition-colors">
-                      {doc.title}
-                    </span>
-                    <Download className="w-5 h-5 text-muted-foreground shrink-0" />
-                  </a>
-                </li>
-              ))}
+              {section.items.map((item, index) =>
+                item.type === 'document' ? (
+                  <li key={`doc-${index}`}>
+                    <a
+                      href={`${item.fileUrl}?dl=`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-4 p-4 rounded-lg border border-border bg-card hover:bg-muted/50 transition-colors group"
+                    >
+                      <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                        <FileText className="w-6 h-6 text-primary" />
+                      </div>
+                      <span className="flex-1 font-medium text-foreground group-hover:text-primary transition-colors">
+                        {item.title}
+                      </span>
+                      <Download className="w-5 h-5 text-muted-foreground shrink-0" />
+                    </a>
+                  </li>
+                ) : (
+                  <li key={`link-${index}`}>
+                    <a
+                      href={item.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-4 p-4 rounded-lg border border-border bg-card hover:bg-muted/50 transition-colors group"
+                    >
+                      <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                        <ExternalLink className="w-6 h-6 text-primary" />
+                      </div>
+                      <span className="flex-1 font-medium text-foreground group-hover:text-primary transition-colors">
+                        {item.title}
+                      </span>
+                      <ExternalLink className="w-5 h-5 text-muted-foreground shrink-0" />
+                    </a>
+                  </li>
+                ),
+              )}
             </ul>
           ) : (
             <p className="text-muted-foreground">

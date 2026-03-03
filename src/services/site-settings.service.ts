@@ -419,6 +419,7 @@ function getDefaultSiteSettings(lang: Language): SiteSettings {
             label: t.zasticenoPodrucje,
             href: r('/organizacija-i-aktivnosti/zasticeno-podrucje'),
           },
+          { label: t.publications, href: r('/organizacija-i-aktivnosti/publikacije') },
         ],
       },
       resursi: {

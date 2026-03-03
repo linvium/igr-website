@@ -14,6 +14,7 @@ import type {
 } from '@/services/about.service';
 import { TEAM_CATEGORY_LABELS } from '@/services/about.service';
 import { cn } from '@/lib/utils';
+import { PLACEHOLDER_IMAGE } from '@/lib/constants';
 import type { FilterOption } from '@/components/shared/FilterPills';
 
 interface TeamPageProps {
@@ -116,19 +117,13 @@ function TeamCard({ member }: { member: TeamMember }) {
     >
       {/* Image - left side */}
       <div className="relative w-full sm:w-48 h-48 sm:h-40 shrink-0 rounded-lg overflow-hidden bg-muted">
-        {member.image ? (
-          <Image
-            src={member.image}
-            alt={fullName}
-            fill
-            className="object-cover"
-            sizes="(max-width: 640px) 100vw, 192px"
-          />
-        ) : (
-          <div className="absolute inset-0 flex items-center justify-center text-muted-foreground text-4xl font-serif">
-            {member.name?.[0] || '?'}
-          </div>
-        )}
+        <Image
+          src={member.image || PLACEHOLDER_IMAGE}
+          alt={fullName}
+          fill
+          className="object-cover"
+          sizes="(max-width: 640px) 100vw, 192px"
+        />
       </div>
 
       {/* Content - right side */}

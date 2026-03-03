@@ -7,6 +7,7 @@ import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Container } from '@/components/layout';
 import { routes, type Language } from '@/lib';
+import { PLACEHOLDER_IMAGE } from '@/lib/constants';
 import { formatDate } from '@/lib/format';
 import { getNewsRepository } from '@/repositories/factory';
 import type { News } from '@/types/models';
@@ -84,7 +85,7 @@ export function NewsSection({
             >
               <div className="relative h-48 overflow-hidden flex-shrink-0 rounded-[4px]">
                 <Image
-                  src={item.image}
+                  src={item.image || PLACEHOLDER_IMAGE}
                   alt={item.title}
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-500"

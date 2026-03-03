@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Container } from '@/components/layout';
 import { PageHeader, Breadcrumbs } from '@/components/shared';
 import { routes, type Language } from '@/lib';
+import { PLACEHOLDER_IMAGE } from '@/lib/constants';
 import { formatDateShort } from '@/lib/format';
 import type { GalleryListPageConfig } from '@/services/list-pages.service';
 import type { GalleryAlbum } from '@/types/models';
@@ -117,7 +118,7 @@ export function GalleryAlbumPage({
               onClick={() => setLightboxImage(image.id)}
             >
               <Image
-                src={image.url}
+                src={image.url || PLACEHOLDER_IMAGE}
                 alt={image.alt}
                 fill
                 className="object-cover group-hover:scale-110 transition-transform duration-500"
@@ -168,7 +169,7 @@ export function GalleryAlbumPage({
               {/* Image */}
               <div className="relative w-full h-[80vh] flex items-center justify-center p-4">
                 <Image
-                  src={currentImage.url}
+                  src={currentImage.url || PLACEHOLDER_IMAGE}
                   alt={currentImage.alt}
                   fill
                   className="object-contain"

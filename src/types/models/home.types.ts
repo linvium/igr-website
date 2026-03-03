@@ -41,7 +41,8 @@ export interface OrgActivitiesOverviewCard {
     | 'botanicka-basta'
     | 'poljske-kolekcije'
     | 'laboratorije'
-    | 'zasticeno-podrucje';
+    | 'zasticeno-podrucje'
+    | 'publikacije';
 }
 
 /** Resolved section: title/description in current lang, data resolved from refs or defaults */

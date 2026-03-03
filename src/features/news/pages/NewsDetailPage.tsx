@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Container } from '@/components/layout';
 import { PageHeader, Breadcrumbs } from '@/components/shared';
 import { routes, type Language } from '@/lib';
+import { PLACEHOLDER_IMAGE } from '@/lib/constants';
 import { formatDate } from '@/lib/format';
 import { urlForImage } from '@/lib/sanity';
 import type { NewsListPageConfig } from '@/services/list-pages.service';
@@ -28,12 +29,12 @@ const portableTextComponents: PortableTextComponents = {
       const src = value?.asset
         ? urlForImage(value as { asset?: { _ref?: string } })
         : '';
-      if (!src) return null;
+      const imageSrc = src || PLACEHOLDER_IMAGE;
       return (
         <figure className="my-6">
           <div className="relative aspect-video rounded-lg overflow-hidden">
             <Image
-              src={src}
+              src={imageSrc}
               alt={value?.caption || ''}
               fill
               className="object-cover"
@@ -86,22 +87,14 @@ export function NewsDetailPage({
         </Link>
       </Button>
 
-      {item.image ? (
-        <div className="relative h-96 rounded-[4px] overflow-hidden mb-12">
-          <Image
-            src={item.image}
-            alt={item.title}
-            fill
-            className="object-cover"
-          />
-        </div>
-      ) : (
-        <div className="h-96 rounded-2xl bg-muted mb-12 flex items-center justify-center">
-          <span className="text-muted-foreground">
-            {pageConfig.noImageLabel}
-          </span>
-        </div>
-      )}
+      <div className="relative h-96 rounded-[4px] overflow-hidden mb-12">
+        <Image
+          src={item.image || PLACEHOLDER_IMAGE}
+          alt={item.title}
+          fill
+          className="object-cover"
+        />
+      </div>
 
       <PageHeader title={item.title} description={item.excerpt} />
 
@@ -206,20 +199,12 @@ export function NewsDetailPage({
                 className="card-elevated rounded-[4px] overflow-hidden"
               >
                 <div className="relative h-48 rounded-[4px]">
-                  {related.image ? (
-                    <Image
-                      src={related.image}
-                      alt={related.title}
-                      fill
-                      className="object-cover"
-                    />
-                  ) : (
-                    <div className="absolute inset-0 bg-muted flex items-center justify-center">
-                      <span className="text-muted-foreground text-sm">
-                        {pageConfig.noImageLabel}
-                      </span>
-                    </div>
-                  )}
+                  <Image
+                    src={related.image || PLACEHOLDER_IMAGE}
+                    alt={related.title}
+                    fill
+                    className="object-cover"
+                  />
                 </div>
                 <CardHeader>
                   <CardTitle className="font-serif">{related.title}</CardTitle>
