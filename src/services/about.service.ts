@@ -110,7 +110,8 @@ export type TeamCategorySlug =
   | 'direktor'
   | 'naucno_vijece_instituta'
   | 'administrativno_osoblje'
-  | 'stalni_saradnici'
+  | 'spoljni_saradnici'
+  | 'tehnicko_osoblje'
   | 'osoblje_u_naucnom_i_istrazivackom_zvanju';
 
 export interface TeamMember {
@@ -129,11 +130,28 @@ export interface TeamSection {
   members: TeamMember[];
 }
 
+/** Mapira stalni_saradnici -> spoljni_saradnici za retrokompatibilnost */
+function normalizeTeamCategory(cat?: string | null): TeamCategorySlug {
+  const valid: TeamCategorySlug[] = [
+    'direktor',
+    'naucno_vijece_instituta',
+    'administrativno_osoblje',
+    'spoljni_saradnici',
+    'tehnicko_osoblje',
+    'osoblje_u_naucnom_i_istrazivackom_zvanju',
+  ];
+  if (cat === 'stalni_saradnici') return 'spoljni_saradnici';
+  return valid.includes(cat as TeamCategorySlug)
+    ? (cat as TeamCategorySlug)
+    : 'direktor';
+}
+
 export const TEAM_CATEGORY_LABELS: Record<TeamCategorySlug, string> = {
   direktor: 'Direktor',
   naucno_vijece_instituta: 'Naučno vijeće instituta',
   administrativno_osoblje: 'Administrativno osoblje',
-  stalni_saradnici: 'Stalni saradnici',
+  spoljni_saradnici: 'Spoljni saradnici',
+  tehnicko_osoblje: 'Tehničko osoblje',
   osoblje_u_naucnom_i_istrazivackom_zvanju:
     'Osoblje u naučnom i istraživačkom zvanju',
 };
@@ -308,7 +326,7 @@ export async function getAboutPageConfig(lang: Language): Promise<AboutPageConfi
         surname: pickLocaleString(m.surname, lang),
         title: pickLocaleString(m.title, lang),
         description: pickLocaleText(m.description, lang),
-        category: (m.category || 'direktor') as TeamCategorySlug,
+        category: normalizeTeamCategory(m.category),
       })) ?? [],
   };
   const partnersSection = mapSection(
