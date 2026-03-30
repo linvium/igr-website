@@ -26,8 +26,10 @@ import {
 const portableTextComponents: PortableTextComponents = {
   types: {
     figure: ({ value }) => {
-      const src = value?.asset
-        ? urlForImage(value as { asset?: { _ref?: string } })
+      const imageSource =
+        value?.image || value?.asset ? (value.image || value) : null;
+      const src = imageSource
+        ? urlForImage(imageSource as { asset?: { _ref?: string } })
         : '';
       const imageSrc = src || PLACEHOLDER_IMAGE;
       return (
@@ -35,7 +37,7 @@ const portableTextComponents: PortableTextComponents = {
           <div className="relative aspect-video overflow-hidden">
             <Image
               src={imageSrc}
-              alt={value?.caption || ''}
+              alt={value?.alt || value?.caption || ''}
               fill
               className="object-cover"
             />

@@ -44,6 +44,7 @@ const ABOUT_PAGE_QUERY = `coalesce(
       surname,
       title,
       description,
+      descriptionRich,
       category
     }
   },
@@ -120,8 +121,11 @@ export interface TeamMember {
   name: string;
   surname: string;
   title: string;
+  /** Plain text (legacy CMS polje description) – ako nema rich teksta */
   description: string;
-  category: TeamCategorySlug;
+  /** Portable Text iz descriptionRich (prioritet nad description) */
+  descriptionBlocks?: unknown[];
+  categories: TeamCategorySlug[];
 }
 
 export interface TeamSection {
@@ -130,20 +134,34 @@ export interface TeamSection {
   members: TeamMember[];
 }
 
-/** Mapira stalni_saradnici -> spoljni_saradnici za retrokompatibilnost */
-function normalizeTeamCategory(cat?: string | null): TeamCategorySlug {
-  const valid: TeamCategorySlug[] = [
-    'direktor',
-    'naucno_vijece_instituta',
-    'administrativno_osoblje',
-    'spoljni_saradnici',
-    'tehnicko_osoblje',
-    'osoblje_u_naucnom_i_istrazivackom_zvanju',
-  ];
+const TEAM_CATEGORY_SLUGS: TeamCategorySlug[] = [
+  'direktor',
+  'naucno_vijece_instituta',
+  'administrativno_osoblje',
+  'spoljni_saradnici',
+  'tehnicko_osoblje',
+  'osoblje_u_naucnom_i_istrazivackom_zvanju',
+];
+
+/** Jedna oznaka; stalni_saradnici -> spoljni_saradnici */
+function normalizeOneTeamCategory(cat?: string | null): TeamCategorySlug {
   if (cat === 'stalni_saradnici') return 'spoljni_saradnici';
-  return valid.includes(cat as TeamCategorySlug)
+  return TEAM_CATEGORY_SLUGS.includes(cat as TeamCategorySlug)
     ? (cat as TeamCategorySlug)
     : 'direktor';
+}
+
+/** CMS: category kao string (stari zapis) ili niz stringova; uklanja duplikate */
+function normalizeTeamCategories(
+  input: string | string[] | null | undefined,
+): TeamCategorySlug[] {
+  if (input == null || input === '') return ['direktor'];
+  const raw = Array.isArray(input) ? input : [input];
+  const normalized = raw
+    .filter((c): c is string => typeof c === 'string' && c.length > 0)
+    .map((c) => normalizeOneTeamCategory(c));
+  const deduped = [...new Set(normalized)];
+  return deduped.length > 0 ? deduped : ['direktor'];
 }
 
 export const TEAM_CATEGORY_LABELS: Record<TeamCategorySlug, string> = {
@@ -245,7 +263,8 @@ export async function getAboutPageConfig(lang: Language): Promise<AboutPageConfi
         surname?: LocaleObj;
         title?: LocaleObj;
         description?: LocaleObj;
-        category?: string;
+        descriptionRich?: { en?: unknown[]; sr?: unknown[]; srCyr?: unknown[] };
+        category?: string | string[];
       }>;
     };
     partnersSection?: unknown;
@@ -319,15 +338,21 @@ export async function getAboutPageConfig(lang: Language): Promise<AboutPageConfi
       'Tim',
     shortDescription: pickLocaleText(rawTeam?.shortDescription, lang),
     members:
-      rawTeam?.members?.map((m, i) => ({
-        id: `member-${i}`,
-        image: m.image ? urlForImage(m.image) : '',
-        name: pickLocaleString(m.name, lang),
-        surname: pickLocaleString(m.surname, lang),
-        title: pickLocaleString(m.title, lang),
-        description: pickLocaleText(m.description, lang),
-        category: normalizeTeamCategory(m.category),
-      })) ?? [],
+      rawTeam?.members?.map((m, i) => {
+        const descriptionBlocks = pickLocaleBlocks(m.descriptionRich, lang);
+        const plainDescription = pickLocaleText(m.description, lang);
+        return {
+          id: `member-${i}`,
+          image: m.image ? urlForImage(m.image) : '',
+          name: pickLocaleString(m.name, lang),
+          surname: pickLocaleString(m.surname, lang),
+          title: pickLocaleString(m.title, lang),
+          description: plainDescription,
+          descriptionBlocks:
+            descriptionBlocks.length > 0 ? descriptionBlocks : undefined,
+          categories: normalizeTeamCategories(m.category),
+        };
+      }) ?? [],
   };
   const partnersSection = mapSection(
     raw?.partnersSection as Parameters<typeof mapSection>[0],

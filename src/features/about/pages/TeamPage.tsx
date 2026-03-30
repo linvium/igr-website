@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react';
 import Image from 'next/image';
 import { Container } from '@/components/layout';
-import { PageHeader, Breadcrumbs, FilterSelect } from '@/components/shared';
+import { PageHeader, Breadcrumbs, FilterSelect, PortableTextRenderer } from '@/components/shared';
 import { AboutNavigation } from '../components/AboutNavigation';
 import { routes, type Language } from '@/lib';
 import type {
@@ -15,6 +15,7 @@ import type {
 import { TEAM_CATEGORY_LABELS } from '@/services/about.service';
 import { cn } from '@/lib/utils';
 import { PLACEHOLDER_IMAGE } from '@/lib/constants';
+import { Badge } from '@/components/ui/badge';
 import type { FilterOption } from '@/components/shared/FilterPills';
 
 interface TeamPageProps {
@@ -44,7 +45,9 @@ export function TeamPage({
 
   const filteredMembers = useMemo(() => {
     if (activeFilter === 'all') return teamSection.members;
-    return teamSection.members.filter((m) => m.category === activeFilter);
+    return teamSection.members.filter((m) =>
+      m.categories.includes(activeFilter),
+    );
   }, [teamSection.members, activeFilter]);
 
   const categoryOptions: FilterOption[] = [
@@ -116,12 +119,12 @@ function TeamCard({ member }: { member: TeamMember }) {
       )}
     >
       {/* Image - left side */}
-      <div className="relative w-full sm:w-48 h-48 sm:h-40 shrink-0 rounded-lg overflow-hidden bg-muted">
+      <div className="relative w-full sm:w-48 aspect-square sm:aspect-auto sm:h-48 shrink-0 rounded-lg overflow-hidden bg-muted">
         <Image
           src={member.image || PLACEHOLDER_IMAGE}
           alt={fullName}
           fill
-          className="object-cover"
+          className="object-cover object-center"
           sizes="(max-width: 640px) 100vw, 192px"
         />
       </div>
@@ -135,12 +138,26 @@ function TeamCard({ member }: { member: TeamMember }) {
           {member.title && (
             <p className="text-primary font-medium">{member.title}</p>
           )}
+          {member.categories.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-2">
+              {member.categories.map((slug) => (
+                <Badge key={slug} variant="secondary" className="font-normal">
+                  {TEAM_CATEGORY_LABELS[slug]}
+                </Badge>
+              ))}
+            </div>
+          )}
         </div>
-        {member.description && (
-          <p className="text-muted-foreground leading-relaxed">
+        {member.descriptionBlocks && member.descriptionBlocks.length > 0 ? (
+          <PortableTextRenderer
+            value={member.descriptionBlocks}
+            className="prose prose-lg max-w-none text-muted-foreground mt-2"
+          />
+        ) : member.description ? (
+          <p className="text-muted-foreground leading-relaxed mt-2">
             {member.description}
           </p>
-        )}
+        ) : null}
       </div>
     </li>
   );
