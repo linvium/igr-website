@@ -53,6 +53,7 @@ export default async function PublikacijePage({
       navHeading={pageConfig.navigationHeading}
       publicationDocuments={publicationDocuments}
       publicationDocumentsLabel={pageConfig.publicationDocumentsLabel}
+      bottomGallery={section.bottomGallery}
     />
   );
 }

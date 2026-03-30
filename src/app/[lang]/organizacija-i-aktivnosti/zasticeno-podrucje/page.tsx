@@ -54,6 +54,7 @@ export default async function ZasticenoPodrucjePage({
       contentBlocks={section.contentBlocks}
       navItems={navItems}
       navHeading={pageConfig.navigationHeading}
+      bottomGallery={section.bottomGallery}
     />
   );
 }

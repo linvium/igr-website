@@ -47,6 +47,7 @@ export default async function BotanickaBastaPage({
       contentBlocks={section.contentBlocks}
       navItems={navItems}
       navHeading={pageConfig.navigationHeading}
+      bottomGallery={section.bottomGallery}
     />
   );
 }

@@ -10,6 +10,8 @@ import { AboutNavigation } from '@/features/about';
 import { routes, type Language } from '@/lib';
 import type { OrgActivitiesNavItem } from '@/services/org-activities.service';
 import type { PublicationDocument } from '@/services/projects.service';
+import type { GalleryAlbum } from '@/types/models';
+import { OrgActivitiesBottomGallery } from '../components/OrgActivitiesBottomGallery';
 import { Download, FileText } from 'lucide-react';
 
 interface OrgActivitiesSubPageProps {
@@ -25,6 +27,8 @@ interface OrgActivitiesSubPageProps {
   publicationDocuments?: PublicationDocument[];
   /** Label for PDF documents section (e.g. "Dokumenti za preuzimanje") - from CMS */
   publicationDocumentsLabel?: string;
+  /** Album galerije ispod sadržaja (CMS: bottomGallery) */
+  bottomGallery?: GalleryAlbum | null;
 }
 
 export function OrgActivitiesSubPage({
@@ -38,6 +42,7 @@ export function OrgActivitiesSubPage({
   navHeading,
   publicationDocuments,
   publicationDocumentsLabel,
+  bottomGallery,
 }: OrgActivitiesSubPageProps) {
   return (
     <Container>
@@ -95,6 +100,9 @@ export function OrgActivitiesSubPage({
                 ))}
               </ul>
             </div>
+          )}
+          {bottomGallery && bottomGallery.images.length > 0 && (
+            <OrgActivitiesBottomGallery lang={lang} album={bottomGallery} />
           )}
         </div>
       </div>

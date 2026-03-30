@@ -82,6 +82,15 @@ function mapAlbum(raw: SanityGalleryAlbum, lang: Language): GalleryAlbum {
   };
 }
 
+/** Mapira ugrađeni album iz GROQ referenc (npr. orgActivitiesPage bottomGallery) */
+export function mapGalleryAlbumFromSanity(
+  raw: SanityGalleryAlbum | null | undefined,
+  lang: Language,
+): GalleryAlbum | null {
+  if (!raw) return null;
+  return mapAlbum(raw, lang);
+}
+
 export async function getAllGalleryAlbums(
   lang: Language,
 ): Promise<GalleryAlbum[]> {

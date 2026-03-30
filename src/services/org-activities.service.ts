@@ -7,6 +7,8 @@ import {
 } from '@/lib/sanity';
 import type { Language } from '@/lib/lang';
 import { routes } from '@/lib/routes';
+import { mapGalleryAlbumFromSanity } from '@/services/gallery.service';
+import type { GalleryAlbum } from '@/types/models';
 
 type LocaleObj = { en?: string; sr?: string; srCyr?: string } | null;
 
@@ -37,6 +39,8 @@ export interface OrgActivitiesSection {
   title: string;
   shortDescription: string;
   contentBlocks: unknown[];
+  /** Album galerije ispod sadržaja (CMS: bottomGallery na orgActivitiesPage) */
+  bottomGallery?: GalleryAlbum | null;
 }
 
 export interface OrgActivitiesPageConfig {
@@ -77,32 +81,98 @@ const ORG_ACTIVITIES_PAGE_QUERY = `coalesce(
   bankaGenSection {
     titleLabel->{ text },
     shortDescription,
-    content
+    content,
+    bottomGallery->{
+      _id,
+      slug,
+      title,
+      description,
+      category,
+      coverImage,
+      images,
+      date,
+      tags
+    }
   },
   botanickaBastaSection {
     titleLabel->{ text },
     shortDescription,
-    content
+    content,
+    bottomGallery->{
+      _id,
+      slug,
+      title,
+      description,
+      category,
+      coverImage,
+      images,
+      date,
+      tags
+    }
   },
   poljskeKolekcijeSection {
     titleLabel->{ text },
     shortDescription,
-    content
+    content,
+    bottomGallery->{
+      _id,
+      slug,
+      title,
+      description,
+      category,
+      coverImage,
+      images,
+      date,
+      tags
+    }
   },
   laboratorijeSection {
     titleLabel->{ text },
     shortDescription,
-    content
+    content,
+    bottomGallery->{
+      _id,
+      slug,
+      title,
+      description,
+      category,
+      coverImage,
+      images,
+      date,
+      tags
+    }
   },
   zasticenoPodrucjeSection {
     titleLabel->{ text },
     shortDescription,
-    content
+    content,
+    bottomGallery->{
+      _id,
+      slug,
+      title,
+      description,
+      category,
+      coverImage,
+      images,
+      date,
+      tags
+    }
   },
   publikacijeSection {
     titleLabel->{ text },
     shortDescription,
-    content
+    content,
+    bottomGallery->{
+      _id,
+      slug,
+      title,
+      description,
+      category,
+      coverImage,
+      images,
+      date,
+      tags
+    }
   },
   publicationDocumentsLabel->{ text }
 }`;
@@ -112,16 +182,19 @@ function mapSection(
     titleLabel?: { text?: LocaleObj };
     shortDescription?: LocaleObj;
     content?: { en?: unknown[]; sr?: unknown[]; srCyr?: unknown[] };
+    bottomGallery?: Parameters<typeof mapGalleryAlbumFromSanity>[0];
   } | null,
   lang: Language,
 ): OrgActivitiesSection {
   if (!raw) {
     return { title: '', shortDescription: '', contentBlocks: [] };
   }
+  const bottomGallery = mapGalleryAlbumFromSanity(raw.bottomGallery, lang);
   return {
     title: resolveText(raw.titleLabel?.text, lang),
     shortDescription: pickLocaleText(raw.shortDescription, lang),
     contentBlocks: pickLocaleBlocks(raw.content, lang),
+    bottomGallery: bottomGallery ?? undefined,
   };
 }
 
