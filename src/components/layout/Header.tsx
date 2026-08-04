@@ -20,6 +20,11 @@ export function Header() {
   const currentLang = getLanguage(pathname.split('/')[1] as Language);
   const siteSettings = useSiteSettings();
   const navigation = siteSettings.navbar;
+  // EN / ćirilica imaju duže labele — malo manji font da se ne prelamaju
+  const navLinkClass =
+    currentLang === 'sr-lat'
+      ? 'text-sm font-medium text-foreground hover:text-primary transition-colors whitespace-nowrap'
+      : 'text-[13px] font-medium text-foreground hover:text-primary transition-colors whitespace-nowrap';
 
   const isExternal = (href: string) =>
     href.startsWith('http://') || href.startsWith('https://');
@@ -86,7 +91,11 @@ export function Header() {
             </Link>
 
             {/* Desktop Navigation - centered */}
-            <div className="hidden lg:flex items-center justify-center gap-6 flex-1">
+            <div
+              className={`hidden lg:flex items-center justify-center flex-1 ${
+                currentLang === 'sr-lat' ? 'gap-6' : 'gap-4'
+              }`}
+            >
               {navigation.map((item) =>
                 isExternal(item.href) ? (
                   <a
@@ -94,7 +103,7 @@ export function Header() {
                     href={item.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm font-medium text-foreground hover:text-primary transition-colors"
+                    className={navLinkClass}
                   >
                     {item.label}
                   </a>
@@ -102,7 +111,7 @@ export function Header() {
                   <Link
                     key={item.label}
                     href={item.href}
-                    className="text-sm font-medium text-foreground hover:text-primary transition-colors"
+                    className={navLinkClass}
                   >
                     {item.label}
                   </Link>

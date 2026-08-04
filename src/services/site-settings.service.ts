@@ -160,9 +160,9 @@ function mapNavItems(
       if (path === 'centri' || href.endsWith('/centri')) {
         return { label, href: orgActivitiesHref };
       }
-      // Projekti i usluge - label i putanja /projekti-i-usluge
+      // Migracija: Projekti -> Projekti i usluge (href se mijenja, label ostaje iz CMS-a)
       if (path === 'projekti' || path === 'projekti-i-usluge' || href.endsWith('/projekti') || href.endsWith('/projekti-i-usluge')) {
-        return { label: 'Projekti i usluge', href: `/${langSlug}/projekti-i-usluge` };
+        return { label, href: `/${langSlug}/projekti-i-usluge` };
       }
       return { label, href };
     });
