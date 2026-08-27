@@ -7,7 +7,6 @@ import { ProjectsSection } from './sections/ProjectsSection';
 import { NewsSection } from './sections/NewsSection';
 import { GallerySection } from './sections/GallerySection';
 import { ContactSection } from './sections/ContactSection';
-import { NewsletterSection } from './sections/NewsletterSection';
 import type { Language } from '@/lib';
 import type { HomePageData, ResolvedHomeSection } from '@/types/models';
 import type {
@@ -170,7 +169,6 @@ export function HomePage({
           orgActivitiesPageConfig={homePageData.orgActivitiesPageConfig}
         />
       ))}
-      <NewsletterSection />
     </>
   );
 }

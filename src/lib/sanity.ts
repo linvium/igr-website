@@ -27,7 +27,7 @@ export function urlForImage(
   if (typeof source === 'string') return source;
   const ref = source.asset?._ref;
   if (!ref) return '';
-  return imageBuilder.image(source).auto('format').url();
+  return imageBuilder.image(source).auto('format').fit('max').url();
 }
 
 /**
