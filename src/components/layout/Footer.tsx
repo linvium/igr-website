@@ -39,37 +39,48 @@ export function Footer({ lang }: FooterProps) {
           <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-12">
             {/* Brand */}
             <div className="lg:col-span-2">
-              <Link
-                href={routes.home(lang)}
-                className="flex items-center gap-3 mb-6"
-              >
-                <div className="w-18 h-18 rounded-full overflow-hidden flex items-center justify-center bg-[#005d8a]">
+              <div className="flex items-center gap-3 mb-6">
+                <a
+                  href="https://www.unibl.org"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Univerzitet u Banjoj Luci (otvara se u novom tabu)"
+                  title="Univerzitet u Banjoj Luci"
+                  className="shrink-0"
+                >
+                  <div className="w-18 h-18 rounded-full overflow-hidden flex items-center justify-center hover:scale-105 transition-transform bg-[#005d8a]">
+                    <Image
+                      src="/logo-white.svg"
+                      alt="Univerzitet u Banjoj Luci"
+                      width={68}
+                      height={68}
+                      className="object-cover"
+                    />
+                  </div>
+                </a>
+                <Link
+                  href={routes.home(lang)}
+                  className="flex items-center gap-3"
+                >
+                  <div>
+                    <h3 className="font-serif font-bold text-lg text-primary-foreground">
+                      {siteSettings.name}
+                    </h3>
+                    {siteSettings.shortName && (
+                      <p className="text-primary-foreground/70 text-sm">
+                        {siteSettings.shortName}
+                      </p>
+                    )}
+                  </div>
                   <Image
-                    src="/logo-white.svg"
-                    alt=""
-                    width={68}
-                    height={68}
-                    className="object-cover"
+                    src="/igr-bl-logo.jpg"
+                    alt="Institut za genetičke resurse"
+                    width={160}
+                    height={80}
+                    className="object-contain h-16 w-auto"
                   />
-                </div>
-                <div>
-                  <h3 className="font-serif font-bold text-lg text-primary-foreground">
-                    {siteSettings.name}
-                  </h3>
-                  {siteSettings.shortName && (
-                    <p className="text-primary-foreground/70 text-sm">
-                      {siteSettings.shortName}
-                    </p>
-                  )}
-                </div>
-                <Image
-                  src="/igr-bl-logo.jpg"
-                  alt=""
-                  width={160}
-                  height={80}
-                  className="object-contain h-16 w-auto"
-                />
-              </Link>
+                </Link>
+              </div>
               <p className="text-primary-foreground/70 mb-6 max-w-sm">
                 {siteSettings.description}
               </p>
