@@ -58,37 +58,48 @@ export function Header() {
         <nav className="py-4">
           <div className="flex items-center justify-between gap-4">
             {/* Logo */}
-            <Link
-              href={routes.home(currentLang)}
-              className="flex items-center gap-3 group shrink-0"
-            >
-              <div className="w-18 h-18 rounded-full overflow-hidden flex items-center justify-center group-hover:scale-105 transition-transform bg-[#005d8a]">
+            <div className="flex items-center gap-3 shrink-0">
+              <a
+                href="https://www.unibl.org"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Univerzitet u Banjoj Luci (otvara se u novom tabu)"
+                title="Univerzitet u Banjoj Luci"
+                className="shrink-0"
+              >
+                <div className="w-18 h-18 rounded-full overflow-hidden flex items-center justify-center hover:scale-105 transition-transform bg-[#005d8a]">
+                  <Image
+                    src="/logo-white.svg"
+                    alt="Univerzitet u Banjoj Luci"
+                    width={68}
+                    height={68}
+                    className="object-cover"
+                  />
+                </div>
+              </a>
+              <Link
+                href={routes.home(currentLang)}
+                className="flex items-center gap-3"
+              >
+                <div className="hidden sm:block">
+                  <h1 className="font-serif font-bold text-lg leading-tight text-foreground transition-colors">
+                    {siteSettings.name}
+                  </h1>
+                  {siteSettings.shortName && (
+                    <p className="text-xs text-muted-foreground">
+                      {siteSettings.shortName}
+                    </p>
+                  )}
+                </div>
                 <Image
-                  src="/logo-white.svg"
-                  alt=""
-                  width={68}
-                  height={68}
-                  className="object-cover"
+                  src="/igr-bl-logo.jpg"
+                  alt="Institut za genetičke resurse"
+                  width={160}
+                  height={80}
+                  className="object-contain h-14 sm:h-16 w-auto"
                 />
-              </div>
-              <div className="hidden sm:block">
-                <h1 className="font-serif font-bold text-lg leading-tight text-foreground transition-colors">
-                  {siteSettings.name}
-                </h1>
-                {siteSettings.shortName && (
-                  <p className="text-xs text-muted-foreground">
-                    {siteSettings.shortName}
-                  </p>
-                )}
-              </div>
-              <Image
-                src="/igr-bl-logo.jpg"
-                alt=""
-                width={160}
-                height={80}
-                className="hidden sm:block object-contain h-16 w-auto"
-              />
-            </Link>
+              </Link>
+            </div>
 
             {/* Desktop Navigation - centered */}
             <div
